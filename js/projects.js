@@ -1845,6 +1845,150 @@ function submitArtifact(projId, phase) {
   document.querySelector('.proj-modal-overlay')?.remove();
 }
 
+// ============================================================
+// BRANCHES — Project branching for argumentative exploration
+// ============================================================
+
+function initBranches(proj) {
+  if (!proj.drBranches) {
+    proj.drBranches = [{
+      id: 'main',
+      name: 'Línea principal',
+      forkedFrom: null,
+      forkedAtPhase: null,
+      forkedDate: null,
+      status: 'active' // active | paused | archived
+    }];
+    proj.drActiveBranch = 'main';
+  }
+}
+
+function forkBranch(projId) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  initBranches(proj);
+
+  const currentBranch = proj.drActiveBranch || 'main';
+  const activePhase = (proj.drFases || []).find(f => f.estado === 'en_progreso');
+  if (!activePhase) { showToast('Activa una fase antes de bifurcar', 'error'); return; }
+
+  const name = prompt('Nombre de la nueva rama (ej: "enfoque Williamson", "sin March"):');
+  if (!name || !name.trim()) return;
+
+  const branchId = 'branch-' + Date.now().toString(36);
+
+  // Save current state to current branch before forking
+  if (!proj.drBranchData) proj.drBranchData = {};
+  proj.drBranchData[currentBranch] = {
+    drFases: JSON.parse(JSON.stringify(proj.drFases)),
+    drOutputs: JSON.parse(JSON.stringify(proj.drOutputs || {})),
+    drGateRecords: JSON.parse(JSON.stringify(proj.drGateRecords || [])),
+    drWizardProgress: JSON.parse(JSON.stringify(proj.drWizardProgress || {})),
+    drArtifacts: JSON.parse(JSON.stringify(proj.drArtifacts || []))
+  };
+
+  // Create new branch
+  proj.drBranches.push({
+    id: branchId,
+    name: name.trim(),
+    forkedFrom: currentBranch,
+    forkedAtPhase: activePhase.id,
+    forkedDate: new Date().toISOString().split('T')[0],
+    status: 'active'
+  });
+
+  // Copy current data to new branch, reset phases from fork point forward
+  const forkIdx = proj.drFases.findIndex(f => f.id === activePhase.id);
+  const newFases = JSON.parse(JSON.stringify(proj.drFases));
+  // Phases before fork: keep as inherited (completado)
+  // Phases from fork: reset to pendiente, fork phase to en_progreso
+  newFases.forEach((f, i) => {
+    if (i > forkIdx) f.estado = 'pendiente';
+    else if (i === forkIdx) f.estado = 'en_progreso';
+    // Before fork: keep estado as is
+  });
+
+  // Copy outputs only up to fork point
+  const newOutputs = {};
+  const phaseIds = proj.drFases.map(f => f.id);
+  Object.entries(proj.drOutputs || {}).forEach(([phase, tasks]) => {
+    const phaseIdx = phaseIds.indexOf(phase);
+    if (phaseIdx < forkIdx) newOutputs[phase] = JSON.parse(JSON.stringify(tasks));
+  });
+
+  // Copy gate records only up to fork point
+  const forkPhaseIds = phaseIds.slice(0, forkIdx);
+  const newGates = (proj.drGateRecords || []).filter(g => {
+    const gPhase = g.gate.replace('dr_gate_', 'dr_');
+    return forkPhaseIds.some(p => gPhase.includes(p.replace('dr_', '')));
+  });
+
+  proj.drBranchData[branchId] = {
+    drFases: newFases,
+    drOutputs: newOutputs,
+    drGateRecords: JSON.parse(JSON.stringify(newGates)),
+    drWizardProgress: {},
+    drArtifacts: []
+  };
+
+  // Switch to new branch
+  proj.drActiveBranch = branchId;
+  proj.drFases = newFases;
+  proj.drOutputs = newOutputs;
+  proj.drGateRecords = JSON.parse(JSON.stringify(newGates));
+  proj.drWizardProgress = {};
+
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  showToast('🌿 Rama creada: ' + name.trim() + ' (bifurcó en ' + activePhase.nombre + ')', 'success');
+}
+
+function switchBranch(projId, branchId) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  initBranches(proj);
+  if (!proj.drBranchData) proj.drBranchData = {};
+
+  // Save current branch state
+  const currentBranch = proj.drActiveBranch || 'main';
+  proj.drBranchData[currentBranch] = {
+    drFases: JSON.parse(JSON.stringify(proj.drFases || [])),
+    drOutputs: JSON.parse(JSON.stringify(proj.drOutputs || {})),
+    drGateRecords: JSON.parse(JSON.stringify(proj.drGateRecords || [])),
+    drWizardProgress: JSON.parse(JSON.stringify(proj.drWizardProgress || {})),
+    drArtifacts: JSON.parse(JSON.stringify(proj.drArtifacts || []))
+  };
+
+  // Load target branch state
+  const targetData = proj.drBranchData[branchId];
+  if (targetData) {
+    proj.drFases = JSON.parse(JSON.stringify(targetData.drFases));
+    proj.drOutputs = JSON.parse(JSON.stringify(targetData.drOutputs));
+    proj.drGateRecords = JSON.parse(JSON.stringify(targetData.drGateRecords));
+    proj.drWizardProgress = JSON.parse(JSON.stringify(targetData.drWizardProgress));
+    proj.drArtifacts = JSON.parse(JSON.stringify(targetData.drArtifacts || []));
+  }
+
+  proj.drActiveBranch = branchId;
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+
+  const branch = proj.drBranches.find(b => b.id === branchId);
+  showToast('🌿 Rama activa: ' + (branch?.name || branchId), 'success');
+}
+
+function setBranchStatus(projId, branchId, status) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  const branch = (proj.drBranches || []).find(b => b.id === branchId);
+  if (!branch) return;
+  branch.status = status;
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  const labels = { active: 'activada', paused: 'pausada', archived: 'archivada' };
+  showToast('🌿 Rama ' + (labels[status] || status) + ': ' + branch.name, 'success');
+}
+
 function generatePortfolio(projId) {
   const projects = getProjects(); const proj = projects.find(p => p.id === projId);
   if (!proj) { showToast('Proyecto no encontrado', 'error'); return; }
@@ -1898,6 +2042,21 @@ function generatePortfolio(projId) {
     r += '## Reflexiones del investigador\n\n';
     withNotes.forEach(a => {
       r += `**${a.date} — ${a.name}:** ${a.notes}\n\n`;
+    });
+  }
+
+  // Branches section
+  const branches = proj.drBranches || [];
+  if (branches.length > 1) {
+    r += '## Ramas exploradas\n\n';
+    branches.forEach(b => {
+      const statusLabels = { active: 'activa', paused: 'pausada', archived: 'archivada' };
+      r += `### ${b.name} (${statusLabels[b.status] || b.status})\n`;
+      if (b.forkedFrom) {
+        const parent = branches.find(p => p.id === b.forkedFrom);
+        r += `Bifurcó de ${parent?.name || b.forkedFrom} en fase ${b.forkedAtPhase} · ${b.forkedDate}\n`;
+      }
+      r += '\n';
     });
   }
 
@@ -2932,6 +3091,73 @@ function renderProjectDash(projId) {
     h += `</div>`;
   }
 
+  // === BRANCHES — Ramas argumentativas ===
+  {
+    const wfModeB = proj.workflowMode || (proj.drMode ? 'dr' : 'default');
+    if ((wfModeB === 'dr' || wfModeB === 'mixed') && proj.drBranches && proj.drBranches.length > 1) {
+      const activeBranch = proj.drActiveBranch || 'main';
+      h += `<details class="pd-section" open><summary><div class="pd-header"><span class="pd-chevron">▶</span><span class="pd-title">🌿 Ramas del proyecto</span><span class="pd-count">${proj.drBranches.length}</span></div></summary><div class="pd-body">`;
+
+      // Render branch tree
+      const branches = proj.drBranches;
+      const rootBranches = branches.filter(b => !b.forkedFrom);
+      const childOf = (parentId) => branches.filter(b => b.forkedFrom === parentId);
+
+      function renderBranchTree(branch, depth) {
+        const isActive = branch.id === activeBranch;
+        const indent = depth * 20;
+        const statusColors = { active: 'var(--green)', paused: 'var(--gold)', archived: 'var(--tx3)' };
+        const statusLabels = { active: 'activa', paused: 'pausada', archived: 'archivada' };
+        const branchData = proj.drBranchData?.[branch.id];
+        const branchFases = branchData?.drFases || (isActive ? proj.drFases : []);
+        const activePhase = branchFases.find(f => f.estado === 'en_progreso');
+        const completedCount = branchFases.filter(f => f.estado === 'completado').length;
+
+        let bh = '';
+        bh += `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin:2px 0;margin-left:${indent}px;background:${isActive ? 'rgba(93,187,138,0.06)' : 'var(--bg2)'};border:1px solid ${isActive ? 'var(--green)' : 'rgba(220,215,205,0.06)'};border-radius:6px;border-left:3px solid ${statusColors[branch.status] || 'var(--tx3)'};">`;
+        bh += `<span style="font-size:14px;">${depth === 0 ? '●' : '├─●'}</span>`;
+        bh += `<div style="flex:1;">`;
+        bh += `<div style="font-size:13px;font-weight:${isActive ? '700' : '400'};color:${isActive ? 'var(--green)' : 'var(--tx)'};">${branch.name}</div>`;
+        bh += `<div style="font-size:11px;color:var(--tx3);">`;
+        if (branch.forkedFrom) {
+          const parent = branches.find(b => b.id === branch.forkedFrom);
+          bh += `Bifurcó de ${parent?.name || branch.forkedFrom} en ${branch.forkedAtPhase} · ${branch.forkedDate} · `;
+        }
+        bh += `${completedCount}/${branchFases.length} fases`;
+        if (activePhase) bh += ` · Fase: ${activePhase.nombre}`;
+        bh += `</div>`;
+        bh += `</div>`;
+        // Status badge
+        bh += `<span style="font-size:10px;padding:2px 6px;background:rgba(220,215,205,0.06);border-radius:4px;color:${statusColors[branch.status]};">${statusLabels[branch.status] || branch.status}</span>`;
+        // Actions
+        if (!isActive) {
+          bh += `<button class="btn bo" onclick="switchBranch('${proj.id}','${branch.id}')" style="font-size:11px;padding:2px 8px;">Activar</button>`;
+        }
+        if (branch.id !== 'main' && branch.status === 'active') {
+          bh += `<select onchange="if(this.value)setBranchStatus('${proj.id}','${branch.id}',this.value);this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
+          bh += `<option value="">···</option><option value="paused">Pausar</option><option value="archived">Archivar</option></select>`;
+        }
+        if (branch.status !== 'active' && branch.id !== 'main') {
+          bh += `<button class="btn bo" onclick="setBranchStatus('${proj.id}','${branch.id}','active')" style="font-size:11px;padding:2px 6px;color:var(--green);">Reactivar</button>`;
+        }
+        bh += `</div>`;
+        h += bh;
+
+        // Render children
+        childOf(branch.id).forEach(child => renderBranchTree(child, depth + 1));
+      }
+
+      rootBranches.forEach(b => renderBranchTree(b, 0));
+
+      // Fork button
+      h += `<div style="margin-top:8px;">`;
+      h += `<button class="btn bo" onclick="forkBranch('${proj.id}')" style="font-size:12px;padding:3px 10px;border-color:var(--green);color:var(--green);">🌿 Nueva rama desde fase actual</button>`;
+      h += `</div>`;
+
+      h += `</div></details>`;
+    }
+  }
+
   // === DR WIZARD — Flujo guiado de producción doctoral con /dr skills ===
   {
     const wfMode = proj.workflowMode || (proj.drMode ? 'dr' : 'default');
@@ -2965,6 +3191,7 @@ function renderProjectDash(projId) {
       } else {
         h += `<span></span>`;
       }
+      if (drActive) h += `<button class="btn bo" onclick="forkBranch('${proj.id}')" style="font-size:12px;padding:4px 10px;border-color:var(--green);color:var(--green);">🌿 Bifurcar</button>`;
       h += `<button class="btn bg" onclick="advanceDrPhase('${proj.id}')" style="font-size:13px;padding:5px 16px;background:var(--purple);color:#fff;">${drActive ? '🚧 Completar fase y verificar gate' : '▶ Iniciar primera fase'}</button>`;
       h += `</div>`;
       h += `</div>`;
@@ -4160,6 +4387,9 @@ window.addArtifactLink = addArtifactLink;
 window.showArtifactModal = showArtifactModal;
 window.submitArtifact = submitArtifact;
 window.generatePortfolio = generatePortfolio;
+window.forkBranch = forkBranch;
+window.switchBranch = switchBranch;
+window.setBranchStatus = setBranchStatus;
 window.generateDrReport = generateDrReport;
 window.saveCloPath = saveCloPath;
 window.toggleCloWizardStep = toggleCloWizardStep;
