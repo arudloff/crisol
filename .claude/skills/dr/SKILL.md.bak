@@ -103,11 +103,6 @@ compuesto ponderado y determina si el texto pasa el quality gate correspondiente
 
 **Flujo obligatorio:**
 
-0. **LEER CONTEXTO SUPABASE** (ver `references/supabase_helpers.md`):
-   - Leer dr_wizard_context → obtener fase activa → aplicar phase-sensitive severity
-   - Leer dr_socratic_log → obtener declaraciones del investigador → verificar si el texto las cumple
-   - Leer dr_alerts → verificar si hay alertas previas no resueltas
-   Si no hay conexion o project_id, continuar sin contexto (degradar gracefully).
 1. Leer `references/critic_deductions.md` para cargar el catalogo de deducciones
 1b. Leer `references/writing_principles_30.md` para cargar los 30 principios de escritura
 2. Leer el texto completo (archivo .md, .docx, o texto pegado)
@@ -127,12 +122,6 @@ compuesto ponderado y determina si el texto pasa el quality gate correspondiente
 6. Determinar quality gate: BORRADOR (≥70) | CAPITULO (≥80, ≥70 por comp.) | ENTREGA (≥90, ≥80 por comp., zero defectos de cita (F1-F5 todos resueltos o declarados))
 7. Listar las 3 debilidades mas impactantes con sugerencia concreta de mejora
 8. Registrar en el research journal
-9. **ESCRIBIR A SUPABASE** (ver `references/supabase_helpers.md`):
-   - Por cada deduccion CRITICA (CT05, PL01, RM01, RM05) → escribir alerta type="warning"
-   - Por cada principio CRITICO violado (A1, A2, A3, B2, B3, E1, E5) → escribir alerta type="warning" code="principle_critical"
-   - Si score compuesto < score anterior (cross-round) → escribir alerta type="warning" code="score_drop"
-   - Si error recurrente (mismo codigo que ronda anterior) → escribir alerta type="warning" code="recurrent"
-   Si no hay project_id, omitir (degradar gracefully).
 
 **Principios del critico:**
 - Ser adversarial, no hostil. El objetivo es mejorar el texto, no destruirlo
@@ -171,9 +160,6 @@ Construye sobre el trabajo de verificacion previo (tablas AX_tabla_verificacion_
 
 **Flujo obligatorio:**
 
-0. **LEER CONTEXTO SUPABASE** (ver `references/supabase_helpers.md`):
-   - Leer alertas previas → verificar si hay F1-F5 pendientes de rondas anteriores
-   Si no hay conexion, continuar sin contexto.
 1. Leer `references/citation_taxonomy.md` para cargar taxonomia de errores
 2. Leer el texto a verificar
 3. Verificar si ya existe tabla de verificacion previa para este articulo:
@@ -190,14 +176,6 @@ Construye sobre el trabajo de verificacion previo (tablas AX_tabla_verificacion_
 6. Generar tabla de hallazgos
 7. Calcular score de trazabilidad
 8. Registrar en journal
-9. **ESCRIBIR A SUPABASE** (ver `references/supabase_helpers.md`):
-   - Por cada F1 (fabricada) → escribir alerta type="block" code="F1"
-   - Por cada F2 (distorsionada) → escribir alerta type="block" code="F2"
-   - Por cada F3 (descontextualizada) → escribir alerta type="block" code="F3"
-   - Por cada F4 (inexacta) → escribir alerta type="warning" code="F4"
-   - Por cada F5 (inverificable) → escribir alerta type="warning" code="F5"
-   CRISOL mostrara estas alertas como bloqueos rojos o advertencias amarillas.
-   El gate de verificacion NO se puede pasar con alertas block sin resolver.
 
 **Taxonomia de errores (5 tipos):**
 - **F1 — Fabricada** (CRITICA, -20): fuente/dato no existe
@@ -312,24 +290,11 @@ Anti-sycophancy: nunca valida sin cuestionar, nunca halaga sin sustancia.
 
 **Flujo obligatorio:**
 
-0. **LEER CONTEXTO SUPABASE** (ver `references/supabase_helpers.md`):
-   - Leer dr_socratic_log → obtener dialogos previos → NO repetir preguntas ya hechas
-   - Leer dr_wizard_context → obtener fase activa y declaraciones del investigador
-   Si no hay conexion, continuar sin contexto.
 1. Leer `references/socratic_mentor_protocol.md`
 2. Parafrasear el argumento del investigador (confirmar comprension)
 3. Generar 8-10 preguntas por tipo: clarificacion, supuestos, evidencia, perspectiva alternativa, implicaciones, meta-pregunta
 4. Identificar LA pregunta que mas importa ahora
 5. Registrar en journal
-6. **ESCRIBIR A SUPABASE** (ver `references/supabase_helpers.md`):
-   - Escribir entrada en dr_socratic_log con:
-     source: "claude", skill: "/dr mentor", phase: fase activa,
-     questions: las preguntas generadas,
-     key_question: LA pregunta que mas importa,
-     researcher_answer: la respuesta del investigador (si la da en la sesion),
-     insight: el insight emergente del dialogo,
-     context_for_next: resumen para el proximo agente que lea el log
-   CRISOL usara este log para personalizar gates futuros.
 
 **Modos:**
 - Default: preguntas socraticas sobre texto/idea
