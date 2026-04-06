@@ -1244,18 +1244,38 @@ export function renderAyuda() {
     <div class="help-item"><h4>📁 Crear proyecto</h4><p>Sidebar → <b>"+ Nuevo proyecto"</b> → nombre, descripción, deadline, carpeta Drive. Agregar artículos y documentos desde el dashboard del proyecto.</p></div>
     <div class="help-item"><h4>🔄 Workflow de 9 fases (estándar)</h4><p>Ideación → Fundamentación → Diseño → Escritura → Revisión → Submission → Peer Review → Respuesta → Publicación. Click para cambiar estado.</p></div>
     <div class="help-item"><h4>🧬🔬🔗 Tres modos de producción doctoral</h4><p>En la barra de workflow, tres botones activan modos especializados:<br><br>
-    <b>🧬 /dr</b> — Tesis y ensayos teóricos en español. 8 fases: Exploración → Lectura → Escritura → Crítica → Humanización → Verificación → Profundización → Entrega. Incluye mentor socrático, abogado del diablo, verificación anti-IA, y reporte de trazabilidad.<br><br>
+    <b>🧬 /dr</b> — Tesis y ensayos teóricos en español. 10 fases: 🔭 Exploración → 📖 Lectura → ✍ Escritura → 🔍 Crítica → 🧬 Humanización → 📎 Verificación → 🧠 Profundización → 💎 Impacto → ⚖ Benchmarking → 🚀 Entrega. Incluye 4 agentes en review, 30 principios de escritura, mentor socrático, abogado del diablo, evaluación de impacto con 4 agentes antagónicos, y benchmarking contra publicaciones ancla.<br><br>
     <b>🔬 clo-author</b> — Papers empíricos con R, LaTeX, inglés. 7 fases: Descubrimiento → Estrategia → Análisis → Escritura → Peer Review simulado → R&R → Submission. Basado en clo-author v3.1.1 (16 agentes, worker-critic pairs).<br><br>
     <b>🔗 Mixto</b> — Ambos simultáneamente. Marco teórico con /dr + validación empírica con clo-author. Los outputs de un sistema alimentan los prompts del otro automáticamente.<br><br>
     Cada proyecto elige su modo independientemente. Puedes tener un proyecto teórico en 🧬 /dr y otro empírico en 🔬 clo-author al mismo tiempo.</p></div>
-    <div class="help-item"><h4>🚧 Gates anti-deuda intelectual</h4><p>Al avanzar de fase, CRISOL muestra un gate de verificación:<br><br>
-    <b>Workflow estándar (3 gates):</b><br>
-    Gate de entrada · Gate de autoría · Gate de publicación<br><br>
-    <b>🧬 /dr (7 gates con scores numéricos):</b><br>
-    Exploración (¿pregunta precisa?) · Lectura (¿conexiones reales?) · Escritura (¿autoría verificable?) · Crítica (¿score ≥80?) · Humanización (¿anti-IA ≥85?) · Verificación (¿zero fabricadas?) · Profundización (¿respondiste mentor y diablo?)<br><br>
-    <b>🔬 clo-author (5 gates con scores de critics):</b><br>
-    Descubrimiento (¿librarian ≥80?) · Estrategia (¿identificación creíble?) · Análisis (¿código reproducible?) · Escritura (¿writer-critic ≥80?) · Peer Review (¿decisión editorial?)<br><br>
+    <div class="help-item"><h4>🚧 Gates socráticos obligatorios</h4><p>Al avanzar de fase, CRISOL muestra un gate con dos secciones:<br><br>
+    <b>📋 Verificación:</b> Preguntas de check rápido (dropdowns).<br>
+    <b>🧠 Reflexión socrática:</b> Preguntas abiertas que el investigador DEBE responder por escrito (mínimo 20 caracteres). Sin respuesta, no se pasa el gate. 19 preguntas socráticas distribuidas en 9 gates.<br><br>
+    Las respuestas socráticas se guardan en Supabase para que Claude las lea y personalice las siguientes interacciones.<br><br>
+    <b>🧬 /dr (9 gates):</b><br>
+    Exploración (¿pregunta precisa? + reflexión sobre gap) · Lectura (¿conexiones reales? + reflexión sobre cambios) · Escritura (¿autoría verificable? + reflexión sobre contribución y decisiones) · Crítica (¿score ≥80? + reflexión sobre debilidades) · Humanización (¿anti-IA ≥85? + reflexión sobre voz) · Verificación (ZERO TOLERANCIA: gate NO se puede saltar + reflexión sobre citación) · Profundización (¿respondiste mentor y diablo? + respuestas escritas) · Impacto (¿contribución nombrable?) · Benchmarking (¿posición relativa conocida?)<br><br>
+    <b>🔬 clo-author (5 gates con scores de critics)</b><br><br>
     Los gates son personales — cada investigador los pasa independientemente.</p></div>
+    <div class="help-item"><h4>🌿 Ramas argumentativas</h4><p>Cuando emerge un replanteamiento, en vez de reabrir una fase (destruye trazabilidad), puedes <b>bifurcar el proyecto</b>:<br><br>
+    Click <b>🌿 Bifurcar</b> en el wizard → nombra la rama → se crea una copia desde la fase actual.<br><br>
+    La rama hereda todo el trabajo previo pero permite explorar un argumento alternativo sin afectar la línea principal. Puedes:<br>
+    - Tener múltiples ramas activas simultáneamente<br>
+    - Pausar o archivar ramas descartadas<br>
+    - Comparar ramas (scores, argumentos)<br>
+    - El portafolio incluye TODAS las ramas como evidencia de exploración<br><br>
+    Para el comité: demuestra que exploraste alternativas, no que seguiste la primera idea ciegamente.</p></div>
+    <div class="help-item"><h4>📎 Artefactos del proceso</h4><p>Cada fase produce artefactos (borradores, scores, fichas, decisiones). La sección <b>"📎 Artefactos"</b> los registra con:<br><br>
+    <b>11 tags transversales</b> en 3 categorías:<br>
+    Sustancia: 📜 Argumento · 🔗 Síntesis · 📊 Evidencia · 🧭 Diseño<br>
+    Proceso: 💭 Reflexión · ⚡ Decisión · 🔍 Crítica<br>
+    Integridad: ✅ Verificación · 👣 Trazabilidad · 🎚 Calibración · 📌 Otro<br><br>
+    Cada artefacto tiene: nombre, tag, score (opcional), delta vs iteración anterior, estado (borrador/revisado/final), enlaces Google Drive, y notas de reflexión.<br><br>
+    La <b>trayectoria de scores</b> muestra visualmente la evolución: [72] → [78 +6] → [85 +7].<br>
+    El botón <b>📊 Descargar portafolio</b> genera un .md completo para el comité.</p></div>
+    <div class="help-item"><h4>🔄 Conexión Claude ↔ CRISOL</h4><p>Claude Code y CRISOL se comunican directamente vía Supabase:<br><br>
+    <b>Claude → CRISOL:</b> Cuando /dr verify detecta una cita fabricada, escribe una alerta que CRISOL muestra como bloqueo rojo. Cuando /dr mentor dialoga, guarda las preguntas y respuestas para personalizar gates futuros.<br><br>
+    <b>CRISOL → Claude:</b> Cuando completas un gate socrático, las respuestas se guardan para que Claude las lea y ajuste su evaluación. Cuando avanzas de fase, Claude sabe en qué fase estás y aplica severidad proporcional (×0.5 en exploración, ×1.25 en entrega).<br><br>
+    Todo funciona automáticamente. Si no hay conexión, las skills funcionan igual — solo pierden el contexto personalizado.</p></div>
     <div class="help-item"><h4>👥 Colaboración</h4><p>
     <b>Invitar:</b> Dashboard del proyecto → <b>"Invitar"</b> → genera link con token (7 días)<br>
     <b>Roles:</b> Coautor (ve todo, gates propios) · Reviewer (lectura + comentarios) · Lector (solo docs publicados)<br>
@@ -1311,7 +1331,7 @@ export function renderAyuda() {
     <b>Modos:</b> <span class="key">/dr read</span> · <span class="key">--gap</span> · <span class="key">--compare</span> · <span class="key">--scan</span></p></div>
     <div class="help-item"><h4>✍ /dr write — Escritor doctoral</h4><p>Genera borradores con esqueleto aprobado y estilo calibrado. Worker-critic con autoevaluación.<br>
     <b>Modos:</b> <span class="key">section</span> · <span class="key">draft</span> · <span class="key">extend</span> · <span class="key">rewrite</span></p></div>
-    <div class="help-item"><h4>🔍 /dr review — Crítico adversarial</h4><p>Evalúa en 6 componentes: coherencia (25%), literatura (15%), rigor (20%), autoetnografía (15%), anti-IA (15%), trazabilidad (10%). 25 deducciones con códigos trazables. Quality gates: borrador ≥70, capítulo ≥80, entrega ≥90.</p></div>
+    <div class="help-item"><h4>🔍 /dr review — Crítico adversarial (4 agentes)</h4><p>4 agentes independientes en paralelo: (1) Crítico de contenido (CT+PL+RM+IA), (2) Humanizer (15 patrones anti-IA), (3) Verificador de citas (F1-F5), (4) Evaluador de 30 principios de escritura. Phase-sensitive severity (×0.5 en exploración a ×1.25 en entrega). Cross-round learning (errores recurrentes ×1.5). Escribe alertas a CRISOL vía Supabase.</p></div>
     <div class="help-item"><h4>🧬 /dr humanize — Detector anti-IA</h4><p>15 patrones de escritura IA en 3 niveles: CRÍTICO (listitis, coletillas, hedging), ALTO (paralelismo, vocabulario hiperpulido), MEDIO (oraciones uniformes, verbos débiles). Score 0-100, objetivo ≥85.</p></div>
     <div class="help-item"><h4>📎 /dr verify — Verificador de citas</h4><p>Verifica TODAS las citas contra PDFs originales. 5 tipos de error: F1 Fabricada (-20, bloquea entrega), F2 Distorsionada (-10), F3 Descontextualizada (-6), F4 Inexacta (-3), F5 Inverificable (-5).</p></div>
     <div class="help-item"><h4>🧠 /dr mentor — Mentor socrático</h4><p>Preguntas que obligan a pensar más profundo. Anti-sycophancy: nunca halaga sin sustancia.<br>
