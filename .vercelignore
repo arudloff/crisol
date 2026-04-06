@@ -1,0 +1,5 @@
+.git
+docs
+supabase_migration_dr_tables.sql
+SETUP.md
+ARCHITECTURE.md

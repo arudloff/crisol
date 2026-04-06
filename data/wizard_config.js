@@ -627,6 +627,50 @@ var DR_PHASE_GATES = {
 };
 
 // Skill files — contenido de cada skill para descarga directa desde CRISOL
+// ============================================================
+// ARTIFACT TAGS — Taxonomía transversal de artefactos
+// Describen QUÉ ES el artefacto, no de dónde viene
+// 3 categorías + campo libre
+// ============================================================
+
+var ARTIFACT_TAGS = [
+  // A. SUSTANCIA — contenido intelectual
+  {id:'argumento',     label:'Argumento',     icon:'📜', category:'sustancia', color:'#90C8F0',
+   desc:'Tesis, posición, pregunta de investigación, párrafos de posicionamiento, declaración de vacío'},
+  {id:'sintesis',      label:'Síntesis',      icon:'🔗', category:'sustancia', color:'#7BB8E0',
+   desc:'Integración cross-fuentes, marcos conceptuales, mapas de convergencias/tensiones, fichas de explotación'},
+  {id:'evidencia',     label:'Evidencia',     icon:'📊', category:'sustancia', color:'#6CA8D0',
+   desc:'Datos, transcripciones, resultados estadísticos, tablas analíticas, casos documentados'},
+  {id:'diseno',        label:'Diseño',        icon:'🧭', category:'sustancia', color:'#5D98C0',
+   desc:'Decisiones metodológicas, instrumentos, criterios de selección, protocolos de búsqueda'},
+
+  // B. PROCESO — trazas de evolución intelectual
+  {id:'reflexion',     label:'Reflexión',     icon:'💭', category:'proceso', color:'#E8A838',
+   desc:'Pensamiento sobre el propio pensamiento: dudas, cambios de rumbo, insights, por qué cambié de idea'},
+  {id:'decision',      label:'Decisión',      icon:'⚡', category:'proceso', color:'#D89828',
+   desc:'Elecciones con justificación: elegí X porque Y, alternativas rechazadas, cuándo aceptar/rechazar output IA'},
+  {id:'critica',       label:'Crítica',       icon:'🔍', category:'proceso', color:'#C88818',
+   desc:'Evaluaciones de calidad: scores de review, ataques del diablo, respuestas a reviewers, benchmarkings'},
+
+  // C. INTEGRIDAD — prueba de rigor y transparencia
+  {id:'verificacion',  label:'Verificación',  icon:'✅', category:'integridad', color:'#5DBB8A',
+   desc:'Tablas de verificación de citas contra PDFs, auditorías de fabricación, fact-checking'},
+  {id:'trazabilidad',  label:'Trazabilidad',  icon:'👣', category:'integridad', color:'#4DAB7A',
+   desc:'Genealogía del texto: reportes, trayectoria de scores, historial de versiones, declaraciones rol IA vs humano'},
+  {id:'calibracion',   label:'Calibración',   icon:'🎚', category:'integridad', color:'#3D9B6A',
+   desc:'Preservación de voz propia: scores anti-IA, reportes de humanización, comparaciones de estilo'},
+
+  // + Campo libre
+  {id:'otro',          label:'Otro',          icon:'📌', category:'otro',       color:'var(--tx3)',
+   desc:'Campo libre para lo que no encaje en las categorías anteriores'}
+];
+
+var ARTIFACT_STATUSES = [
+  {id:'draft',    label:'Borrador',   color:'var(--tx3)'},
+  {id:'reviewed', label:'Revisado',   color:'var(--blue)'},
+  {id:'final',    label:'Final',      color:'var(--green)'}
+];
+
 var DR_SKILL_FILES = {
   dr_read: {
     name: '/dr read — Lector Profundo',

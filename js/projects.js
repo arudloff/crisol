@@ -1714,6 +1714,203 @@ function saveCloOutput(projId, phaseId, stepIdx, value) {
   setTimeout(() => renderProjectDash(projId), 150);
 }
 
+// ============================================================
+// ARTIFACTS — Registry with transversal tags
+// ============================================================
+
+function _getArtifactTags() {
+  return (typeof ARTIFACT_TAGS !== 'undefined') ? ARTIFACT_TAGS : [];
+}
+
+function addArtifact(projId, data) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  if (!proj.drArtifacts) proj.drArtifacts = [];
+  // Auto-calculate iteration
+  const iteration = proj.drArtifacts.filter(a => a.phase === data.phase && a.tag === data.tag).length + 1;
+  // Auto-calculate delta
+  const prev = proj.drArtifacts.filter(a => a.phase === data.phase && a.tag === data.tag && a.score != null)
+    .sort((a, b) => b.iteration - a.iteration)[0];
+  const delta = (data.score != null && prev) ? data.score - prev.score : null;
+
+  proj.drArtifacts.push({
+    id: Date.now().toString(36),
+    name: data.name || '',
+    phase: data.phase || '',
+    tag: data.tag || 'otro',
+    customTag: data.customTag || '',
+    date: new Date().toISOString().split('T')[0],
+    iteration,
+    score: data.score != null ? Number(data.score) : null,
+    delta,
+    status: data.status || 'draft',
+    links: data.links || [],
+    notes: data.notes || '',
+    auto: data.auto || false
+  });
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  showToast('📎 Artefacto registrado: ' + (data.name || data.tag), 'success');
+  renderProjectDash(projId);
+}
+
+function removeArtifact(projId, artifactId) {
+  if (!confirm('¿Eliminar este artefacto?')) return;
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  proj.drArtifacts = (proj.drArtifacts || []).filter(a => a.id !== artifactId);
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+}
+
+function updateArtifactNotes(projId, artifactId, notes) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  const art = (proj.drArtifacts || []).find(a => a.id === artifactId);
+  if (!art) return;
+  art.notes = notes.trim();
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+}
+
+function addArtifactLink(projId, artifactId) {
+  const url = prompt('URL (Google Drive, etc.):');
+  if (!url || !url.trim()) return;
+  const desc = prompt('Descripción breve:') || '';
+  const tag = prompt('Tag del enlace (borrador/score/fuentes/otro):') || 'otro';
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  const art = (proj.drArtifacts || []).find(a => a.id === artifactId);
+  if (!art) return;
+  if (!art.links) art.links = [];
+  art.links.push({ url: url.trim(), desc: desc.trim(), tag: tag.trim() });
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  showToast('📁 Enlace agregado', 'success');
+}
+
+function showArtifactModal(projId, phase) {
+  const tags = _getArtifactTags();
+  const overlay = document.createElement('div');
+  overlay.className = 'proj-modal-overlay';
+  overlay.onclick = function (e) { if (e.target === overlay) overlay.remove(); };
+
+  let html = `<div class="logbook-modal" style="max-width:480px;">`;
+  html += `<h3 style="font-size:17px;">📎 Registrar artefacto</h3>`;
+  html += `<label>Nombre</label>`;
+  html += `<input id="art-name" type="text" placeholder="Ej: Score R2 - tabla de componentes" style="width:100%;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;">`;
+
+  html += `<label>Tag</label>`;
+  html += `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">`;
+  tags.forEach(t => {
+    html += `<button onclick="document.getElementById('art-tag').value='${t.id}';this.parentNode.querySelectorAll('button').forEach(b=>b.style.borderColor='rgba(220,215,205,0.1)');this.style.borderColor='${t.color}'" style="font-size:12px;padding:3px 8px;background:var(--bg2);border:2px solid rgba(220,215,205,0.1);border-radius:6px;color:${t.color};cursor:pointer;">${t.icon} ${t.label}</button>`;
+  });
+  html += `</div>`;
+  html += `<input id="art-tag" type="hidden" value="otro">`;
+  html += `<input id="art-custom-tag" type="text" placeholder="Si elegiste Otro, escribe el tag" style="width:100%;padding:6px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-size:13px;margin-bottom:8px;">`;
+
+  html += `<label>Score (opcional)</label>`;
+  html += `<input id="art-score" type="number" placeholder="Ej: 82" style="width:100px;padding:6px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-size:13px;">`;
+
+  html += `<label>Estado</label>`;
+  html += `<select id="art-status" style="width:100%;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-size:14px;">`;
+  html += `<option value="draft">Borrador</option><option value="reviewed">Revisado</option><option value="final">Final</option>`;
+  html += `</select>`;
+
+  html += `<label>Notas / Reflexión (opcional)</label>`;
+  html += `<textarea id="art-notes" placeholder="¿Por qué es relevante este artefacto?" style="min-height:50px;"></textarea>`;
+
+  html += `<div class="lb-actions" style="margin-top:12px;">`;
+  html += `<button onclick="this.closest('.proj-modal-overlay').remove()" style="background:var(--bg3);color:var(--tx2);">Cancelar</button>`;
+  html += `<button onclick="submitArtifact('${projId}','${phase}')" style="background:var(--green);color:#000;font-weight:600;">Registrar</button>`;
+  html += `</div></div>`;
+
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+}
+
+function submitArtifact(projId, phase) {
+  const name = document.getElementById('art-name')?.value?.trim();
+  const tag = document.getElementById('art-tag')?.value || 'otro';
+  const customTag = document.getElementById('art-custom-tag')?.value?.trim() || '';
+  const scoreVal = document.getElementById('art-score')?.value;
+  const status = document.getElementById('art-status')?.value || 'draft';
+  const notes = document.getElementById('art-notes')?.value?.trim() || '';
+
+  if (!name) { showToast('Escribe un nombre para el artefacto', 'error'); return; }
+
+  addArtifact(projId, {
+    name, phase, tag, customTag,
+    score: scoreVal ? Number(scoreVal) : null,
+    status, notes
+  });
+  document.querySelector('.proj-modal-overlay')?.remove();
+}
+
+function generatePortfolio(projId) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId);
+  if (!proj) { showToast('Proyecto no encontrado', 'error'); return; }
+  const artifacts = proj.drArtifacts || [];
+  const tags = _getArtifactTags();
+  const today = new Date().toISOString().split('T')[0];
+
+  let r = '# Portafolio de Artefactos del Proceso\n';
+  r += '## ' + (proj.nombre || 'Proyecto') + '\n';
+  r += '### Generado: ' + today + '\n\n---\n\n';
+
+  // Score trajectory
+  const scored = artifacts.filter(a => a.score != null).sort((a, b) => a.date.localeCompare(b.date));
+  if (scored.length > 0) {
+    r += '## Trayectoria de scores\n\n';
+    r += '| Fase | Tag | Iter | Fecha | Score | Delta | Estado |\n';
+    r += '|------|-----|------|-------|-------|-------|--------|\n';
+    scored.forEach(a => {
+      const tagObj = tags.find(t => t.id === a.tag);
+      r += `| ${a.phase} | ${tagObj ? tagObj.icon + ' ' + tagObj.label : a.tag} | R${a.iteration} | ${a.date} | ${a.score} | ${a.delta != null ? (a.delta >= 0 ? '+' : '') + a.delta : '—'} | ${a.status} |\n`;
+    });
+    r += '\n';
+  }
+
+  // By phase
+  r += '## Artefactos por fase\n\n';
+  const phases = {};
+  artifacts.forEach(a => {
+    if (!phases[a.phase]) phases[a.phase] = [];
+    phases[a.phase].push(a);
+  });
+  Object.entries(phases).forEach(([phase, arts]) => {
+    r += `### ${phase} (${arts.length})\n`;
+    arts.forEach(a => {
+      const tagObj = tags.find(t => t.id === a.tag);
+      r += `- **${tagObj ? tagObj.icon : '📌'} ${a.name}** — ${a.date} — ${a.status}`;
+      if (a.score != null) r += ` — Score: ${a.score}`;
+      if (a.delta != null) r += ` (${a.delta >= 0 ? '+' : ''}${a.delta})`;
+      r += '\n';
+      if (a.links && a.links.length > 0) {
+        a.links.forEach(l => { r += `  - [${l.desc || 'Enlace'}](${l.url})\n`; });
+      }
+      if (a.notes) r += `  > ${a.notes}\n`;
+    });
+    r += '\n';
+  });
+
+  // Reflections
+  const withNotes = artifacts.filter(a => a.notes);
+  if (withNotes.length > 0) {
+    r += '## Reflexiones del investigador\n\n';
+    withNotes.forEach(a => {
+      r += `**${a.date} — ${a.name}:** ${a.notes}\n\n`;
+    });
+  }
+
+  r += '---\n*Generado por CRISOL · ' + today + '*\n';
+
+  const blob = new Blob([r], { type: 'text/markdown;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  const safeName = (proj.nombre || 'proyecto').replace(/[^a-zA-Z0-9áéíóúñ _-]/g, '').replace(/\s+/g, '_');
+  a.download = 'Portafolio_' + safeName + '_' + today + '.md';
+  a.click();
+  showToast('📊 Portafolio generado', 'success');
+}
+
 // --- Load and render DR alerts from Supabase ---
 async function loadAndRenderDrAlerts(projId) {
   const container = document.getElementById('dr-alerts-container');
@@ -3015,6 +3212,103 @@ function renderProjectDash(projId) {
     }
   }
 
+  // === ARTIFACTS REGISTRY ===
+  {
+    const artifacts = proj.drArtifacts || [];
+    const wfMode = proj.workflowMode || (proj.drMode ? 'dr' : 'default');
+    if (wfMode === 'dr' || wfMode === 'mixed' || wfMode === 'clo') {
+      const tags = _getArtifactTags();
+      const hasScored = artifacts.filter(a => a.score != null).length >= 2;
+
+      h += `<details class="pd-section"${artifacts.length > 0 ? ' open' : ''}>`;
+      h += `<summary><div class="pd-header"><span class="pd-chevron">▶</span><span class="pd-title">📎 Artefactos del proceso</span><span class="pd-count">${artifacts.length}</span></div></summary>`;
+      h += `<div class="pd-body">`;
+
+      // Score trajectory (if 2+ scored artifacts)
+      if (hasScored) {
+        const scored = artifacts.filter(a => a.score != null).sort((a, b) => a.date.localeCompare(b.date));
+        // Group by phase+tag
+        const trajectories = {};
+        scored.forEach(a => {
+          const key = a.phase + '/' + a.tag;
+          if (!trajectories[key]) trajectories[key] = [];
+          trajectories[key].push(a);
+        });
+        h += `<div style="margin-bottom:12px;">`;
+        h += `<div style="font-size:12px;font-weight:600;color:var(--tx);margin-bottom:6px;">Trayectoria de scores</div>`;
+        Object.entries(trajectories).forEach(([key, arts]) => {
+          if (arts.length < 2) return;
+          const label = key.split('/')[1];
+          const tagObj = tags.find(t => t.id === label);
+          h += `<div style="display:flex;align-items:center;gap:6px;margin:3px 0;font-size:12px;">`;
+          h += `<span style="color:${tagObj?.color || 'var(--tx3)'};min-width:80px;">${tagObj?.icon || ''} ${tagObj?.label || label}:</span>`;
+          arts.forEach((a, i) => {
+            const deltaColor = a.delta > 0 ? 'var(--green)' : a.delta < 0 ? 'var(--red)' : 'var(--tx3)';
+            h += `<span style="background:var(--bg2);padding:2px 6px;border-radius:4px;color:var(--tx);">${a.score}</span>`;
+            if (a.delta != null) h += `<span style="font-size:11px;color:${deltaColor};">${a.delta >= 0 ? '+' : ''}${a.delta}</span>`;
+            if (i < arts.length - 1) h += `<span style="color:var(--tx3);">→</span>`;
+          });
+          h += `</div>`;
+        });
+        h += `</div>`;
+      }
+
+      // Artifacts grouped by phase
+      const byPhase = {};
+      artifacts.forEach(a => {
+        if (!byPhase[a.phase]) byPhase[a.phase] = [];
+        byPhase[a.phase].push(a);
+      });
+
+      if (Object.keys(byPhase).length > 0) {
+        Object.entries(byPhase).forEach(([phase, arts]) => {
+          h += `<div style="margin-bottom:8px;">`;
+          h += `<div style="font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:4px;">${phase} (${arts.length})</div>`;
+          arts.forEach(a => {
+            const tagObj = tags.find(t => t.id === a.tag);
+            const statusColors = { draft: 'var(--tx3)', reviewed: 'var(--blue)', final: 'var(--green)' };
+            h += `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;margin:2px 0;background:var(--bg2);border-radius:6px;border-left:3px solid ${statusColors[a.status] || 'var(--tx3)'};">`;
+            h += `<span style="font-size:14px;">${tagObj?.icon || '📌'}</span>`;
+            h += `<span style="flex:1;font-size:13px;color:var(--tx);">${a.name}</span>`;
+            if (a.score != null) {
+              const deltaColor = a.delta > 0 ? 'var(--green)' : a.delta < 0 ? 'var(--red)' : 'var(--tx3)';
+              h += `<span style="font-size:12px;color:var(--tx2);">${a.score}</span>`;
+              if (a.delta != null) h += `<span style="font-size:11px;color:${deltaColor};">${a.delta >= 0 ? '+' : ''}${a.delta}</span>`;
+            }
+            h += `<span style="font-size:11px;color:var(--tx3);">${a.date}</span>`;
+            // Links
+            if (a.links && a.links.length > 0) {
+              a.links.forEach(l => {
+                h += `<a href="${l.url}" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none;" title="${l.desc || ''}">📁</a>`;
+              });
+            }
+            h += `<span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="addArtifactLink('${proj.id}','${a.id}')" title="Agregar enlace">+📁</span>`;
+            h += `<span style="font-size:10px;color:var(--tx3);cursor:pointer;opacity:0.4;" onclick="removeArtifact('${proj.id}','${a.id}')" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4" title="Eliminar">✕</span>`;
+            h += `</div>`;
+            // Notes (if any)
+            if (a.notes) {
+              h += `<div style="font-size:11px;color:var(--tx3);padding:2px 8px 4px 25px;font-style:italic;">${a.notes}</div>`;
+            }
+          });
+          h += `</div>`;
+        });
+      } else {
+        h += `<div style="font-size:13px;color:var(--tx3);padding:8px 0;">Sin artefactos registrados. Los artefactos documentan tu proceso: borradores, scores, decisiones, reflexiones.</div>`;
+      }
+
+      // Action bar
+      const activePhaseId = (proj.drFases || []).find(f => f.estado === 'en_progreso')?.id || '';
+      h += `<div style="display:flex;gap:8px;margin-top:8px;">`;
+      h += `<button class="btn bo" onclick="showArtifactModal('${proj.id}','${activePhaseId}')" style="font-size:12px;padding:3px 10px;">+ Artefacto</button>`;
+      if (artifacts.length > 0) {
+        h += `<button class="btn bo" onclick="generatePortfolio('${proj.id}')" style="font-size:12px;padding:3px 10px;border-color:var(--green);color:var(--green);">📊 Descargar portafolio</button>`;
+      }
+      h += `</div>`;
+
+      h += `</div></details>`;
+    }
+  }
+
   // External links (collapsible)
   const links = proj.links || [];
   h += `<details class="pd-section"${links.length > 0 ? ' open' : ''}><summary><div class="pd-header"><span class="pd-chevron">▶</span><span class="pd-title">Links del proyecto</span><span class="pd-count">${links.length}</span></div></summary><div class="pd-body">`;
@@ -3860,6 +4154,12 @@ window.skipDrGate = skipDrGate;
 window.downloadDrSkill = downloadDrSkill;
 window.saveDrOutput = saveDrOutput;
 window.resolveDrAlertUI = resolveDrAlertUI;
+window.addArtifact = addArtifact;
+window.removeArtifact = removeArtifact;
+window.addArtifactLink = addArtifactLink;
+window.showArtifactModal = showArtifactModal;
+window.submitArtifact = submitArtifact;
+window.generatePortfolio = generatePortfolio;
 window.generateDrReport = generateDrReport;
 window.saveCloPath = saveCloPath;
 window.toggleCloWizardStep = toggleCloWizardStep;
