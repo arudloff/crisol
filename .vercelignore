@@ -1,5 +1,7 @@
 .git
 docs
+.claude
 supabase_migration_dr_tables.sql
 SETUP.md
 ARCHITECTURE.md
+README.md
