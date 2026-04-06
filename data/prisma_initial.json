@@ -1,0 +1,337 @@
+{
+  "documents": [
+    {
+      "title": "Organizaciones de aprendizaje como sistemas complejos: capacidades adaptativas ante la disrupción de la inteligencia artificial",
+      "summary": "Ensayo que analiza cómo las organizaciones de aprendizaje, entendidas como sistemas complejos (Luhmann, Prigogine), desarrollan capacidades adaptativas ante la IA. Propone el concepto de deuda intelectual organizacional y argumenta que la integración de IA reduce complejidad operativa pero genera nueva complejidad epistémica, requiriendo estructuras disipativas para metabolizar la tecnología sin perder capacidad de problematización.",
+      "type": "ensayo",
+      "date": "2026-03-31",
+      "wordCount": 8500,
+      "maturity": "tree",
+      "concepts": [
+        "complejidad organizacional",
+        "deuda intelectual organizacional",
+        "estructuras disipativas",
+        "double-loop learning",
+        "autopoiesis",
+        "déficit de problematización",
+        "déficit de asimilación cognitiva",
+        "efecto Red Queen",
+        "presión competitiva"
+      ],
+      "downloadUrl": null
+    },
+    {
+      "title": "Hibridación investigador-IA: taxonomía, deuda intelectual y el futuro de la autoría científica",
+      "summary": "Ensayo que desarrolla una taxonomía de seis niveles del investigador hibridado con IA, desde el usuario superficial hasta el investigador-orquestador. Introduce el concepto de deuda intelectual individual como contrapartida a la deuda técnica, y argumenta que la inevitabilidad competitiva de la hibridación obliga a redefinir la autoría científica, no como elección sino como condición del contexto académico contemporáneo.",
+      "type": "ensayo",
+      "date": "2026-03-31",
+      "wordCount": 9200,
+      "maturity": "tree",
+      "concepts": [
+        "hibridación humano-IA",
+        "taxonomía del investigador",
+        "deuda intelectual individual",
+        "investigador-orquestador",
+        "autoría científica",
+        "efecto Red Queen",
+        "inevitabilidad competitiva",
+        "aseguramiento epistémico",
+        "contexto latinoamericano"
+      ],
+      "downloadUrl": null
+    },
+    {
+      "title": "Informe ejecutivo: La presión competitiva como motor ineludible de la hibridación",
+      "summary": "Documento complementario que sintetiza la evidencia empírica sobre la inevitabilidad de la adopción de IA tanto a nivel organizacional (BCG 2024, McKinsey 2025) como individual (Kusumegi et al. 2025 en Science). Establece el efecto Red Queen como marco teórico para entender por qué la no-adopción constituye retroceso relativo, no estabilidad.",
+      "type": "informe",
+      "date": "2026-03-31",
+      "wordCount": 3200,
+      "maturity": "sprout",
+      "concepts": [
+        "brecha competitiva",
+        "efecto Red Queen",
+        "adoptantes tempranos",
+        "OCDE emerging divides",
+        "contexto latinoamericano",
+        "doble trampa"
+      ],
+      "downloadUrl": null
+    }
+  ],
+  "concepts": [
+    "deuda intelectual",
+    "complejidad organizacional",
+    "aprendizaje organizacional",
+    "double-loop learning",
+    "hibridación humano-IA",
+    "déficit de problematización",
+    "déficit de asimilación cognitiva",
+    "taxonomía del investigador",
+    "autoría científica",
+    "investigador-orquestador",
+    "presión competitiva",
+    "efecto Red Queen",
+    "estructuras disipativas",
+    "autopoiesis organizacional",
+    "contexto latinoamericano",
+    "brecha de productividad",
+    "aseguramiento epistémico",
+    "inevitabilidad competitiva"
+  ],
+  "matrix": {
+    "themes": [
+      "Deuda intelectual (organizacional + individual)",
+      "Complejidad organizacional",
+      "Aprendizaje organizacional / double-loop learning",
+      "Hibridación humano-IA",
+      "Déficit de problematización",
+      "Déficit de asimilación cognitiva",
+      "Taxonomía del investigador",
+      "Autoría científica / investigador-orquestador",
+      "Presión competitiva / inevitabilidad",
+      "Contexto latinoamericano"
+    ],
+    "cells": {
+      "0-0": "Desarrolla el concepto de deuda intelectual organizacional: la brecha entre lo que una organización produce con IA y lo que genuinamente comprende. Aplica la recursión de Luhmann para mostrar que reducir complejidad operativa genera nueva complejidad epistémica.",
+      "0-1": "Núcleo del ensayo. Fundamenta la organización como sistema complejo autorreferente (Luhmann, Bustamante-Ubilla & Arenas-Torres 2022). Toda reducción de complejidad genera nueva complejidad — la IA intensifica este ciclo.",
+      "0-2": "Integra Senge (5 disciplinas), Argyris & Schön (single/double-loop) y Nonaka & Takeuchi (SECI). Argumenta que el double-loop learning es el mecanismo clave para metabolizar la complejidad generada por la IA.",
+      "0-3": "Aborda la hibridación a nivel organizacional: acoplamiento estructural entre sistemas humanos y sistemas de IA. La organización debe aprender a integrar agentes cognitivos no humanos sin perder su capacidad autopoiética.",
+      "0-4": "Identifica el déficit de problematización como cuello de botella organizacional: la IA responde pero no cuestiona. Cuando la organización delega la formulación de preguntas, pierde su capacidad generativa.",
+      "0-5": "Define el déficit de asimilación cognitiva colectiva: la brecha entre el ritmo de producción de outputs con IA y la capacidad de la organización de integrarlos en su base de conocimiento compartido.",
+      "0-6": "No desarrolla taxonomía individual; se mantiene en el nivel organizacional. Referencia implícita al diferenciar organizaciones que adoptan IA como herramienta vs. como agente cognitivo.",
+      "0-7": "No aborda autoría científica directamente. La contribución implícita es al nivel organizacional: quién \"sabe\" en una organización cuando la IA genera parte del conocimiento.",
+      "0-8": "Apartado de inevitabilidad: datos BCG (1.5x ingresos), McKinsey (4.8x productividad), OCDE emerging divides. Concluye que la no-adopción genera obsolescencia competitiva — no hay opción libre de complejidad.",
+      "0-9": "Discusión crítica sobre brechas de productividad OCDE (40% respecto a economías avanzadas). La región podría cerrar la brecha de productividad con IA pero a costa de abrir una brecha de comprensión si no gestiona la deuda intelectual.",
+      "1-0": "Desarrolla la deuda intelectual individual como contrapartida a la deuda técnica en software. El investigador que usa IA sin comprender acumula una deuda que se manifiesta cuando debe defender, aplicar o extender su trabajo.",
+      "1-1": "Contribución secundaria. Reconoce la complejidad del ecosistema académico pero la analiza desde la perspectiva del investigador individual, no de la organización.",
+      "1-2": "Implícito en la taxonomía: los niveles superiores (5-6) requieren aprendizaje de doble bucle — el investigador no solo usa la IA sino que cuestiona y reconfigura sus propios marcos epistémicos en el proceso.",
+      "1-3": "Núcleo del ensayo. Define la hibridación como continuum, no como estado binario. Desarrolla seis niveles que van desde el uso superficial hasta la orquestación epistémica completa.",
+      "1-4": "Diagnóstico individual: el investigador que delega la formulación de preguntas a la IA pierde la capacidad más valiosa del quehacer científico. La problematización es irreductiblemente humana.",
+      "1-5": "Análisis individual del déficit: la velocidad de producción con IA supera la capacidad de asimilación del investigador. Publicar más sin entender más configura una fragilidad intelectual creciente.",
+      "1-6": "Contribución central: taxonomía de 6 niveles — (1) usuario superficial, (2) delegador acrítico, (3) asistido dependiente, (4) colaborador epistémico, (5) director metodológico, (6) investigador-orquestador.",
+      "1-7": "Argumenta que la autoría debe redefinirse: el investigador-orquestador diseña la arquitectura epistémica, dirige agentes de IA y mantiene responsabilidad intelectual. La autoría se desplaza del hacer al dirigir.",
+      "1-8": "Apartado de inevitabilidad individual: Kusumegi et al. (2025, Science) — adoptantes publican 33-89% más. La OCDE documenta brechas crecientes entre adoptantes y rezagados. No hibridarse es retroceder.",
+      "1-9": "La doble trampa latinoamericana: los investigadores no angloparlantes se benefician más de la IA (reducción de barrera lingüística) pero si adoptan sin aseguramiento epistémico, cierran brecha de productividad abriendo brecha de comprensión.",
+      "2-0": "Referencia indirecta: la deuda intelectual se agrava bajo presión competitiva porque la urgencia de adoptar IA reduce el tiempo disponible para la asimilación genuina.",
+      "2-1": "Documenta la complejidad del entorno competitivo con datos cuantitativos: brecha de ingresos 1.5x, productividad 4.8x más rápida en sectores con alta exposición a IA.",
+      "2-2": "Conexión implícita: las organizaciones que aprenden a integrar IA lideran; las que no, retroceden. El aprendizaje organizacional no es opcional sino condición de supervivencia.",
+      "2-3": "Síntesis de evidencia empírica sobre la inevitabilidad de la hibridación tanto organizacional como individual. Establece que la hibridación no es opción sino condición del contexto.",
+      "2-4": "No aborda directamente; contribuye al argumento de urgencia que hace más crítico el déficit de problematización.",
+      "2-5": "No aborda directamente; la presión competitiva documentada agrava el riesgo de asimilación superficial por urgencia de adopción.",
+      "2-6": "No desarrolla la taxonomía; pero la evidencia de Kusumegi et al. sobre productividad diferencial implícitamente valida la necesidad de distinguir niveles de adopción.",
+      "2-7": "No aborda autoría directamente; pero los datos de productividad de publicación (+33-89%) plantean la pregunta de qué significa \"publicar más\" cuando la IA interviene.",
+      "2-8": "Contribución central del documento. Sintetiza BCG 2024, McKinsey 2025, Kusumegi et al. 2025, OCDE 2025. Establece el efecto Red Queen como marco: adaptarse continuamente solo para mantener posición relativa.",
+      "2-9": "CEPAL 2024: tres trampas estructurales de América Latina. Kusumegi et al.: investigadores no angloparlantes se benefician entre 43-89% más. Paradoja: la mayor oportunidad viene con mayor riesgo de deuda intelectual."
+    }
+  },
+  "argument": {
+    "question": "¿Cómo pueden las organizaciones intensivas en conocimiento y los investigadores individuales integrar la inteligencia artificial sin acumular deuda intelectual que erosione su capacidad de aprendizaje genuino, especialmente en el contexto latinoamericano?",
+    "central": "La integración de IA en organizaciones e investigación científica es competitivamente inevitable, pero genera deuda intelectual (organizacional e individual) que solo puede gestionarse mediante mecanismos deliberados de aseguramiento epistémico: double-loop learning a nivel organizacional y una taxonomía consciente de niveles de hibridación a nivel individual.",
+    "premises": [
+      {
+        "text": "Las organizaciones son sistemas complejos donde toda reducción de complejidad genera nueva complejidad (recursión de Luhmann)",
+        "evidence": "Teoría de sistemas sociales de Luhmann; Bustamante-Ubilla & Arenas-Torres (2022) aplican este principio a organizaciones contemporáneas",
+        "sources": "Luhmann 1998, Bustamante-Ubilla & Arenas-Torres 2022",
+        "support": "supported"
+      },
+      {
+        "text": "La IA introduce una fuente de complejidad cualitativamente nueva: agentes no humanos capaces de aprender, que reconfiguran quién sabe qué en la organización",
+        "evidence": "Figge et al. (2025) documentan AI-human learning systems; Kolbjørnsrud (2024) analiza el diseño organizacional para IA",
+        "sources": "Figge et al. 2025, Kolbjørnsrud 2024",
+        "support": "supported"
+      },
+      {
+        "text": "La adopción de IA genera deuda intelectual: brecha entre lo producido con IA y lo genuinamente comprendido, tanto a nivel organizacional como individual",
+        "evidence": "Concepto original desarrollado por analogía con deuda técnica en software; evidencia cualitativa de ambos ensayos",
+        "sources": "Elaboración propia, analogía con Cunningham 1992 (deuda técnica)",
+        "support": "partial"
+      },
+      {
+        "text": "Existen dos cuellos de botella específicos: el déficit de problematización (la IA responde pero no cuestiona) y el déficit de asimilación cognitiva (se produce más rápido de lo que se comprende)",
+        "evidence": "Análisis teórico sustentado en la distinción entre capacidades generativas y productivas; evidencia indirecta de Kusumegi et al. 2025",
+        "sources": "Elaboración propia, Kusumegi et al. 2025",
+        "support": "partial"
+      },
+      {
+        "text": "La hibridación investigador-IA opera en un continuum de seis niveles, desde el usuario superficial hasta el investigador-orquestador",
+        "evidence": "Taxonomía original con descripciones operacionales; requiere validación empírica",
+        "sources": "Elaboración propia",
+        "support": "partial"
+      },
+      {
+        "text": "La adopción de IA es competitivamente inevitable: la no-adopción genera obsolescencia, no estabilidad (efecto Red Queen)",
+        "evidence": "BCG 2024 (1.5x ingresos líderes IA), McKinsey 2025 (4.8x productividad), Kusumegi et al. 2025 (+33-89% publicaciones), OCDE 2025 (emerging divides)",
+        "sources": "BCG 2024, McKinsey 2025, Kusumegi et al. 2025, OCDE 2025, Van Valen 1973",
+        "support": "supported"
+      },
+      {
+        "text": "Las estructuras disipativas (Prigogine) ofrecen un modelo para organizaciones que necesitan crear orden localizado dentro del caos de la transformación digital",
+        "evidence": "Aplicación teórica de Prigogine/Urry a contextos organizacionales; Bustamante-Ubilla & Arenas-Torres (2022) validan parcialmente",
+        "sources": "Prigogine 1977, Urry 2005, Bustamante-Ubilla & Arenas-Torres 2022",
+        "support": "partial"
+      },
+      {
+        "text": "El contexto latinoamericano presenta una paradoja específica: la IA ofrece mayor beneficio relativo (reducción de barrera lingüística) pero también mayor riesgo de deuda intelectual por debilidades institucionales",
+        "evidence": "CEPAL 2024 (tres trampas estructurales), OCDE 2023 (brecha productividad 40%), Kusumegi et al. 2025 (beneficio diferencial 43-89% para no angloparlantes)",
+        "sources": "CEPAL 2024, OCDE 2023, Kusumegi et al. 2025",
+        "support": "supported"
+      }
+    ]
+  },
+  "gaps": [
+    {
+      "text": "Falta validación empírica de la taxonomía de 6 niveles del investigador hibridado — actualmente es una propuesta teórica sin datos de campo",
+      "priority": "alta"
+    },
+    {
+      "text": "El concepto de deuda intelectual carece de operacionalización medible — no hay indicadores cuantitativos propuestos para detectarla o medirla",
+      "priority": "alta"
+    },
+    {
+      "text": "No se ha desarrollado un instrumento metodológico para diagnosticar en qué nivel de la taxonomía opera un investigador dado",
+      "priority": "alta"
+    },
+    {
+      "text": "La conexión entre el nivel organizacional (Ensayo 1) y el nivel individual (Ensayo 2) está implícita pero no formalizada — falta un modelo multinivel que integre ambas escalas",
+      "priority": "alta"
+    },
+    {
+      "text": "Los mecanismos de aseguramiento epistémico se mencionan pero no se detallan operacionalmente — qué prácticas concretas previenen la deuda intelectual",
+      "priority": "media"
+    },
+    {
+      "text": "Evidencia empírica específica del contexto latinoamericano es escasa — la mayoría de datos provienen de economías avanzadas (BCG, McKinsey, OCDE) o son globales (Kusumegi et al.)",
+      "priority": "media"
+    },
+    {
+      "text": "No se aborda la dimensión temporal de la deuda intelectual: ¿se acumula linealmente? ¿exponencialmente? ¿hay puntos de inflexión?",
+      "priority": "media"
+    },
+    {
+      "text": "Falta discusión sobre las implicaciones éticas de la hibridación: responsabilidad, atribución, sesgo algorítmico en la investigación científica",
+      "priority": "baja"
+    }
+  ],
+  "strengths": [
+    {
+      "text": "Marco teórico sólido y multidisciplinario: integra teoría de la complejidad (Luhmann, Prigogine), aprendizaje organizacional (Senge, Argyris) y evidencia empírica reciente sobre IA (2024-2025)"
+    },
+    {
+      "text": "Conceptos originales con potencial teórico alto: deuda intelectual (organizacional e individual), déficit de problematización, déficit de asimilación cognitiva — llenan vacíos nominales en la literatura"
+    },
+    {
+      "text": "Taxonomía del investigador hibridado ofrece un framework operativo con niveles claros y diferenciados, útil tanto para investigación como para política académica"
+    },
+    {
+      "text": "El argumento de inevitabilidad competitiva está fuertemente respaldado por evidencia empírica cuantitativa de múltiples fuentes independientes (BCG, McKinsey, Kusumegi/Science, OCDE)"
+    },
+    {
+      "text": "La paradoja latinoamericana (mayor beneficio + mayor riesgo) es una contribución original que posiciona la tesis en un contexto geográfico específico con relevancia política"
+    },
+    {
+      "text": "Coherencia argumental entre ambos ensayos: el nivel organizacional y el individual se complementan y refuerzan mutuamente, sugiriendo un modelo doctoral multinivel"
+    }
+  ],
+  "evolution": [
+    {
+      "date": "2026-01-15",
+      "text": "Ensayo 1 — Complejidad organizacional: se establece la base teórica en Luhmann y la recursión de complejidad como marco para entender la disrupción de IA en organizaciones",
+      "impact": "Define el nivel macro (organizacional) de la tesis y el concepto de deuda intelectual organizacional como brecha entre producción e comprensión"
+    },
+    {
+      "date": "2026-02-15",
+      "text": "Ensayo 2 — Hibridación investigador-IA: se desarrolla la taxonomía de 6 niveles y se traslada el concepto de deuda intelectual al nivel individual",
+      "impact": "Abre el nivel micro (investigador) y propone la redefinición de autoría científica como orquestación epistémica"
+    },
+    {
+      "date": "2026-03-20",
+      "text": "Apartados de inevitabilidad: evidencia empírica de BCG, McKinsey, Kusumegi et al. (Science) y OCDE transforma el argumento de \"la hibridación es riesgosa\" a \"la hibridación es inevitable, el riesgo está en cómo se hace\"",
+      "impact": "Cierra la objeción de que la no-adopción es una alternativa viable; refuerza urgencia del marco propuesto"
+    },
+    {
+      "date": "2026-03-28",
+      "text": "Identificación de la paradoja latinoamericana: CEPAL + Kusumegi muestran que la región tiene más que ganar y más que perder simultáneamente",
+      "impact": "Posiciona la tesis geográficamente y genera una contribución original relevante para política científica regional"
+    },
+    {
+      "date": "2026-03-31",
+      "text": "Síntesis PRISMA: análisis cruzado revela que falta el eslabón formal entre nivel organizacional e individual — necesidad de modelo multinivel integrador",
+      "impact": "Define la siguiente fase de trabajo doctoral: construir el modelo que conecte los dos niveles de análisis con mecanismos operacionalizables"
+    }
+  ],
+  "lastAnalysis": "2026-03-31",
+  "researchQuestions": [
+    {
+      "text": "¿Cómo varía la posición en la taxonomía del investigador hibridado según el dominio de expertise, la fase de la carrera académica y el acceso diferencial a herramientas de IA?",
+      "context": "La taxonomía de 6 niveles fue propuesta teóricamente pero no validada. Diferentes disciplinas y contextos institucionales podrían mostrar distribuciones distintas.",
+      "sources": "Ensayo 2, sección 10.4 (agenda RQ1)",
+      "type": "descriptiva",
+      "methodology": "Estudio transversal con encuesta + entrevistas a investigadores de diferentes disciplinas y niveles",
+      "priority": "alta",
+      "status": "open"
+    },
+    {
+      "text": "¿Qué indicadores conductuales observables permiten discriminar entre un investigador colaborador (nivel 4) y un investigador orquestador (nivel 5)?",
+      "context": "La frontera entre niveles 4 y 5 es la más importante pero la más difusa. El nivel 5 implica recursión (problematizar los outputs), pero ¿cómo se mide?",
+      "sources": "Ensayo 2, sección 10.4 (agenda RQ2)",
+      "type": "exploratoria",
+      "methodology": "Diseño experimental: presentar outputs de IA con errores sutiles y medir tasa de detección + profundidad de corrección",
+      "priority": "alta",
+      "status": "open"
+    },
+    {
+      "text": "¿Cuál es el umbral de deuda intelectual tolerable antes de que la calidad de la investigación se degrade significativamente?",
+      "context": "La deuda intelectual no es binaria. Cierto grado puede ser funcional (andamiaje). ¿Dónde está el punto de inflexión?",
+      "sources": "Ensayo 2, sección 10.4 (agenda RQ3); Ensayo 1, debate 1",
+      "type": "causal",
+      "methodology": "Estudio longitudinal midiendo discrepancia entre calidad del producto y capacidad de defensa del autor",
+      "priority": "alta",
+      "status": "open"
+    },
+    {
+      "text": "¿Cómo interactúa la cultura institucional (publish-or-perish vs. slow science) con la distribución de investigadores en la taxonomía?",
+      "context": "Watson et al. (2025) argumentan que las soluciones centradas en el individuo son insuficientes sin reforma institucional. ¿Las instituciones determinan el nivel?",
+      "sources": "Ensayo 2, sección 10.4 (agenda RQ4); Watson et al. 2025",
+      "type": "relacional",
+      "methodology": "Estudio comparativo entre instituciones con diferentes culturas de evaluación",
+      "priority": "media",
+      "status": "open"
+    },
+    {
+      "text": "¿Es posible diseñar intervenciones formativas que aceleren el tránsito de firmante (nivel 3) a orquestador (nivel 5)?",
+      "context": "Si la taxonomía describe posiciones pero no trayectorias, ¿se puede enseñar la orquestación epistémica?",
+      "sources": "Ensayo 2, sección 10.4 (agenda RQ5)",
+      "type": "diseño",
+      "methodology": "Cuasi-experimental: programa doctoral con formación en metaconocimiento vs. control, midiendo evolución en taxonomía durante 1 año",
+      "priority": "media",
+      "status": "open"
+    },
+    {
+      "text": "¿Cómo se relaciona la deuda intelectual organizacional (nivel macro) con la deuda intelectual individual (nivel micro)? ¿Existe un mecanismo de transmisión bidireccional?",
+      "context": "Ensayo 1 opera a nivel organizacional, Ensayo 2 a nivel individual. La conexión está implícita pero no formalizada.",
+      "sources": "Gap identificado en análisis cruzado PRISMA",
+      "type": "relacional",
+      "methodology": "Modelo multinivel: datos organizacionales + datos individuales en las mismas instituciones",
+      "priority": "alta",
+      "status": "open"
+    },
+    {
+      "text": "¿La deuda intelectual se acumula de forma lineal, exponencial o con puntos de inflexión? ¿Hay un efecto de umbral?",
+      "context": "No se ha abordado la dinámica temporal. Figge et al. (2025) sugieren un patrón de overshoot (sube antes de caer), pero falta evidencia.",
+      "sources": "Ensayo 1, modelo de Figge et al. 2025; Gap identificado",
+      "type": "causal",
+      "methodology": "Simulación basada en agentes o estudio longitudinal con mediciones repetidas",
+      "priority": "media",
+      "status": "open"
+    },
+    {
+      "text": "¿Qué mecanismos específicos de aseguramiento epistémico (prácticas, herramientas, protocolos) son más efectivos para prevenir la acumulación patológica de deuda intelectual?",
+      "context": "Ambos ensayos proponen que la deuda debe gestionarse pero no detallan el cómo operacional. YUNQUE es una propuesta tecnológica, pero ¿funciona?",
+      "sources": "Informe ejecutivo YUNQUE; Gap identificado en ambos ensayos",
+      "type": "evaluativa",
+      "methodology": "Design science research: diseñar, implementar y evaluar mecanismos en contextos reales",
+      "priority": "alta",
+      "status": "open"
+    }
+  ]
+}
