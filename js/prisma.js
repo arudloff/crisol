@@ -92,7 +92,7 @@ export async function loadOtherPrisma(userId, projectId) {
       .eq('project_id', projectId || '')
       .single();
     if (!error && data) return data.data;
-  } catch (e) {}
+  } catch (e) { console.error('Load prisma data error:', e); }
   // Try global PRISMA (no project)
   try {
     const { data, error } = await state.sdb
@@ -102,7 +102,7 @@ export async function loadOtherPrisma(userId, projectId) {
       .is('project_id', null)
       .single();
     if (!error && data) return data.data;
-  } catch (e) {}
+  } catch (e) { console.error('Load global prisma error:', e); }
   return null;
 }
 
@@ -218,7 +218,7 @@ async function loadPrismaViewOptions() {
       if (_viewingUserId === m.user_id) opt.selected = true;
       sel.appendChild(opt);
     });
-  } catch (e) {}
+  } catch (e) { console.error('Load prisma collaborators error:', e); }
 }
 
 async function switchPrismaView(value) {

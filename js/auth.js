@@ -56,11 +56,21 @@ function generateInviteCode() {
   return code;
 }
 
-// Admin email(s) — these users see the invite requests panel
-const ADMIN_EMAILS = ['alejandro@chenriquez.cl'];
+// Admin check — loaded from Supabase 'admins' table at login
+async function loadAdminStatus() {
+  if (!state.sdb || !state.currentUser) { state.isAdmin = false; return; }
+  try {
+    const { data } = await state.sdb.from('admins')
+      .select('id').eq('id', state.currentUser.id).maybeSingle();
+    state.isAdmin = !!data;
+  } catch (e) {
+    console.error('Admin check error:', e);
+    state.isAdmin = false;
+  }
+}
 
 function isAdmin() {
-  return state.currentUser && ADMIN_EMAILS.includes(state.currentUser.email);
+  return !!state.isAdmin;
 }
 
 // Load and show pending invite requests (admin only)
@@ -89,7 +99,7 @@ window.showInviteRequests = async function() {
       const { data } = await state.sdb.from('invite_requests')
         .select('*').order('created_at', { ascending: false });
       if (data) allRequests = data;
-    } catch (e) {}
+    } catch (e) { console.error('Load invite requests error:', e); }
   }
 
   const pending = allRequests.filter(r => r.status === 'pending');
@@ -261,7 +271,7 @@ async function signUp(email, pw) {
       const { data } = await state.sdb.from('invite_requests')
         .select('id').eq('invite_code', inviteCode).eq('status', 'approved').limit(1);
       if (data && data.length > 0) codeValid = true;
-    } catch (e) {}
+    } catch (e) { console.error('Invite code validation error:', e); }
   }
   if (!codeValid) {
     showAuthError('Código de invitación inválido. Solicita uno a un investigador activo.');
@@ -347,13 +357,14 @@ async function enterApp() {
       if (checkPendingInvitation) await checkPendingInvitation();
     } catch (e) { console.error('Invitation check error:', e); }
 
-    // Check for pending invite requests (admin only)
+    // Load admin status from Supabase, then check invite requests
+    await loadAdminStatus();
     checkInviteRequests();
     // Start auto-backup (every 30 min if changes)
     try {
       const { startAutoBackup } = await import('./sync.js');
       if (startAutoBackup) startAutoBackup();
-    } catch (e) {}
+    } catch (e) { console.error('Auto-backup init error:', e); }
     // Show admin button if admin
     const adminBtn = document.getElementById('admin-invites-btn');
     if (adminBtn && isAdmin()) adminBtn.style.display = 'block';

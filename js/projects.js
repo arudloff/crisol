@@ -205,7 +205,7 @@ async function migrateLocalProjects() {
       }
     });
     if (kanbanChanged) localStorage.setItem('sila_kanban', JSON.stringify(kanban));
-  } catch (e) {}
+  } catch (e) { console.error('Kanban migration error:', e); }
 
   localStorage.setItem('crisol_projects_migrated', 'done');
   console.log('Migration complete. ID mapping:', idMap);
@@ -2793,7 +2793,7 @@ function getProjectClaims(proj) {
           si: si, pi: pi
         });
       });
-    } catch (e) {}
+    } catch (e) { console.error('Claims extraction error:', e); }
   });
   return allClaims;
 }
@@ -2858,7 +2858,7 @@ function calcArticleClaims(articleKey) {
       else if (c === 'contrast') result.contrast++;
       else if (c === 'neutral') result.neutral++;
     });
-  } catch (e) {}
+  } catch (e) { console.error('Claims count error:', e); }
   return result;
 }
 
@@ -4347,7 +4347,7 @@ async function loadTeamDashboard(projectId) {
       .select('user_id, current_phase, phases, gate_records')
       .eq('project_id', projectId);
     phaseData = data || [];
-  } catch (e) {}
+  } catch (e) { console.error('Load phase data error:', e); }
 
   const PHASE_IDS = ['ideacion', 'fundamentacion', 'diseno', 'escritura', 'revision', 'submission', 'peer_review', 'respuesta', 'publicacion'];
   const PHASE_SHORT = ['Idea', 'Fund.', 'Diseño', 'Escrit.', 'Rev.', 'Sub.', 'Review', 'Resp.', 'Pub.'];
