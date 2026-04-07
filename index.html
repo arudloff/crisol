@@ -15,8 +15,129 @@
 </head>
 <body>
 
+<!-- LANDING PAGE (pre-login) -->
+<div id="landing-page">
+
+  <!-- Hero -->
+  <section class="lp-hero">
+    <div class="lp-hero-inner">
+      <div class="lp-logo-icon">&#129514;</div>
+      <h1 class="lp-title">CRISOL</h1>
+      <p class="lp-tagline">Donde tu investigaci&oacute;n toma forma</p>
+      <p class="lp-sub">El primer protocolo de integridad intelectual para investigadores que trabajan con IA</p>
+      <a href="#lp-problem" class="lp-cta-btn">Comenzar</a>
+    </div>
+    <div class="lp-scroll-hint">&#8595;</div>
+  </section>
+
+  <!-- Problem -->
+  <section class="lp-section" id="lp-problem">
+    <h2 class="lp-section-title lp-anim">El dilema de la era</h2>
+    <div class="lp-dilemma">
+      <div class="lp-dilemma-card lp-anim">
+        <div class="lp-dilemma-icon" style="color:var(--red);">&#10007;</div>
+        <p>Sin IA pierdes <strong>competitividad</strong></p>
+      </div>
+      <div class="lp-dilemma-center lp-anim">
+        <div class="lp-dilemma-resolve">CRISOL resuelve ambos</div>
+      </div>
+      <div class="lp-dilemma-card lp-anim">
+        <div class="lp-dilemma-icon" style="color:var(--red);">&#10007;</div>
+        <p>Con IA sin protocolo pierdes <strong>autor&iacute;a</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="lp-section lp-section-alt" id="lp-how">
+    <h2 class="lp-section-title lp-anim">C&oacute;mo funciona</h2>
+    <div class="lp-blocks">
+      <div class="lp-block lp-anim">
+        <div class="lp-block-icon">&#128736;</div>
+        <h3>10 fases guiadas</h3>
+        <p>Desde la pregunta hasta la entrega, cada paso verificado</p>
+      </div>
+      <div class="lp-block lp-anim">
+        <div class="lp-block-icon">&#129504;</div>
+        <h3>Gates socr&aacute;ticos</h3>
+        <p>19 preguntas que te obligan a pensar, no solo a producir</p>
+      </div>
+      <div class="lp-block lp-anim">
+        <div class="lp-block-icon">&#128101;</div>
+        <h3>4 agentes independientes</h3>
+        <p>Eval&uacute;an tu texto sin verse entre s&iacute;. Los cr&iacute;ticos nunca crean.</p>
+      </div>
+      <div class="lp-block lp-anim">
+        <div class="lp-block-icon">&#128279;</div>
+        <h3>Trazabilidad total</h3>
+        <p>Cada decisi&oacute;n, cada cita, cada iteraci&oacute;n documentada</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What you gain -->
+  <section class="lp-section" id="lp-gain">
+    <h2 class="lp-section-title lp-anim">Qu&eacute; ganas</h2>
+    <div class="lp-gains">
+      <div class="lp-gain-card lp-anim">
+        <div class="lp-gain-label" style="color:var(--blue);">Para el investigador</div>
+        <p>Tu comit&eacute; verifica tu <em>proceso</em>, no solo tu producto</p>
+      </div>
+      <div class="lp-gain-card lp-anim">
+        <div class="lp-gain-label" style="color:var(--green);">Para la universidad</div>
+        <p>IA bajo protocolo, no prohibici&oacute;n que se ignora</p>
+      </div>
+      <div class="lp-gain-card lp-anim">
+        <div class="lp-gain-label" style="color:var(--purple);">Para el profesional</div>
+        <p>Sube del nivel 1 (pasivo) al nivel 5 (orquestador)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features grid -->
+  <section class="lp-section lp-section-alt" id="lp-features">
+    <h2 class="lp-section-title lp-anim">Capacidades</h2>
+    <div class="lp-features-grid">
+      <div class="lp-feat lp-anim"><span class="lp-feat-num">12</span> skills <code>/dr</code></div>
+      <div class="lp-feat lp-anim"><span class="lp-feat-num">30</span> principios de escritura</div>
+      <div class="lp-feat lp-anim"><span class="lp-feat-num">0</span> tolerancia citas defectuosas</div>
+      <div class="lp-feat lp-anim">Ramas argumentativas</div>
+      <div class="lp-feat lp-anim">Benchmarking vs anclas</div>
+      <div class="lp-feat lp-anim">Portafolio descargable</div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="lp-section lp-cta-section" id="lp-cta">
+    <h2 class="lp-section-title lp-anim">Comienza tu investigaci&oacute;n hibridada</h2>
+    <p class="lp-cta-sub lp-anim">Demuestra que piensas. Demuestra que decides. Demuestra que creas.</p>
+    <button class="lp-cta-btn lp-anim" onclick="document.getElementById('landing-page').style.display='none';document.getElementById('login-screen').style.display='flex';">Entrar a CRISOL</button>
+  </section>
+
+</div>
+<!-- END LANDING PAGE -->
+
+<script>
+// Landing: smooth scroll & fade-in on scroll
+(function(){
+  document.querySelectorAll('#landing-page a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var t=document.querySelector(this.getAttribute('href'));
+      if(t) t.scrollIntoView({behavior:'smooth'});
+    });
+  });
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){en.target.classList.add('lp-visible');obs.unobserve(en.target);}
+    });
+  },{threshold:0.15});
+  document.querySelectorAll('.lp-anim').forEach(function(el){obs.observe(el);});
+})();
+</script>
+
 <!-- LOGIN SCREEN -->
-<div id="login-screen" style="display:flex;align-items:center;justify-content:center;height:100vh;background:var(--bg);">
+<div id="login-screen" style="display:none;align-items:center;justify-content:center;height:100vh;background:var(--bg);">
   <div style="text-align:center;max-width:360px;padding:40px;">
     <div style="font-size:48px;margin-bottom:16px;">🧪</div>
     <h1 style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">CRISOL <span style="color:var(--gold);">v1</span></h1>
