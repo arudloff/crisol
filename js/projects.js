@@ -1849,6 +1849,54 @@ function submitArtifact(projId, phase) {
 // BRANCHES — Project branching for argumentative exploration
 // ============================================================
 
+// ============================================================
+// MIGRATION — Ensure projects have latest phase structure
+// ============================================================
+
+function migrateDrFases(proj) {
+  if (!proj.drFases || proj.drFases.length === 0) return false;
+
+  const currentFases = _getDrFases();
+  if (currentFases.length === 0) return false;
+
+  const existingIds = proj.drFases.map(f => f.id);
+  const currentIds = currentFases.map(f => f.id);
+  let changed = false;
+
+  // Add missing phases in correct position
+  currentIds.forEach((id, idx) => {
+    if (!existingIds.includes(id)) {
+      const newFase = JSON.parse(JSON.stringify(currentFases[idx]));
+      newFase.estado = 'pendiente';
+      // Insert at correct position
+      proj.drFases.splice(idx, 0, newFase);
+      changed = true;
+    }
+  });
+
+  // Also migrate branch data if branches exist
+  if (proj.drBranchData && changed) {
+    Object.keys(proj.drBranchData).forEach(branchId => {
+      const bd = proj.drBranchData[branchId];
+      if (bd.drFases) {
+        const bIds = bd.drFases.map(f => f.id);
+        currentIds.forEach((id, idx) => {
+          if (!bIds.includes(id)) {
+            const newFase = JSON.parse(JSON.stringify(currentFases[idx]));
+            newFase.estado = 'pendiente';
+            bd.drFases.splice(idx, 0, newFase);
+          }
+        });
+      }
+    });
+  }
+
+  if (changed) {
+    console.log('Migrated drFases: added ' + (proj.drFases.length - existingIds.length) + ' new phases');
+  }
+  return changed;
+}
+
 function initBranches(proj) {
   if (!proj.drBranches) {
     proj.drBranches = [{
@@ -3254,12 +3302,12 @@ function renderProjectDash(projId) {
           bh += `<span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="freezeBranch('${proj.id}','${branch.id}')" title="Congelar versión">🧊</span>`;
         }
 
-        // Status transitions menu
+        // Status transitions menu — always visible
         const st = branch.status || 'active';
         const hasChildBranches = branches.some(b => b.forkedFrom === branch.id);
-        if (branch.id !== 'main' || st === 'completed') {
-          bh += `<select onchange="if(this.value==='delete'){deleteBranch('${proj.id}','${branch.id}')}else if(this.value){setBranchStatus('${proj.id}','${branch.id}',this.value)};this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
-          bh += `<option value="">···</option>`;
+        {
+          bh += `<select onchange="if(this.value==='delete'){deleteBranch('${proj.id}','${branch.id}')}else if(this.value){setBranchStatus('${proj.id}','${branch.id}',this.value)};this.value=''" style="font-size:11px;padding:3px 6px;background:var(--bg);border:1px solid rgba(220,215,205,0.15);border-radius:4px;color:var(--tx2);cursor:pointer;">`;
+          bh += `<option value="">Estado ▾</option>`;
           // Show allowed transitions
           if (st === 'active') {
             bh += `<option value="paused">⏸ En espera</option>`;
@@ -3324,6 +3372,8 @@ function renderProjectDash(projId) {
 
     if (isDrMode) {
       if (!proj.drFases) { proj.drFases = JSON.parse(JSON.stringify(_getDrFases())); saveProjects(projects); }
+      // Migrate old projects (8 phases → 10 phases)
+      if (migrateDrFases(proj)) { saveProjects(projects); }
 
       // DR Phase bar
       h += `<div style="margin:8px 0 12px;">`;
