@@ -120,7 +120,7 @@ window.approveInvite = async function(id, idx) {
   // Show approved details for copying
   if (req) {
     const code = VALID_INVITE_CODES[0];
-    const msg = 'Hola ' + req.name + ',\n\nTu solicitud de acceso a CRISOL fue aprobada.\n\nTu código de invitación es: ' + code + '\n\nIngresa a https://crisol-psi.vercel.app, haz click en "Crear cuenta", e ingresa el código.\n\nBienvenido/a.\nAlejandro Rudloff';
+    const msg = 'Para: ' + req.email + '\n\nHola ' + req.name + ',\n\nTu solicitud de acceso a CRISOL fue aprobada.\n\nTu código de invitación es: ' + code + '\n\nIngresa a https://crisol-psi.vercel.app, haz click en "Crear cuenta", e ingresa el código.\n\nBienvenido/a.\nAlejandro Rudloff';
     const overlay2 = document.createElement('div');
     overlay2.className = 'proj-modal-overlay';
     overlay2.onclick = function(e) { if (e.target === overlay2) overlay2.remove(); };
