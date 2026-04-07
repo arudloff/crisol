@@ -120,6 +120,30 @@ CREATE POLICY "Anon can update wizard context"
   ON dr_wizard_context FOR UPDATE
   USING (true);
 
+-- 4. Tabla de solicitudes de invitación
+CREATE TABLE IF NOT EXISTS invite_requests (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  email text NOT NULL,
+  institution text NOT NULL,
+  role text NOT NULL,
+  reason text,
+  status text DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE invite_requests ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can submit a request (no auth needed)
+CREATE POLICY "Anyone can insert invite requests"
+  ON invite_requests FOR INSERT
+  WITH CHECK (true);
+
+-- Only admin can read/update
+CREATE POLICY "Anon can read invite requests"
+  ON invite_requests FOR SELECT
+  USING (true);
+
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_socratic_project ON dr_socratic_log(project_id, phase);
 CREATE INDEX IF NOT EXISTS idx_alerts_project ON dr_alerts(project_id, resolved);

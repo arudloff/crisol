@@ -47,6 +47,41 @@ export async function checkLogin() {
 // Invitation codes — add codes here to allow new registrations
 const VALID_INVITE_CODES = ['CRISOL-2026', 'TALCA-MGT', 'DR-RESEARCH'];
 
+// Submit invitation request to Supabase
+window.submitInviteRequest = async function() {
+  const name = document.getElementById('req-name')?.value?.trim();
+  const email = document.getElementById('req-email')?.value?.trim();
+  const institution = document.getElementById('req-institution')?.value?.trim();
+  const role = document.getElementById('req-role')?.value;
+  const reason = document.getElementById('req-reason')?.value?.trim();
+  const statusEl = document.getElementById('req-status');
+
+  if (!name || !email || !institution || !role) {
+    if (statusEl) { statusEl.textContent = 'Completa todos los campos obligatorios'; statusEl.style.color = 'var(--red)'; statusEl.style.display = 'block'; }
+    return;
+  }
+
+  if (statusEl) { statusEl.textContent = 'Enviando solicitud...'; statusEl.style.color = 'var(--tx3)'; statusEl.style.display = 'block'; }
+
+  try {
+    if (state.sdb) {
+      await state.sdb.from('invite_requests').insert({
+        name, email, institution, role, reason,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      });
+    }
+    if (statusEl) {
+      statusEl.innerHTML = '&#10003; Solicitud enviada. Recibir&aacute;s tu c&oacute;digo por email cuando sea aprobada.';
+      statusEl.style.color = 'var(--green)';
+    }
+    // Disable form
+    document.querySelectorAll('#invite-request-form input, #invite-request-form select, #invite-request-form textarea, #invite-request-form button').forEach(el => el.disabled = true);
+  } catch (e) {
+    if (statusEl) { statusEl.textContent = 'Error al enviar. Intenta de nuevo.'; statusEl.style.color = 'var(--red)'; }
+  }
+};
+
 async function signUp(email, pw) {
   // Validate invitation code
   const inviteCode = (document.getElementById('invite-code')?.value || '').trim().toUpperCase();

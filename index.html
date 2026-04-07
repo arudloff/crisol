@@ -204,7 +204,24 @@
     <div id="invite-code-row" style="display:none;margin-top:10px;">
       <input id="invite-code" type="text" placeholder="Código de invitación"
         style="width:100%;padding:10px 16px;border-radius:8px;border:1px solid rgba(155,125,207,0.3);background:var(--bg2);color:var(--purple);font-family:'Inter',sans-serif;font-size:14px;text-align:center;outline:none;letter-spacing:2px;" autocomplete="off">
-      <p style="font-size:11px;color:var(--tx3);margin-top:4px;">Solicita tu código a un investigador activo</p>
+      <p style="font-size:11px;color:var(--tx3);margin-top:6px;">&iquest;No tienes c&oacute;digo? <span onclick="document.getElementById('invite-request-form').style.display=document.getElementById('invite-request-form').style.display==='none'?'block':'none'" style="color:var(--purple);cursor:pointer;text-decoration:underline;">Solicitar invitaci&oacute;n</span></p>
+      <div id="invite-request-form" style="display:none;margin-top:10px;padding:14px;background:var(--bg2);border:1px solid rgba(155,125,207,0.15);border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;color:var(--purple);margin-bottom:8px;">Solicitar c&oacute;digo de invitaci&oacute;n</div>
+        <input id="req-name" type="text" placeholder="Tu nombre completo" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <input id="req-email" type="email" placeholder="Tu email institucional" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <input id="req-institution" type="text" placeholder="Universidad / Instituci&oacute;n" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <select id="req-role" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+          <option value="">Rol</option>
+          <option value="doctoral">Estudiante doctoral</option>
+          <option value="master">Estudiante magíster</option>
+          <option value="profesor">Profesor / Investigador</option>
+          <option value="profesional">Profesional</option>
+          <option value="otro">Otro</option>
+        </select>
+        <textarea id="req-reason" placeholder="&iquest;Por qu&eacute; te interesa CRISOL? (breve)" style="width:100%;padding:8px 12px;margin-bottom:8px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;min-height:50px;resize:vertical;"></textarea>
+        <button onclick="submitInviteRequest()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Enviar solicitud</button>
+        <p id="req-status" style="font-size:12px;color:var(--tx3);margin-top:6px;display:none;"></p>
+      </div>
     </div>
     <p style="font-size:12px;color:var(--tx3);margin-top:20px;">
       <span onclick="toggleAuthMode()" style="color:var(--blue);cursor:pointer;text-decoration:underline;" id="auth-toggle">Crear cuenta</span>
