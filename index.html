@@ -18,6 +18,11 @@
 <!-- LANDING PAGE (pre-login) -->
 <div id="landing-page">
 
+  <!-- Quick login button (top-right, for returning users) -->
+  <div style="position:fixed;top:16px;right:20px;z-index:10000;">
+    <button onclick="document.getElementById('landing-page').style.display='none';document.getElementById('login-screen').style.display='flex';" style="background:transparent;border:1px solid rgba(220,215,205,0.15);border-radius:6px;color:rgba(220,215,205,0.5);font-family:'Inter',sans-serif;font-size:13px;padding:6px 16px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(220,215,205,0.15)';this.style.color='rgba(220,215,205,0.5)'">Iniciar sesi&oacute;n</button>
+  </div>
+
   <!-- Hero -->
   <section class="lp-hero">
     <div class="lp-hero-inner">
@@ -111,11 +116,47 @@
     </div>
   </section>
 
+  <!-- Getting started guide -->
+  <section class="lp-section" id="lp-guide">
+    <h2 class="lp-section-title lp-anim">&iquest;C&oacute;mo empezar?</h2>
+    <div style="max-width:700px;margin:0 auto;">
+      <div class="lp-anim" style="display:flex;gap:16px;align-items:flex-start;margin:16px 0;padding:16px;background:rgba(232,168,56,0.04);border:1px solid rgba(232,168,56,0.15);border-radius:10px;">
+        <span style="font-size:28px;flex-shrink:0;">1</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px;">Crea tu cuenta en CRISOL</div>
+          <p style="font-size:13px;color:var(--tx2);margin:0;">Reg&iacute;strate con email y contrase&ntilde;a. Completa tu perfil: nombre, instituci&oacute;n, &aacute;rea de investigaci&oacute;n.</p>
+        </div>
+      </div>
+      <div class="lp-anim" style="display:flex;gap:16px;align-items:flex-start;margin:16px 0;padding:16px;background:rgba(144,200,240,0.04);border:1px solid rgba(144,200,240,0.15);border-radius:10px;">
+        <span style="font-size:28px;flex-shrink:0;">2</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--blue);margin-bottom:4px;">Instala las skills en Claude Code</div>
+          <p style="font-size:13px;color:var(--tx2);margin:0;">Descarga las 12 skills /dr desde la secci&oacute;n de ayuda (?). C&oacute;pialas a <code style="font-size:12px;background:var(--bg2);padding:1px 4px;border-radius:3px;">~/.claude/skills/dr/</code> y reinicia Claude Code.</p>
+        </div>
+      </div>
+      <div class="lp-anim" style="display:flex;gap:16px;align-items:flex-start;margin:16px 0;padding:16px;background:rgba(93,187,138,0.04);border:1px solid rgba(93,187,138,0.15);border-radius:10px;">
+        <span style="font-size:28px;flex-shrink:0;">3</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:4px;">Crea tu primer proyecto y activa /dr</div>
+          <p style="font-size:13px;color:var(--tx2);margin:0;">En CRISOL, crea un proyecto. En la barra de workflow, activa el modo &#129514; /dr. El wizard de 10 fases te gu&iacute;a paso a paso.</p>
+        </div>
+      </div>
+      <div class="lp-anim" style="display:flex;gap:16px;align-items:flex-start;margin:16px 0;padding:16px;background:rgba(155,125,207,0.04);border:1px solid rgba(155,125,207,0.15);border-radius:10px;">
+        <span style="font-size:28px;flex-shrink:0;">4</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--purple);margin-bottom:4px;">Investiga con integridad verificable</div>
+          <p style="font-size:13px;color:var(--tx2);margin:0;">Cada fase tiene prompts copiables, gates socr&aacute;ticos obligatorios, y alertas autom&aacute;ticas. Tu comit&eacute; puede verificar cada paso del proceso.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Final CTA -->
   <section class="lp-section lp-cta-section" id="lp-cta">
     <h2 class="lp-section-title lp-anim">Comienza tu investigaci&oacute;n hibridada</h2>
     <p class="lp-cta-sub lp-anim">Demuestra que piensas. Demuestra que decides. Demuestra que creas.</p>
     <button class="lp-cta-btn lp-anim" onclick="document.getElementById('landing-page').style.display='none';document.getElementById('login-screen').style.display='flex';">Entrar a CRISOL</button>
+    <p class="lp-anim" style="margin-top:20px;font-size:13px;color:var(--tx3);">&iquest;Ya tienes cuenta? <a href="#" onclick="document.getElementById('landing-page').style.display='none';document.getElementById('login-screen').style.display='flex';return false;" style="color:var(--gold);text-decoration:underline;">Inicia sesi&oacute;n</a></p>
   </section>
 
 </div>
