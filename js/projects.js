@@ -2148,6 +2148,85 @@ function deleteBranch(projId, branchId) {
   showToast('🗑 Rama eliminada', 'success');
 }
 
+// ============================================================
+// MEMBER MANAGEMENT — Remove members
+// ============================================================
+
+async function removeMember(projId, userId) {
+  if (!confirm('¿Revocar acceso de este miembro al proyecto?')) return;
+  if (!state.sdb) return;
+  try {
+    await state.sdb.from('project_members').delete()
+      .eq('project_id', projId).eq('user_id', userId);
+    showToast('Acceso revocado', 'success');
+    renderProjectDash(projId);
+  } catch (e) {
+    showToast('Error al revocar: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// CLONE PROJECT — Create independent copy
+// ============================================================
+
+async function cloneProject(projId) {
+  const projects = getProjects();
+  const source = projects.find(p => p.id === projId);
+  if (!source) { showToast('Proyecto no encontrado', 'error'); return; }
+
+  const newName = prompt('Nombre para tu copia del proyecto:', source.nombre + ' (mi versión)');
+  if (!newName || !newName.trim()) return;
+
+  if (!state.sdb || !state.currentUser) { showToast('Necesitas estar logueado', 'error'); return; }
+
+  try {
+    // Create new project in Supabase
+    const metadata = JSON.parse(JSON.stringify(source));
+    // Clean up: remove id, owner-specific data
+    delete metadata.id;
+    delete metadata.created;
+    delete metadata.updated;
+    delete metadata._db_owner_id;
+    metadata.nombre = newName.trim();
+    metadata.descripcion = (source.descripcion || '') + '\n\n[Clonado de: ' + source.nombre + ']';
+    metadata.clonedFrom = { projectId: projId, projectName: source.nombre, date: new Date().toISOString().split('T')[0] };
+    // Reset progress: keep structure but reset wizard progress
+    if (metadata.drWizardProgress) metadata.drWizardProgress = {};
+    if (metadata.drGateRecords) metadata.drGateRecords = [];
+    if (metadata.drArtifacts) metadata.drArtifacts = [];
+    if (metadata.drOutputs) metadata.drOutputs = {};
+    // Reset branches to just main
+    metadata.drBranches = [{ id: 'main', name: 'Línea principal', forkedFrom: null, forkedAtPhase: null, forkedDate: null, status: 'active' }];
+    metadata.drActiveBranch = 'main';
+    metadata.drBranchData = {};
+    // Reset phases to pendiente
+    if (metadata.drFases) {
+      metadata.drFases.forEach(f => { f.estado = 'pendiente'; });
+    }
+
+    const { data, error } = await state.sdb.from('projects').insert({
+      title: newName.trim(),
+      description: metadata.descripcion,
+      owner_id: state.currentUser.id,
+      metadata: metadata,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }).select().single();
+
+    if (error) { showToast('Error al clonar: ' + error.message, 'error'); return; }
+
+    // Reload projects
+    const { loadProjects } = await import('./sync.js').catch(() => ({}));
+    if (loadProjects) await loadProjects();
+    else { state.projects.push({ id: data.id, ...metadata }); }
+
+    showToast('🧬 Proyecto clonado: ' + newName.trim(), 'success');
+    renderProjectDash(data.id);
+  } catch (e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
 function generatePortfolio(projId) {
   const projects = getProjects(); const proj = projects.find(p => p.id === projId);
   if (!proj) { showToast('Proyecto no encontrado', 'error'); return; }
@@ -2868,12 +2947,15 @@ function renderProjectDash(projId) {
   h += `<div class="proj-title">${proj.nombre}`;
   if (proj._isShared) h += ` <span style="font-size:13px;color:var(--purple);font-weight:400;">👥 ${PROJ_ROLE_LABELS[proj._myRole] || proj._myRole}</span>`;
   h += `</div>`;
+  h += `<div style="display:flex;gap:6px;">`;
   if (isOwner) {
-    h += `<div style="display:flex;gap:6px;">`;
     h += `<button class="btn bo" onclick="showInviteModal('${proj.id}')" style="font-size:12px;padding:4px 12px;color:var(--purple);border-color:var(--purple);">👥 Invitar</button>`;
     h += `<button class="btn bo" onclick="editProject('${proj.id}')" style="font-size:12px;padding:4px 12px;">✏️ Editar</button>`;
-    h += `</div>`;
   }
+  if (!isOwner) {
+    h += `<button class="btn bo" onclick="cloneProject('${proj.id}')" style="font-size:12px;padding:4px 12px;color:var(--green);border-color:var(--green);">🧬 Clonar proyecto</button>`;
+  }
+  h += `</div>`;
   h += `</div>`;
   if (proj.descripcion) h += `<div class="proj-desc">${proj.descripcion}</div>`;
   h += `<div class="proj-meta">`;
@@ -2889,16 +2971,21 @@ function renderProjectDash(projId) {
   loadProjectMembers(projId).then(members => {
     const area = document.getElementById('proj-members-area');
     if (!area || members.length <= 1) return; // Don't show if only owner
-    const ROLE_COLORS = { owner: 'var(--gold)', coauthor: 'var(--blue)', reviewer: 'var(--green)', reader: 'var(--tx3)' };
-    const ROLE_LABELS = { owner: 'Owner', coauthor: 'Coautor', reviewer: 'Reviewer', reader: 'Lector' };
+    const ROLE_COLORS = { owner: 'var(--gold)', reviewer: 'var(--green)', reader: 'var(--tx3)', coauthor: 'var(--blue)' };
+    const ROLE_LABELS = { owner: 'Dueño', reviewer: 'Reviewer', reader: 'Lector', coauthor: 'Lector' };
+    const isOwner = members.some(m => m.role === 'owner' && m.user_id === state.currentUser?.id);
     let mh = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;align-items:center;">';
     mh += '<span style="font-size:12px;color:var(--tx3);">Equipo:</span>';
     members.forEach(m => {
       const name = m.profiles?.display_name || 'Sin nombre';
-      const role = m.role;
+      const role = m.role === 'coauthor' ? 'reader' : m.role;
       const color = ROLE_COLORS[role] || 'var(--tx3)';
       const isMe = m.user_id === state.currentUser?.id;
-      mh += `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:12px;background:${color}18;border:1px solid ${color}30;color:${color};">${name}${isMe ? ' (tú)' : ''} · ${ROLE_LABELS[role] || role}</span>`;
+      mh += `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:12px;background:${color}18;border:1px solid ${color}30;color:${color};">${name}${isMe ? ' (tú)' : ''} · ${ROLE_LABELS[role] || role}`;
+      if (isOwner && !isMe && role !== 'owner') {
+        mh += ` <span onclick="removeMember('${proj.id}','${m.user_id}')" style="cursor:pointer;opacity:0.5;margin-left:2px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" title="Revocar acceso">✕</span>`;
+      }
+      mh += `</span>`;
     });
     mh += '</div>';
     area.innerHTML = mh;
@@ -4361,7 +4448,7 @@ function showInviteModal(projId) {
   html += `<div style="display:flex;gap:6px;">`;
   html += `<input id="invite-email" type="email" placeholder="email@ejemplo.com" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;">`;
   html += `<select id="invite-email-role" style="padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
-  html += `<option value="coauthor">Coautor</option><option value="reviewer">Reviewer</option><option value="reader">Lector</option>`;
+  html += `<option value="reviewer">Reviewer (ve y comenta)</option><option value="reader">Lector (ve y puede clonar)</option>`;
   html += `</select>`;
   html += `</div>`;
   html += `<button onclick="addMemberByEmail('${projId}')" id="invite-email-btn" class="btn bg" style="width:100%;margin-top:8px;">Agregar</button>`;
@@ -4373,7 +4460,7 @@ function showInviteModal(projId) {
   html += `<div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;">Generar link de invitación</div>`;
   html += `<div style="display:flex;gap:6px;align-items:center;">`;
   html += `<select id="invite-role" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
-  html += `<option value="coauthor">Coautor</option><option value="reviewer">Reviewer</option><option value="reader">Lector</option>`;
+  html += `<option value="reviewer">Reviewer (ve y comenta)</option><option value="reader">Lector (ve y puede clonar)</option>`;
   html += `</select>`;
   html += `<button id="invite-gen-btn" onclick="generateInviteLink('${projId}')" class="btn bo" style="white-space:nowrap;">Generar link</button>`;
   html += `</div>`;
@@ -4607,6 +4694,8 @@ window.setBranchStatus = setBranchStatus;
 window.deleteBranch = deleteBranch;
 window.addBranchNote = addBranchNote;
 window.freezeBranch = freezeBranch;
+window.removeMember = removeMember;
+window.cloneProject = cloneProject;
 window.generateDrReport = generateDrReport;
 window.saveCloPath = saveCloPath;
 window.toggleCloWizardStep = toggleCloWizardStep;
