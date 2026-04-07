@@ -44,8 +44,16 @@ export async function checkLogin() {
 // ============================================================
 // REGISTER
 // ============================================================
-// Invitation codes — add codes here to allow new registrations
-const VALID_INVITE_CODES = ['CRISOL-2026', 'TALCA-MGT', 'DR-RESEARCH'];
+// Invitation codes — generated dynamically on approval + stored in Supabase
+// Legacy static codes still accepted for backward compat
+const LEGACY_INVITE_CODES = ['CRISOL-2026', 'TALCA-MGT', 'DR-RESEARCH'];
+
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'CR-';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
 
 // Admin email(s) — these users see the invite requests panel
 const ADMIN_EMAILS = ['alejandro@chenriquez.cl'];
@@ -100,7 +108,6 @@ window.showInviteRequests = async function() {
   if (pending.length > 0) {
     html += '<div style="font-size:13px;font-weight:600;color:var(--gold);margin:12px 0 6px;">Pendientes (' + pending.length + ')</div>';
     pending.forEach((req, i) => {
-      const code = VALID_INVITE_CODES[0];
       const date = new Date(req.created_at).toLocaleDateString();
       html += '<div style="padding:12px;margin:6px 0;background:var(--bg2);border:1px solid rgba(232,168,56,0.2);border-radius:8px;">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
@@ -111,8 +118,7 @@ window.showInviteRequests = async function() {
       html += '<div style="font-size:12px;color:var(--tx3);">' + (req.institution || '') + ' · ' + (req.role || '') + '</div>';
       if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + req.reason + '"</div>';
       html += '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">';
-      html += '<div style="flex:1;padding:6px 10px;background:var(--bg);border:1px solid rgba(155,125,207,0.3);border-radius:6px;font-family:monospace;font-size:14px;color:var(--purple);letter-spacing:2px;text-align:center;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + code + '\\nPara: ' + (req.name || '') + '\\nEmail: ' + (req.email || '') + '\');this.style.borderColor=\'var(--green)\';showToast(\'Código copiado\',\'success\')" title="Click para copiar código + datos">' + code + ' 📋</div>';
-      html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Aprobar</button>';
+      html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 16px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">✅ Aprobar y generar código</button>';
       html += '<button onclick="rejectInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--bg3);color:var(--tx3);border:none;border-radius:6px;font-size:12px;cursor:pointer;">Rechazar</button>';
       html += '</div>';
       html += '</div>';
@@ -159,13 +165,12 @@ window.showInviteRequests = async function() {
 window.approveInvite = async function(id, idx) {
   if (!state.sdb) return;
   const req = state._pendingInvites ? state._pendingInvites[idx] : null;
-  await state.sdb.from('invite_requests').update({ status: 'approved' }).eq('id', id);
-  if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
+  const code = generateInviteCode();
+  await state.sdb.from('invite_requests').update({ status: 'approved', invite_code: code }).eq('id', id);
   document.querySelector('.proj-modal-overlay')?.remove();
 
   // Show approved details for copying
   if (req) {
-    const code = VALID_INVITE_CODES[0];
     const msg = 'Para: ' + req.email + '\n\nHola ' + req.name + ',\n\nTu solicitud de acceso a CRISOL fue aprobada.\n\nTu código de invitación es: ' + code + '\n\nIngresa a https://crisol-psi.vercel.app, haz click en "Crear cuenta", e ingresa el código.\n\nBienvenido/a.\nAlejandro Rudloff';
     const overlay2 = document.createElement('div');
     overlay2.className = 'proj-modal-overlay';
@@ -230,9 +235,17 @@ window.submitInviteRequest = async function() {
 };
 
 async function signUp(email, pw) {
-  // Validate invitation code
+  // Validate invitation code (legacy static OR dynamic from Supabase)
   const inviteCode = (document.getElementById('invite-code')?.value || '').trim().toUpperCase();
-  if (!VALID_INVITE_CODES.includes(inviteCode)) {
+  let codeValid = LEGACY_INVITE_CODES.includes(inviteCode);
+  if (!codeValid && state.sdb) {
+    try {
+      const { data } = await state.sdb.from('invite_requests')
+        .select('id').eq('invite_code', inviteCode).eq('status', 'approved').limit(1);
+      if (data && data.length > 0) codeValid = true;
+    } catch (e) {}
+  }
+  if (!codeValid) {
     showAuthError('Código de invitación inválido. Solicita uno a un investigador activo.');
     const codeInput = document.getElementById('invite-code');
     if (codeInput) { codeInput.style.borderColor = 'var(--red)'; codeInput.focus(); }
