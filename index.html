@@ -315,7 +315,10 @@
 <!-- Quick capture -->
 <button class="qc-btn" id="qc-btn" onclick="toggleQuickCapture()" title="Captura rápida (💡 idea → tarea)" style="display:none;">💡</button>
 <div class="qc-panel" id="qc-panel">
-  <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px;">💡 Captura rápida</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <span style="font-size:13px;font-weight:600;color:var(--gold);">💡 Captura rápida</span>
+    <span onclick="toggleQuickCapture()" style="font-size:14px;color:var(--tx3);cursor:pointer;padding:2px 6px;" title="Cerrar (Esc)">✕</span>
+  </div>
   <textarea id="qc-text" placeholder="Anota tu idea... se creará como tarea en el tablero"></textarea>
   <select id="qc-project" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid rgba(220,215,205,0.12);border-radius:6px;color:var(--tx3);font-family:'Inter',sans-serif;font-size:12px;margin-bottom:4px;">
     <option value="">Sin proyecto</option>
