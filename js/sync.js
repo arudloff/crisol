@@ -502,13 +502,21 @@ async function autoBackupCheck() {
     const backup = await createFullBackup();
     if (!backup) return;
 
-    // Save to Supabase dr_backups table
-    await state.sdb.from('dr_backups').upsert({
+    // Save to Supabase dr_backups table (accumulate, don't overwrite)
+    await state.sdb.from('dr_backups').insert({
       user_id: state.currentUser.id,
       backup_type: 'auto',
       data: backup,
       created_at: new Date().toISOString()
-    }, { onConflict: 'user_id,backup_type' });
+    });
+
+    // Retention: delete backups older than 7 days
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    await state.sdb.from('dr_backups')
+      .delete()
+      .eq('user_id', state.currentUser.id)
+      .eq('backup_type', 'auto')
+      .lt('created_at', cutoff);
 
     lastBackupHash = currentHash;
     console.log('Auto-backup saved (' + new Date().toLocaleTimeString() + ')');
