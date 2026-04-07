@@ -195,9 +195,13 @@ window.kbDrop = function(e, colArg) {
     item.column = col;
     item.updated = new Date().toISOString();
     saveKanban(items);
-    if (currentProjectId) { renderProjectDash(currentProjectId); }
-    else if (isHome) { renderGlobalDash(); }
-    else { renderKanban(); }
+    if (state.currentProjectId) {
+      if (state._renderProjectDash) state._renderProjectDash(state.currentProjectId);
+    } else if (state.isHome) {
+      if (window.renderGlobalDash) window.renderGlobalDash();
+    } else {
+      renderKanban();
+    }
   }
   kbDragId = null;
 };
