@@ -3,8 +3,9 @@
 // ============================================================
 
 import { state } from './state.js';
+import { showToast, setSyncStatus } from './utils.js';
+window.showToast = showToast; // expose for inline onclick in invite modals
 import './db.js'; // side-effect: initializes state.sdb
-import { setSyncStatus } from './utils.js';
 
 // ============================================================
 // LOGIN
@@ -72,9 +73,8 @@ async function checkInviteRequests() {
     // Show badge on notification bell
     const badge = document.getElementById('notif-badge');
     if (badge) {
-      const current = parseInt(badge.textContent) || 0;
-      badge.textContent = current + data.length;
-      badge.style.display = 'block';
+      badge.textContent = data.length;
+      badge.style.display = data.length > 0 ? 'block' : 'none';
     }
     // Store for rendering
     state._pendingInvites = data;
@@ -166,7 +166,18 @@ window.approveInvite = async function(id, idx) {
   if (!state.sdb) return;
   const req = state._pendingInvites ? state._pendingInvites[idx] : null;
   const code = generateInviteCode();
-  await state.sdb.from('invite_requests').update({ status: 'approved', invite_code: code }).eq('id', id);
+  const { data: upData, error } = await state.sdb.from('invite_requests').update({ status: 'approved', invite_code: code }).eq('id', id).select();
+  console.log('approveInvite result:', { id, code, upData, error });
+  if (error) { showToast('Error al aprobar: ' + error.message, 'error'); return; }
+  if (!upData || upData.length === 0) { showToast('No se pudo actualizar — revisa permisos RLS en Supabase', 'error'); return; }
+  // Remove from local pending list and update badge
+  if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    const remaining = (state._pendingInvites ? state._pendingInvites.length : 0);
+    badge.textContent = remaining;
+    badge.style.display = remaining > 0 ? 'block' : 'none';
+  }
   document.querySelector('.proj-modal-overlay')?.remove();
 
   // Show approved details for copying
@@ -180,7 +191,7 @@ window.approveInvite = async function(id, idx) {
     h2 += '<div style="font-size:13px;color:var(--tx2);margin-bottom:8px;"><strong>' + req.name + '</strong> · ' + req.email + '</div>';
     h2 += '<div style="font-size:12px;color:var(--tx3);margin-bottom:12px;">' + req.institution + ' · ' + req.role + '</div>';
     h2 += '<label style="font-size:12px;color:var(--gold);">Mensaje para enviar (click para copiar):</label>';
-    h2 += '<div onclick="navigator.clipboard.writeText(this.dataset.msg);this.style.borderColor=\'var(--green)\';showToast(\'Mensaje copiado\',\'success\')" data-msg="' + msg.replace(/"/g, '&quot;') + '" style="padding:12px;background:var(--bg);border:2px solid rgba(155,125,207,0.3);border-radius:8px;font-size:13px;color:var(--tx);white-space:pre-wrap;cursor:pointer;line-height:1.6;margin-bottom:12px;">' + msg.replace(/\n/g, '<br>') + '</div>';
+    h2 += '<div onclick="navigator.clipboard.writeText(this.dataset.msg);this.style.borderColor=\'var(--green)\';if(window.showToast)window.showToast(\'Mensaje copiado\',\'success\')" data-msg="' + msg.replace(/"/g, '&quot;') + '" style="padding:12px;background:var(--bg);border:2px solid rgba(155,125,207,0.3);border-radius:8px;font-size:13px;color:var(--tx);white-space:pre-wrap;cursor:pointer;line-height:1.6;margin-bottom:12px;">' + msg.replace(/\n/g, '<br>') + '</div>';
     h2 += '<div style="text-align:right;"><button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="background:var(--green);color:#000;border:none;border-radius:6px;padding:8px 20px;font-weight:600;cursor:pointer;">Listo</button></div>';
     h2 += '</div>';
     overlay2.innerHTML = h2;
@@ -192,8 +203,15 @@ window.approveInvite = async function(id, idx) {
 
 window.rejectInvite = async function(id, idx) {
   if (!state.sdb) return;
-  await state.sdb.from('invite_requests').update({ status: 'rejected' }).eq('id', id);
+  const { error } = await state.sdb.from('invite_requests').update({ status: 'rejected' }).eq('id', id);
+  if (error) { showToast('Error al rechazar: ' + error.message, 'error'); return; }
   if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    const remaining = (state._pendingInvites ? state._pendingInvites.length : 0);
+    badge.textContent = remaining;
+    badge.style.display = remaining > 0 ? 'block' : 'none';
+  }
   document.querySelector('.proj-modal-overlay')?.remove();
   showToast('Solicitud rechazada', 'info');
   if (state._pendingInvites && state._pendingInvites.length > 0) showInviteRequests();
