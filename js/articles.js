@@ -1344,6 +1344,7 @@ export function renderAyuda() {
     <div class="help-item"><h4>😈 /dr devil — Abogado del diablo</h4><p>Ataques sistemáticos para fortalecer el argumento. Steelman antes de destruir. 4 niveles: amigable, reviewer, hostil, existencial.<br>
     <b>Modos:</b> <span class="key">--reviewer CMR</span> · <span class="key">--defense</span> · <span class="key">--steelman</span></p></div>
     <div class="help-item"><h4>💎 /dr impact — Evaluación de impacto</h4><p>4 agentes antagónicos evalúan la contribución del artículo en 6 dimensiones: Originalidad (Corley & Gioia), Novedad (Davis), Utilidad, Claridad (Suddaby), Generalidad (Whetten), Rigor causal. Identifica vacíos en la literatura, rankea aportes, detecta tensiones entre dimensiones, sugiere párrafos de posicionamiento explícito. Score max 24 por vacío.</p></div>
+    <div class="help-item"><h4>⚖ /dr benchmark — Benchmarking contra anclas</h4><p>Compara tu artículo contra publicaciones de referencia en 12 dimensiones. Modo <span class="key">--suggest</span>: Claude analiza tus fuentes citadas y propone 5-8 anclas candidatas. Tú evalúas, seleccionas 3-4, descargas los PDFs, y Claude ejecuta la comparación. Anclas contextuales al artículo, no fijas.</p></div>
     <div class="help-item"><h4>📊 /dr report — Reporte de trazabilidad</h4><p>6 secciones: ficha técnica, genealogía del argumento, trayectoria de calidad, integridad de fuentes, decisiones del investigador, declaración metodológica. Documenta TODO el proceso para el comité.</p></div>
     <div class="help-item"><h4>📓 /dr journal — Diario de investigación</h4><p>Registro automático de cada acción /dr con timestamp, comando, documento, resultado, score.</p></div>
     <div class="help-item"><p><b>Descarga todas las skills /dr desde el wizard:</b> cada tarea con botón 📥 Skill descarga la guía correspondiente. O descarga el paquete completo:<br><br>
@@ -1355,7 +1356,8 @@ export function renderAyuda() {
     <button class="btn bo" onclick="downloadDrSkill('dr_mentor')" style="font-size:12px;margin:2px;">📥 /dr mentor</button>
     <button class="btn bo" onclick="downloadDrSkill('dr_devil')" style="font-size:12px;margin:2px;">📥 /dr devil</button>
     <button class="btn bo" onclick="downloadDrSkill('dr_report')" style="font-size:12px;margin:2px;">📥 /dr report</button>
-    <button class="btn bo" onclick="downloadDrSkill('dr_impact')" style="font-size:12px;margin:2px;">📥 /dr impact</button></p></div>
+    <button class="btn bo" onclick="downloadDrSkill('dr_impact')" style="font-size:12px;margin:2px;">📥 /dr impact</button>
+    <button class="btn bo" onclick="downloadDrSkill('dr_benchmark')" style="font-size:12px;margin:2px;">📥 /dr benchmark</button></p></div>
 
     <div class="help-item"><h4 style="color:#2dd4bf;">— 🔬 clo-author — Paper empírico (10 comandos) —</h4></div>
 
