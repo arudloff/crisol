@@ -444,7 +444,21 @@ Compara el articulo completo contra 3-4 publicaciones de referencia en 12 dimens
 Diferente de /dr impact: impact mira DENTRO (vacios y contribucion), benchmark mira
 AFUERA (posicion relativa contra el estado del arte publicado).
 
-**Flujo obligatorio:**
+**Modo --suggest (proponer anclas):**
+
+Cuando se invoca `/dr benchmark --suggest`, el flujo es:
+1. Leer las fuentes citadas en el articulo del investigador
+2. Identificar los campos disciplinarios que cruza el articulo
+3. Proponer 5-8 publicaciones ancla candidatas, para cada una:
+   - Autor, año, titulo, journal
+   - Tipo: teorica pura / cercana al tema / empirica
+   - Citas aproximadas (si se conoce)
+   - Por que seria buena ancla para ESTE articulo especificamente
+   - Que dimension fortaleceria la comparacion
+4. Organizar por tipo (teorica pura, cercana, empirica)
+5. El investigador elige 3-4 de las propuestas
+
+**Flujo obligatorio (comparacion):**
 
 1. Leer `references/impact_assessment_protocol.md` (seccion Benchmarking)
 2. Recibir las anclas seleccionadas por el investigador (3-4 publicaciones)
