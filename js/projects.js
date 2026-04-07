@@ -1975,6 +1975,18 @@ function switchBranch(projId, branchId) {
 
   const branch = proj.drBranches.find(b => b.id === branchId);
   showToast('🌿 Rama activa: ' + (branch?.name || branchId), 'success');
+
+  // Sync branch change to Supabase for Claude
+  const activePhase = (proj.drFases || []).find(f => f.estado === 'en_progreso');
+  if (activePhase) {
+    syncWizardContext(projId, {
+      active_phase: activePhase.id,
+      active_phase_name: activePhase.nombre,
+      workflow_mode: proj.workflowMode || 'dr',
+      active_branch: branchId,
+      active_branch_name: branch?.name || branchId
+    });
+  }
 }
 
 function setBranchStatus(projId, branchId, status) {
@@ -2253,7 +2265,9 @@ function advanceDrPhase(projId) {
       syncWizardContext(projId, {
         active_phase: proj.drFases[firstPending].id,
         active_phase_name: proj.drFases[firstPending].nombre,
-        workflow_mode: proj.workflowMode || 'dr'
+        workflow_mode: proj.workflowMode || 'dr',
+        active_branch: proj.drActiveBranch || 'main',
+        active_branch_name: (proj.drBranches || []).find(b => b.id === (proj.drActiveBranch || 'main'))?.name || 'main'
       });
     }
     proj.updated = new Date().toISOString();
@@ -2287,6 +2301,8 @@ function doAdvanceDrPhase(projId, currentIdx) {
       active_phase: proj.drFases[nextIdx].id,
       active_phase_name: proj.drFases[nextIdx].nombre,
       workflow_mode: proj.workflowMode || 'dr',
+      active_branch: proj.drActiveBranch || 'main',
+      active_branch_name: (proj.drBranches || []).find(b => b.id === (proj.drActiveBranch || 'main'))?.name || 'main',
       gate_responses: (proj.drGateRecords || []).reduce((acc, g) => { acc[g.gate] = g.responses; return acc; }, {}),
       socratic_responses: (proj.drGateRecords || []).reduce((acc, g) => { if (g.socratic) acc[g.gate] = g.socratic; return acc; }, {})
     });
