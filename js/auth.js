@@ -3,7 +3,7 @@
 // ============================================================
 
 import { state } from './state.js';
-import { showToast, setSyncStatus } from './utils.js';
+import { showToast, setSyncStatus, escH } from './utils.js';
 window.showToast = showToast; // expose for inline onclick in invite modals
 import './db.js'; // side-effect: initializes state.sdb
 
@@ -111,12 +111,12 @@ window.showInviteRequests = async function() {
       const date = new Date(req.created_at).toLocaleDateString();
       html += '<div style="padding:12px;margin:6px 0;background:var(--bg2);border:1px solid rgba(232,168,56,0.2);border-radius:8px;">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-      html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + (req.name || 'Sin nombre') + '</div>';
+      html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + escH(req.name || 'Sin nombre') + '</div>';
       html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
       html += '</div>';
-      html += '<div style="font-size:13px;color:var(--tx2);margin:4px 0;">' + (req.email || '') + '</div>';
-      html += '<div style="font-size:12px;color:var(--tx3);">' + (req.institution || '') + ' · ' + (req.role || '') + '</div>';
-      if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + req.reason + '"</div>';
+      html += '<div style="font-size:13px;color:var(--tx2);margin:4px 0;">' + escH(req.email || '') + '</div>';
+      html += '<div style="font-size:12px;color:var(--tx3);">' + escH(req.institution || '') + ' · ' + escH(req.role || '') + '</div>';
+      if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + escH(req.reason) + '"</div>';
       html += '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">';
       html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 16px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">✅ Aprobar y generar código</button>';
       html += '<button onclick="rejectInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--bg3);color:var(--tx3);border:none;border-radius:6px;font-size:12px;cursor:pointer;">Rechazar</button>';
@@ -136,7 +136,7 @@ window.showInviteRequests = async function() {
       approved.forEach(req => {
         const date = new Date(req.created_at).toLocaleDateString();
         html += '<div style="padding:8px 12px;margin:3px 0;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green);display:flex;justify-content:space-between;align-items:center;">';
-        html += '<div><span style="font-size:13px;color:var(--tx);">' + (req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + (req.email || '') + '</span></div>';
+        html += '<div><span style="font-size:13px;color:var(--tx);">' + escH(req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + escH(req.email || '') + '</span></div>';
         html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
         html += '</div>';
       });
@@ -147,7 +147,7 @@ window.showInviteRequests = async function() {
       rejected.forEach(req => {
         const date = new Date(req.created_at).toLocaleDateString();
         html += '<div style="padding:8px 12px;margin:3px 0;background:var(--bg2);border-radius:6px;border-left:3px solid var(--red);opacity:0.6;display:flex;justify-content:space-between;align-items:center;">';
-        html += '<div><span style="font-size:13px;color:var(--tx);">' + (req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + (req.email || '') + '</span></div>';
+        html += '<div><span style="font-size:13px;color:var(--tx);">' + escH(req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + escH(req.email || '') + '</span></div>';
         html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
         html += '</div>';
       });
