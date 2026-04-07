@@ -437,3 +437,133 @@ export async function resolveDrAlert(alertId) {
       .eq('id', alertId);
   } catch (e) { console.error('Alert resolve error:', e); }
 }
+
+// ============================================================
+// AUTO-BACKUP — Every 30 min if changes detected
+// ============================================================
+
+let backupTimer = null;
+let lastBackupHash = '';
+
+function computeHash(obj) {
+  return JSON.stringify(obj).length.toString(); // Simple length-based change detection
+}
+
+export async function createFullBackup() {
+  if (!state.sdb || !state.currentUser) return null;
+  try {
+    // Collect ALL data from Supabase
+    const [projects, docs, socratic, alerts, context, userdata] = await Promise.all([
+      state.sdb.from('projects').select('*').then(r => r.data || []),
+      state.sdb.from('documents').select('*').then(r => r.data || []),
+      state.sdb.from('dr_socratic_log').select('*').then(r => r.data || []),
+      state.sdb.from('dr_alerts').select('*').then(r => r.data || []),
+      state.sdb.from('dr_wizard_context').select('*').then(r => r.data || []),
+      state.sdb.from('sila_userdata').select('*').then(r => r.data || [])
+    ]);
+
+    const backup = {
+      version: '3.2',
+      created: new Date().toISOString(),
+      user: state.currentUser.email,
+      data: { projects, documents: docs, dr_socratic_log: socratic, dr_alerts: alerts, dr_wizard_context: context, sila_userdata: userdata }
+    };
+
+    return backup;
+  } catch (e) {
+    console.error('Backup creation error:', e);
+    return null;
+  }
+}
+
+export async function downloadBackup() {
+  const backup = await createFullBackup();
+  if (!backup) { if (window.showToast) showToast('Error al crear backup', 'error'); return; }
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  const date = new Date().toISOString().split('T')[0];
+  a.download = 'CRISOL_backup_' + date + '.json';
+  a.click();
+  if (window.showToast) showToast('💾 Backup completo descargado (' + (blob.size / 1024).toFixed(0) + ' KB)', 'success');
+}
+
+async function autoBackupCheck() {
+  if (!state.sdb || !state.currentUser) return;
+
+  try {
+    // Quick hash of projects to detect changes
+    const { data } = await state.sdb.from('projects').select('updated_at').order('updated_at', { ascending: false }).limit(1);
+    const currentHash = data && data[0] ? data[0].updated_at : '';
+
+    if (currentHash === lastBackupHash) return; // No changes
+
+    // Create backup
+    const backup = await createFullBackup();
+    if (!backup) return;
+
+    // Save to Supabase dr_backups table
+    await state.sdb.from('dr_backups').upsert({
+      user_id: state.currentUser.id,
+      backup_type: 'auto',
+      data: backup,
+      created_at: new Date().toISOString()
+    }, { onConflict: 'user_id,backup_type' });
+
+    lastBackupHash = currentHash;
+    console.log('Auto-backup saved (' + new Date().toLocaleTimeString() + ')');
+  } catch (e) {
+    // Silently fail — backup is not critical path
+    console.error('Auto-backup error:', e);
+  }
+}
+
+export function startAutoBackup() {
+  if (backupTimer) clearInterval(backupTimer);
+  // Run every 30 minutes
+  backupTimer = setInterval(autoBackupCheck, 30 * 60 * 1000);
+  // Also run once after 1 minute (first backup after login)
+  setTimeout(autoBackupCheck, 60 * 1000);
+  console.log('Auto-backup enabled (every 30 min)');
+}
+
+export function stopAutoBackup() {
+  if (backupTimer) { clearInterval(backupTimer); backupTimer = null; }
+}
+
+// Full restore from backup JSON
+export async function restoreFromBackup(backupJson) {
+  if (!state.sdb || !state.currentUser) return false;
+  try {
+    const backup = typeof backupJson === 'string' ? JSON.parse(backupJson) : backupJson;
+    if (!backup.data) { showToast('Archivo de backup inválido', 'error'); return false; }
+
+    const d = backup.data;
+
+    // Restore projects
+    if (d.projects && d.projects.length > 0) {
+      for (const p of d.projects) {
+        await state.sdb.from('projects').upsert(p, { onConflict: 'id' });
+      }
+    }
+    // Restore documents
+    if (d.documents && d.documents.length > 0) {
+      for (const doc of d.documents) {
+        await state.sdb.from('documents').upsert(doc, { onConflict: 'id' });
+      }
+    }
+    // Restore socratic log
+    if (d.dr_socratic_log && d.dr_socratic_log.length > 0) {
+      for (const entry of d.dr_socratic_log) {
+        await state.sdb.from('dr_socratic_log').upsert(entry, { onConflict: 'id' });
+      }
+    }
+
+    showToast('✅ Backup restaurado exitosamente', 'success');
+    return true;
+  } catch (e) {
+    console.error('Restore error:', e);
+    showToast('Error al restaurar: ' + e.message, 'error');
+    return false;
+  }
+}

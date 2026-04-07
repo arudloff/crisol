@@ -385,6 +385,15 @@ window.exportUserData = function() {
   showToast('Backup completo descargado', 'success', 3000);
 };
 
+window.fullBackupDownload = async function() {
+  try {
+    const { downloadBackup } = await import('./sync.js');
+    if (downloadBackup) await downloadBackup();
+  } catch (e) {
+    showToast('Error al crear backup: ' + e.message, 'error');
+  }
+};
+
 window.importUserData = function(event) {
   const file = event.target.files[0];
   if (!file) return;

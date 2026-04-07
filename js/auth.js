@@ -318,6 +318,11 @@ async function enterApp() {
 
     // Check for pending invite requests (admin only)
     checkInviteRequests();
+    // Start auto-backup (every 30 min if changes)
+    try {
+      const { startAutoBackup } = await import('./sync.js');
+      if (startAutoBackup) startAutoBackup();
+    } catch (e) {}
     // Show admin button if admin
     const adminBtn = document.getElementById('admin-invites-btn');
     if (adminBtn && isAdmin()) adminBtn.style.display = 'block';

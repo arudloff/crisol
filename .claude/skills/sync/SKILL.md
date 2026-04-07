@@ -88,6 +88,46 @@ NODE_PATH="$(npm root -g)" node "G:/Mi unidad/Doctorado MGT/SILA/scripts/sync_fr
 **Nota**: El script `sync_from_cloud.js` puede necesitar actualizaciones para las nuevas tablas.
 Si el script no existe o está desactualizado, regenerarlo leyendo las tablas actuales de Supabase.
 
+## Backup completo (incluido en /sync)
+
+Cada vez que se ejecuta /sync, ADEMAS de sincronizar con Obsidian, se genera
+un backup completo de todos los datos de Supabase en formato JSON.
+
+**Carpeta de backups:** `G:/Mi unidad/RESPALDOS/CRISOL/`
+
+**Estructura:**
+```
+CRISOL_backups/
+├── latest.json              ← siempre el más reciente (se sobreescribe)
+├── weekly/
+│   ├── 2026-W14.json        ← uno por semana (mantener 12)
+│   └── 2026-W15.json
+└── monthly/
+    ├── 2026-03.json         ← uno por mes (mantener todos)
+    └── 2026-04.json
+```
+
+**Datos incluidos en el backup:**
+- projects (con metadata: fases, outputs, gates, ramas, artefactos)
+- documents (escritos del editor)
+- dr_socratic_log (diálogo socrático)
+- dr_alerts (alertas y bloqueos)
+- dr_wizard_context (contexto del wizard)
+- sila_userdata (anotaciones de artículos)
+- invite_requests (solicitudes de invitación)
+
+**Retención:**
+- `latest.json`: se sobreescribe cada vez
+- `weekly/`: guardar solo si es domingo o no existe de esta semana. Borrar mayores a 12 semanas.
+- `monthly/`: guardar solo si no existe de este mes. No borrar nunca.
+
+**Al ejecutar /sync, el flujo es:**
+1. Sincronizar con Obsidian (existente)
+2. Leer TODOS los datos de Supabase
+3. Escribir latest.json
+4. Si corresponde, escribir weekly y monthly
+5. Limpiar weeklies antiguos (> 12 semanas)
+
 ## Configuración
 
 | Variable | Valor |
