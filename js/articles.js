@@ -1296,11 +1296,16 @@ export function renderAyuda() {
     <div class="help-item"><h4>💾 Export / 📂 Import</h4><p>PRISMA se regenera completo cada vez que /sila procesa tu corpus. Usa 💾 para exportar como JSON y 📂 para importar.</p></div>
   </div></div>
 
-  <div class="help-section"><div class="help-head" onclick="togHelp(this)"><span class="hchv">▸</span> Datos y sincronización</div><div class="help-body">
-    <div class="help-item"><h4>☁ Auto-guardado + Sync</h4><p>Todo se guarda en localStorage + Supabase (2s debounce). Datos sincronizados entre dispositivos: artículos, proyectos, documentos, Kanban, PRISMA, settings.</p></div>
-    <div class="help-item"><h4>💾 Backup</h4><p>Sidebar → ⚙ → <b>"💾 Backup externo"</b> descarga JSON con todos los datos. <b>"📂 Restaurar"</b> importa el backup.</p></div>
-    <div class="help-item"><h4>📄 Importar artículo</h4><p>Sidebar → Artículos → <b>"+ Importar artículo (.json)"</b>. Sube un artículo procesado con /sila. Se guarda en Supabase y aparece en tu biblioteca.</p></div>
-    <div class="help-item"><h4>🔔 Notificaciones</h4><p>Badge en el sidebar. Se activan cuando alguien acepta tu invitación. Polling cada 60s.</p></div>
+  <div class="help-section"><div class="help-head" onclick="togHelp(this)"><span class="hchv">▸</span> Datos, respaldo y seguridad</div><div class="help-body">
+    <div class="help-item"><h4>☁ Auto-guardado</h4><p>Cada cambio se guarda en Supabase en tiempo real (2s debounce). Tus datos están en la nube, accesibles desde cualquier dispositivo.</p></div>
+    <div class="help-item"><h4>💾 Sistema de respaldo (3 niveles)</h4><p>
+    <b>Automático:</b> Cada 30 minutos, si hubo cambios, CRISOL guarda un backup completo en Supabase. No necesitas hacer nada — es silencioso.<br><br>
+    <b>Manual:</b> Sidebar → ⚙ → <b>"💾 Backup completo"</b> descarga un JSON con TODOS tus datos de Supabase (proyectos, documentos, diálogo socrático, alertas, artefactos, todo). Úsalo para tener una copia física en tu máquina.<br><br>
+    <b>Vía /sync:</b> Al ejecutar <span class="key">/sync</span> en Claude Code, además de sincronizar con Obsidian, se guarda un backup en <code>G:\Mi unidad\RESPALDOS\CRISOL\</code> con retención inteligente: último + 12 semanales + todos los mensuales (~100 MB/año).</p></div>
+    <div class="help-item"><h4>📂 Restaurar</h4><p>Si pierdes datos, sube el JSON de backup con <b>"📂 Restaurar"</b> en ⚙. CRISOL reconstruye todo: proyectos, documentos, gates, ramas, artefactos.</p></div>
+    <div class="help-item"><h4>🔐 Acceso por invitación</h4><p>CRISOL requiere código de invitación para registrarse. Los nuevos usuarios solicitan acceso con un formulario. Los administradores aprueban/rechazan desde ⚙ → 📨 Solicitudes de invitación.</p></div>
+    <div class="help-item"><h4>📄 Importar artículo</h4><p>Sidebar → Artículos → <b>"+ Importar artículo (.json)"</b>. Sube un artículo procesado con /sila.</p></div>
+    <div class="help-item"><h4>🔔 Notificaciones</h4><p>Badge en el sidebar. Se activan para invitaciones aceptadas y solicitudes de acceso pendientes (admin).</p></div>
   </div></div>
 
   <div class="help-section"><div class="help-head" onclick="togHelp(this)"><span class="hchv">▸</span> Skills para Claude Code (descargables)</div><div class="help-body">
