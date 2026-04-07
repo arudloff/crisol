@@ -56,26 +56,27 @@
   <!-- How it works -->
   <section class="lp-section lp-section-alt" id="lp-how">
     <h2 class="lp-section-title lp-anim">C&oacute;mo funciona</h2>
+    <p class="lp-anim" style="text-align:center;max-width:700px;margin:0 auto 30px;font-size:15px;color:var(--tx2);line-height:1.7;">CRISOL no es un formulario est&aacute;tico. Es un <strong style="color:var(--gold);">sistema de di&aacute;logo adaptativo</strong> donde cada respuesta tuya recalibra lo que la IA hace despu&eacute;s. Tus declaraciones alimentan a los agentes. Los hallazgos de los agentes personalizan tus pr&oacute;ximas preguntas. El ciclo converge hacia calidad genuina.</p>
     <div class="lp-blocks">
       <div class="lp-block lp-anim">
         <div class="lp-block-icon">&#128736;</div>
-        <h3>10 fases guiadas</h3>
-        <p>Desde la pregunta hasta la entrega, cada paso verificado</p>
+        <h3>10 fases con di&aacute;logo vivo</h3>
+        <p>No es un checklist &mdash; cada fase dialoga con las anteriores. Lo que declaras en Exploraci&oacute;n calibra c&oacute;mo te eval&uacute;a la Cr&iacute;tica. Lo que el diablo ataca informa al mentor.</p>
       </div>
       <div class="lp-block lp-anim">
         <div class="lp-block-icon">&#129504;</div>
-        <h3>Gates socr&aacute;ticos</h3>
-        <p>19 preguntas que te obligan a pensar, no solo a producir</p>
+        <h3>Di&aacute;logo socr&aacute;tico adaptativo</h3>
+        <p>Las preguntas evolucionan con tu proceso. En ronda 2, el gate sabe qu&eacute; dijiste en ronda 1, qu&eacute; encontr&oacute; el review, y qu&eacute; cambi&oacute;. Te pregunta sobre ESO, no preguntas gen&eacute;ricas.</p>
       </div>
       <div class="lp-block lp-anim">
         <div class="lp-block-icon">&#128101;</div>
-        <h3>4 agentes independientes</h3>
-        <p>Eval&uacute;an tu texto sin verse entre s&iacute;. Los cr&iacute;ticos nunca crean.</p>
+        <h3>4 agentes que aprenden de ti</h3>
+        <p>Los agentes leen tus respuestas socr&aacute;ticas para evaluar con precisi&oacute;n. Si declaraste que tu contribuci&oacute;n es X, el cr&iacute;tico verifica que el texto realmente demuestre X.</p>
       </div>
       <div class="lp-block lp-anim">
         <div class="lp-block-icon">&#128279;</div>
-        <h3>Trazabilidad total</h3>
-        <p>Cada decisi&oacute;n, cada cita, cada iteraci&oacute;n documentada</p>
+        <h3>Retroalimentaci&oacute;n en tiempo real</h3>
+        <p>Claude y CRISOL conversan v&iacute;a Supabase. Cuando Claude detecta una cita fabricada, CRISOL la bloquea instant&aacute;neamente. Cuando completas un gate, Claude ajusta su severidad.</p>
       </div>
     </div>
   </section>
@@ -144,8 +145,8 @@
       <div class="lp-anim" style="display:flex;gap:16px;align-items:flex-start;margin:16px 0;padding:16px;background:rgba(155,125,207,0.04);border:1px solid rgba(155,125,207,0.15);border-radius:10px;">
         <span style="font-size:28px;flex-shrink:0;">4</span>
         <div>
-          <div style="font-size:15px;font-weight:700;color:var(--purple);margin-bottom:4px;">Investiga con integridad verificable</div>
-          <p style="font-size:13px;color:var(--tx2);margin:0;">Cada fase tiene prompts copiables, gates socr&aacute;ticos obligatorios, y alertas autom&aacute;ticas. Tu comit&eacute; puede verificar cada paso del proceso.</p>
+          <div style="font-size:15px;font-weight:700;color:var(--purple);margin-bottom:4px;">Dialoga, itera, converge</div>
+          <p style="font-size:13px;color:var(--tx2);margin:0;">Cada fase te hace preguntas que evolucionan con tu proceso. Tus respuestas calibran a la IA. Los hallazgos de la IA personalizan tus preguntas. El resultado: calidad genuina con autor&iacute;a demostrable.</p>
         </div>
       </div>
     </div>
@@ -200,9 +201,14 @@
       Entrar
     </button>
     <p id="login-error" style="font-size:14px;color:var(--red);margin-top:10px;display:none;"></p>
+    <div id="invite-code-row" style="display:none;margin-top:10px;">
+      <input id="invite-code" type="text" placeholder="Código de invitación"
+        style="width:100%;padding:10px 16px;border-radius:8px;border:1px solid rgba(155,125,207,0.3);background:var(--bg2);color:var(--purple);font-family:'Inter',sans-serif;font-size:14px;text-align:center;outline:none;letter-spacing:2px;" autocomplete="off">
+      <p style="font-size:11px;color:var(--tx3);margin-top:4px;">Solicita tu código a un investigador activo</p>
+    </div>
     <p style="font-size:12px;color:var(--tx3);margin-top:20px;">
       <span onclick="toggleAuthMode()" style="color:var(--blue);cursor:pointer;text-decoration:underline;" id="auth-toggle">Crear cuenta</span>
-      <span style="margin:0 6px;">·</span>Para investigadores
+      <span style="margin:0 6px;">·</span>Acceso por invitación
     </p>
   </div>
 </div>

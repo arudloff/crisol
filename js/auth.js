@@ -44,7 +44,18 @@ export async function checkLogin() {
 // ============================================================
 // REGISTER
 // ============================================================
+// Invitation codes — add codes here to allow new registrations
+const VALID_INVITE_CODES = ['CRISOL-2026', 'TALCA-MGT', 'DR-RESEARCH'];
+
 async function signUp(email, pw) {
+  // Validate invitation code
+  const inviteCode = (document.getElementById('invite-code')?.value || '').trim().toUpperCase();
+  if (!VALID_INVITE_CODES.includes(inviteCode)) {
+    showAuthError('Código de invitación inválido. Solicita uno a un investigador activo.');
+    const codeInput = document.getElementById('invite-code');
+    if (codeInput) { codeInput.style.borderColor = 'var(--red)'; codeInput.focus(); }
+    return;
+  }
   if (pw.length < 6) { showAuthError('La contraseña debe tener al menos 6 caracteres'); return; }
 
   const btn = document.getElementById('login-btn');
@@ -84,12 +95,15 @@ export function toggleAuthMode() {
   const errEl = document.getElementById('login-error');
   if (errEl) errEl.style.display = 'none';
 
+  const inviteRow = document.getElementById('invite-code-row');
   if (state.authMode === 'register') {
     btn.textContent = 'Crear cuenta';
     if (toggle) toggle.textContent = 'Ya tengo cuenta';
+    if (inviteRow) inviteRow.style.display = 'block';
   } else {
     btn.textContent = 'Entrar';
     if (toggle) toggle.textContent = 'Crear cuenta';
+    if (inviteRow) inviteRow.style.display = 'none';
   }
 }
 window.toggleAuthMode = toggleAuthMode;
