@@ -1332,7 +1332,7 @@ function renderWizardTask(projId, phaseId, stepIdx, task, autoCheck, liveData) {
     h += `<div style="font-size:12px;font-weight:600;color:var(--gold);margin:6px 0 4px;">🤖 Prompts (click para copiar):</div>`;
     task.prompts.forEach(p => {
       const safeP = p.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">📋 ${p.length > 120 ? p.substring(0, 120) + '...' : p}</div>`;
+      h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">📋 ${p.length > 120 ? p.substring(0, 120) + '...' : p}</div>`;
     });
   }
   h += `</div>`;
@@ -3063,7 +3063,7 @@ function renderProjectDash(projId) {
     if (entry.prompt) {
       e += `<div style="margin-top:6px;padding:6px 10px;background:rgba(155,125,207,0.06);border:1px solid rgba(155,125,207,0.12);border-radius:6px;">`;
       e += `<div style="font-size:11px;color:var(--purple);font-weight:600;margin-bottom:3px;">🤖 Prompt usado</div>`;
-      e += `<div style="font-size:12px;color:var(--tx2);cursor:pointer;line-height:1.5;" onclick="navigator.clipboard.writeText(this.dataset.prompt);showToast('Prompt copiado','success')" data-prompt="${(entry.prompt || '').replace(/"/g, '&quot;')}" title="Click para copiar">${entry.prompt.length > 150 ? entry.prompt.substring(0, 150) + '...' : entry.prompt}</div>`;
+      e += `<div style="font-size:12px;color:var(--tx2);cursor:pointer;line-height:1.5;" onclick="navigator.clipboard.writeText(this.dataset.prompt);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${(entry.prompt || '').replace(/"/g, '&quot;')}" title="Click para copiar">${entry.prompt.length > 150 ? entry.prompt.substring(0, 150) + '...' : entry.prompt}</div>`;
       if (entry.promptResult) e += `<div style="font-size:12px;color:var(--tx3);margin-top:3px;">→ ${entry.promptResult}</div>`;
       e += `</div>`;
     }
@@ -3135,7 +3135,7 @@ function renderProjectDash(projId) {
       h += `<span class="logbook-remove" onclick="event.stopPropagation();removePromptLog('${proj.id}','${pl.id}')">✕</span>`;
       h += `<span class="logbook-date">${pl.fecha}</span>`;
       if (linkedDoc) h += `<span style="font-size:12px;color:var(--purple);margin-left:8px;">📄 ${linkedDoc.title}</span>`;
-      h += `<div style="font-size:13px;color:var(--tx2);line-height:1.6;margin-top:6px;padding:6px 10px;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);showToast('Prompt copiado','success')" data-prompt="${pl.prompt.replace(/"/g, '&quot;')}" title="Click para copiar">📋 ${pl.prompt.length > 200 ? pl.prompt.substring(0, 200) + '...' : pl.prompt}</div>`;
+      h += `<div style="font-size:13px;color:var(--tx2);line-height:1.6;margin-top:6px;padding:6px 10px;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${pl.prompt.replace(/"/g, '&quot;')}" title="Click para copiar">📋 ${pl.prompt.length > 200 ? pl.prompt.substring(0, 200) + '...' : pl.prompt}</div>`;
       if (pl.resultado) h += `<div style="font-size:13px;color:var(--tx3);margin-top:4px;">→ ${pl.resultado}</div>`;
       h += `</div>`;
     });
@@ -3148,7 +3148,7 @@ function renderProjectDash(projId) {
         h += `<span class="logbook-remove" onclick="event.stopPropagation();removePromptLog('${proj.id}','${pl.id}')">✕</span>`;
         h += `<span class="logbook-date">${pl.fecha}</span>`;
         if (linkedDoc) h += `<span style="font-size:12px;color:var(--purple);margin-left:8px;">📄 ${linkedDoc.title}</span>`;
-        h += `<div style="font-size:13px;color:var(--tx2);line-height:1.6;margin-top:6px;padding:6px 10px;background:var(--bg3);border-radius:6px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.dataset.prompt);showToast('Prompt copiado','success')" data-prompt="${pl.prompt.replace(/"/g, '&quot;')}" title="Click para copiar">📋 ${pl.prompt.length > 200 ? pl.prompt.substring(0, 200) + '...' : pl.prompt}</div>`;
+        h += `<div style="font-size:13px;color:var(--tx2);line-height:1.6;margin-top:6px;padding:6px 10px;background:var(--bg3);border-radius:6px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.dataset.prompt);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${pl.prompt.replace(/"/g, '&quot;')}" title="Click para copiar">📋 ${pl.prompt.length > 200 ? pl.prompt.substring(0, 200) + '...' : pl.prompt}</div>`;
         if (pl.resultado) h += `<div style="font-size:13px;color:var(--tx3);margin-top:4px;">→ ${pl.resultado}</div>`;
         h += `</div>`;
       });
@@ -3590,7 +3590,7 @@ function renderProjectDash(projId) {
               const enriched = prevContext ? p + '\n\n--- CONTEXTO DE PASOS ANTERIORES ---\n' + prevContext : p;
               const safeP = enriched.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
               const displayP = p.length > 120 ? p.substring(0, 120) + '...' : p;
-              h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);showToast('Prompt copiado'+(${prevOutputs.length}>0?' (con contexto)':''),'success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='transparent'">📋 ${displayP}</div>`;
+              h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);window.showToast&&window.showToast('Prompt copiado'+(${prevOutputs.length}>0?' (con contexto)':''),'success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='transparent'">📋 ${displayP}</div>`;
             });
           }
 
@@ -3722,7 +3722,7 @@ function renderProjectDash(projId) {
                 const enriched = (task.needsCd ? cdPrefix : '') + p + (prevContext ? '\n\n--- CONTEXTO ---\n' + prevContext : '');
                 const safeP = enriched.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 const displayP = p.length > 120 ? p.substring(0, 120) + '...' : p;
-                h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='#2dd4bf'" onmouseout="this.style.borderColor='transparent'">📋 ${displayP}</div>`;
+                h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='#2dd4bf'" onmouseout="this.style.borderColor='transparent'">📋 ${displayP}</div>`;
               });
             }
             // Output field
@@ -3893,7 +3893,7 @@ function renderProjectDash(projId) {
         h += `<div style="font-size:13px;font-weight:600;color:var(--gold);margin:6px 0 4px;">🤖 Prompts (click para copiar):</div>`;
         prompts.forEach(p => {
           const safeP = p.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-          h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">📋 ${p.length > 120 ? p.substring(0, 120) + '...' : p}</div>`;
+          h += `<div style="font-size:13px;color:var(--tx2);padding:6px 10px;margin:3px 0;background:var(--bg3);border-radius:6px;cursor:pointer;border:1px solid transparent;transition:border-color 0.15s;" onclick="navigator.clipboard.writeText(this.dataset.prompt);this.style.borderColor='var(--green)';setTimeout(()=>this.style.borderColor='transparent',1500);window.showToast&&window.showToast('Prompt copiado','success')" data-prompt="${safeP}" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">📋 ${p.length > 120 ? p.substring(0, 120) + '...' : p}</div>`;
         });
       }
       h += `</div>`;

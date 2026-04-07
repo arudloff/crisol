@@ -455,7 +455,7 @@ export async function createFullBackup() {
     // Collect ALL data from Supabase
     const [projects, docs, socratic, alerts, context, userdata] = await Promise.all([
       state.sdb.from('projects').select('*').then(r => r.data || []),
-      state.sdb.from('documents').select('*').then(r => r.data || []),
+      state.sdb.from('sila_docs').select('*').then(r => r.data || []),
       state.sdb.from('dr_socratic_log').select('*').then(r => r.data || []),
       state.sdb.from('dr_alerts').select('*').then(r => r.data || []),
       state.sdb.from('dr_wizard_context').select('*').then(r => r.data || []),
@@ -557,7 +557,7 @@ export async function restoreFromBackup(backupJson) {
     // Restore documents
     if (d.documents && d.documents.length > 0) {
       for (const doc of d.documents) {
-        await state.sdb.from('documents').upsert(doc, { onConflict: 'id' });
+        await state.sdb.from('sila_docs').upsert(doc, { onConflict: 'id' });
       }
     }
     // Restore socratic log

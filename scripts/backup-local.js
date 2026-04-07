@@ -4,18 +4,39 @@
 // Downloads latest data from Supabase and saves to local folder
 //
 // Usage:  node scripts/backup-local.js
+// Setup:  Create scripts/.env with your service_role key:
+//         SUPABASE_SERVICE_KEY=eyJ...
 // Schedule: Windows Task Scheduler every 30 min or daily
 // ============================================================
 
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const SUPABASE_URL = 'https://cupykpcsxjihnzwyflbm.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1cHlrcGNzeGppaG56d3lmbGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTU1MjMsImV4cCI6MjA4OTE3MTUyM30.GFEW-prBl39zRGbqIhOfqKoWcVLICEIXXQvPkL9UaOU';
-
 const BACKUP_DIR = 'G:/Mi unidad/RESPALDOS/CRISOL/weekly';
-const MAX_LOCAL_BACKUPS = 30; // keep last 30 files
+const MAX_LOCAL_BACKUPS = 30;
+
+// Load service_role key from .env file (bypasses RLS)
+function loadServiceKey() {
+  const envPath = path.join(__dirname, '.env');
+  if (!fs.existsSync(envPath)) {
+    console.error('ERROR: scripts/.env no encontrado.');
+    console.error('Crea el archivo con: SUPABASE_SERVICE_KEY=eyJ...');
+    console.error('La key está en Supabase Dashboard → Settings → API → service_role');
+    process.exit(1);
+  }
+  const content = fs.readFileSync(envPath, 'utf8');
+  const match = content.match(/SUPABASE_SERVICE_KEY=(.+)/);
+  if (!match) {
+    console.error('ERROR: SUPABASE_SERVICE_KEY no encontrada en scripts/.env');
+    process.exit(1);
+  }
+  return match[1].trim();
+}
+
+const SUPABASE_KEY = loadServiceKey();
 
 const TABLES = [
   'projects',
@@ -32,11 +53,12 @@ const TABLES = [
   'profiles',
   'invite_requests',
   'project_members',
-  'article_annotations'
+  'article_annotations',
+  'admins'
 ];
 
 function fetchTable(table) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const url = new URL(`/rest/v1/${table}?select=*`, SUPABASE_URL);
     const options = {
       headers: {
@@ -50,7 +72,12 @@ function fetchTable(table) {
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try {
-          resolve({ table, data: JSON.parse(data), status: res.statusCode });
+          const parsed = JSON.parse(data);
+          if (res.statusCode !== 200) {
+            resolve({ table, data: [], status: res.statusCode, error: parsed.message || `HTTP ${res.statusCode}` });
+          } else {
+            resolve({ table, data: parsed, status: res.statusCode });
+          }
         } catch (e) {
           resolve({ table, data: [], status: res.statusCode, error: e.message });
         }
@@ -63,9 +90,8 @@ function fetchTable(table) {
 
 async function main() {
   console.log('CRISOL Backup — ' + new Date().toLocaleString());
-  console.log('Downloading from Supabase...');
+  console.log('Downloading from Supabase (service_role)...');
 
-  // Fetch all tables in parallel
   const results = await Promise.all(TABLES.map(fetchTable));
 
   const backup = {
@@ -76,10 +102,12 @@ async function main() {
   };
 
   let totalRows = 0;
+  let errors = 0;
   results.forEach(r => {
     if (r.error) {
       console.log(`  ⚠ ${r.table}: ${r.error}`);
       backup.tables[r.table] = [];
+      errors++;
     } else {
       const count = Array.isArray(r.data) ? r.data.length : 0;
       console.log(`  ✓ ${r.table}: ${count} rows`);
@@ -88,9 +116,12 @@ async function main() {
     }
   });
 
+  if (totalRows === 0) {
+    console.log('\n⚠ No se obtuvieron datos. Verifica la service_role key.');
+    return;
+  }
+
   // Check if data changed since last backup
-  const crypto = require('crypto');
-  // Exclude dr_backups from hash (its timestamps change every run)
   const hashTables = { ...backup.tables };
   delete hashTables.dr_backups;
   const dataStr = JSON.stringify(hashTables);
@@ -103,23 +134,23 @@ async function main() {
     return;
   }
 
+  // Ensure directory exists
+  if (!fs.existsSync(BACKUP_DIR)) {
+    fs.mkdirSync(BACKUP_DIR, { recursive: true });
+  }
+
   // Save to file
   const now = new Date();
   const dateStr = now.toISOString().replace(/[:.]/g, '-').substring(0, 19);
   const filename = `CRISOL_backup_${dateStr}.json`;
   const filepath = path.join(BACKUP_DIR, filename);
 
-  // Ensure directory exists
-  if (!fs.existsSync(BACKUP_DIR)) {
-    fs.mkdirSync(BACKUP_DIR, { recursive: true });
-  }
-
   fs.writeFileSync(filepath, JSON.stringify(backup, null, 2), 'utf8');
   fs.writeFileSync(hashFile, currentHash, 'utf8');
   const sizeMB = (fs.statSync(filepath).size / 1024 / 1024).toFixed(2);
-  console.log(`\n💾 Saved: ${filename} (${sizeMB} MB, ${totalRows} rows)`);
+  console.log(`\n💾 Saved: ${filename} (${sizeMB} MB, ${totalRows} rows${errors > 0 ? `, ${errors} errors` : ''})`);
 
-  // Cleanup: remove old backups beyond MAX_LOCAL_BACKUPS
+  // Cleanup old backups
   const files = fs.readdirSync(BACKUP_DIR)
     .filter(f => f.startsWith('CRISOL_backup_') && f.endsWith('.json'))
     .sort()
