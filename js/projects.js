@@ -2044,12 +2044,13 @@ function setBranchStatus(projId, branchId, newStatus) {
 
   const currentStatus = branch.status || 'active';
 
-  // Validate transitions
+  // Validate transitions (includes legacy 'archived' state)
   const allowed = {
     'active':    ['paused', 'discarded', 'completed'],
     'paused':    ['active', 'discarded'],
     'discarded': ['paused'],
-    'completed': ['active']
+    'completed': ['active'],
+    'archived':  ['active', 'paused']
   };
   if (allowed[currentStatus] && !allowed[currentStatus].includes(newStatus)) {
     showToast('No se puede pasar de ' + currentStatus + ' a ' + newStatus, 'error');
@@ -3268,9 +3269,9 @@ function renderProjectDash(projId) {
       function renderBranchTree(branch, depth) {
         const isActive = branch.id === activeBranch;
         const indent = depth * 20;
-        const statusColors = { active: 'var(--green)', paused: 'var(--gold)', discarded: 'var(--red)', completed: 'var(--blue)' };
-        const statusLabels = { active: 'en curso', paused: 'en espera', discarded: 'descartada', completed: 'completada' };
-        const statusIcons = { active: '🔵', paused: '⏸', discarded: '✗', completed: '✅' };
+        const statusColors = { active: 'var(--green)', paused: 'var(--gold)', discarded: 'var(--red)', completed: 'var(--blue)', archived: 'var(--tx3)' };
+        const statusLabels = { active: 'en curso', paused: 'en espera', discarded: 'descartada', completed: 'completada', archived: 'archivada' };
+        const statusIcons = { active: '🔵', paused: '⏸', discarded: '✗', completed: '✅', archived: '📦' };
         const branchData = proj.drBranchData?.[branch.id];
         const branchFases = branchData?.drFases || (isActive ? proj.drFases : []);
         const activePhase = branchFases.find(f => f.estado === 'en_progreso');
@@ -3320,6 +3321,9 @@ function renderProjectDash(projId) {
             bh += `<option value="paused">⏸ Reactivar</option>`;
           } else if (st === 'completed') {
             bh += `<option value="active">🔵 Reabrir</option>`;
+          } else if (st === 'archived') {
+            bh += `<option value="active">🔵 Reactivar</option>`;
+            bh += `<option value="paused">⏸ En espera</option>`;
           }
           if (!hasChildBranches && branch.id !== 'main') bh += `<option value="delete">🗑 Eliminar</option>`;
           bh += `</select>`;
