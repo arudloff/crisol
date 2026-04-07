@@ -1,6 +1,9 @@
 -- ============================================================
 -- CRISOL — Email notifications via pg_net + Resend
 -- Ejecutar en Supabase Dashboard → SQL Editor
+-- ⚠️ LEGACY: La API key de Resend está hardcodeada en estos triggers.
+-- Para producción, migrar la lógica al Edge Function notify-invite
+-- que usa Deno.env.get('RESEND_API_KEY') con secrets de Supabase.
 -- ============================================================
 
 -- Enable pg_net extension (for HTTP requests from PostgreSQL)
