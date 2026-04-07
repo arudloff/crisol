@@ -73,36 +73,82 @@ async function checkInviteRequests() {
   } catch (e) { console.error('Invite check error:', e); }
 }
 
-window.showInviteRequests = function() {
-  if (!state._pendingInvites || state._pendingInvites.length === 0) {
-    showToast('No hay solicitudes pendientes', 'info');
-    return;
+window.showInviteRequests = async function() {
+  // Load all requests (pending + history)
+  let allRequests = [];
+  if (state.sdb) {
+    try {
+      const { data } = await state.sdb.from('invite_requests')
+        .select('*').order('created_at', { ascending: false });
+      if (data) allRequests = data;
+    } catch (e) {}
   }
+
+  const pending = allRequests.filter(r => r.status === 'pending');
+  const approved = allRequests.filter(r => r.status === 'approved');
+  const rejected = allRequests.filter(r => r.status === 'rejected');
+  state._pendingInvites = pending;
+
   const overlay = document.createElement('div');
   overlay.className = 'proj-modal-overlay';
   overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
 
   let html = '<div class="logbook-modal" style="max-width:600px;max-height:80vh;overflow-y:auto;">';
-  html += '<h3 style="font-size:17px;">📨 Solicitudes de invitación (' + state._pendingInvites.length + ')</h3>';
+  html += '<h3 style="font-size:17px;">📨 Solicitudes de invitación</h3>';
 
-  state._pendingInvites.forEach((req, i) => {
-    const code = VALID_INVITE_CODES[0];
-    const date = new Date(req.created_at).toLocaleDateString();
-    html += '<div style="padding:12px;margin:8px 0;background:var(--bg2);border:1px solid rgba(155,125,207,0.15);border-radius:8px;">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
-    html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + (req.name || 'Sin nombre') + '</div>';
-    html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
-    html += '</div>';
-    html += '<div style="font-size:13px;color:var(--tx2);margin:4px 0;">' + (req.email || '') + '</div>';
-    html += '<div style="font-size:12px;color:var(--tx3);">' + (req.institution || '') + ' · ' + (req.role || '') + '</div>';
-    if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + req.reason + '"</div>';
-    html += '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">';
-    html += '<div style="flex:1;padding:6px 10px;background:var(--bg);border:1px solid rgba(155,125,207,0.3);border-radius:6px;font-family:monospace;font-size:14px;color:var(--purple);letter-spacing:2px;text-align:center;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + code + '\\nPara: ' + (req.name || '') + '\\nEmail: ' + (req.email || '') + '\');this.style.borderColor=\'var(--green)\';showToast(\'Código copiado al portapapeles\',\'success\')" title="Click para copiar código + datos">' + code + ' 📋</div>';
-    html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Aprobar</button>';
-    html += '<button onclick="rejectInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--bg3);color:var(--tx3);border:none;border-radius:6px;font-size:12px;cursor:pointer;">Rechazar</button>';
-    html += '</div>';
-    html += '</div>';
-  });
+  // Pending section
+  if (pending.length > 0) {
+    html += '<div style="font-size:13px;font-weight:600;color:var(--gold);margin:12px 0 6px;">Pendientes (' + pending.length + ')</div>';
+    pending.forEach((req, i) => {
+      const code = VALID_INVITE_CODES[0];
+      const date = new Date(req.created_at).toLocaleDateString();
+      html += '<div style="padding:12px;margin:6px 0;background:var(--bg2);border:1px solid rgba(232,168,56,0.2);border-radius:8px;">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+      html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + (req.name || 'Sin nombre') + '</div>';
+      html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
+      html += '</div>';
+      html += '<div style="font-size:13px;color:var(--tx2);margin:4px 0;">' + (req.email || '') + '</div>';
+      html += '<div style="font-size:12px;color:var(--tx3);">' + (req.institution || '') + ' · ' + (req.role || '') + '</div>';
+      if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + req.reason + '"</div>';
+      html += '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">';
+      html += '<div style="flex:1;padding:6px 10px;background:var(--bg);border:1px solid rgba(155,125,207,0.3);border-radius:6px;font-family:monospace;font-size:14px;color:var(--purple);letter-spacing:2px;text-align:center;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + code + '\\nPara: ' + (req.name || '') + '\\nEmail: ' + (req.email || '') + '\');this.style.borderColor=\'var(--green)\';showToast(\'Código copiado\',\'success\')" title="Click para copiar código + datos">' + code + ' 📋</div>';
+      html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Aprobar</button>';
+      html += '<button onclick="rejectInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--bg3);color:var(--tx3);border:none;border-radius:6px;font-size:12px;cursor:pointer;">Rechazar</button>';
+      html += '</div>';
+      html += '</div>';
+    });
+  } else {
+    html += '<div style="font-size:13px;color:var(--tx3);padding:12px 0;">Sin solicitudes pendientes</div>';
+  }
+
+  // History section (approved + rejected)
+  if (approved.length > 0 || rejected.length > 0) {
+    html += '<details style="margin-top:16px;"><summary style="font-size:13px;font-weight:600;color:var(--tx3);cursor:pointer;">Historial (' + (approved.length + rejected.length) + ')</summary>';
+
+    if (approved.length > 0) {
+      html += '<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 4px;">✅ Aprobadas (' + approved.length + ')</div>';
+      approved.forEach(req => {
+        const date = new Date(req.created_at).toLocaleDateString();
+        html += '<div style="padding:8px 12px;margin:3px 0;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green);display:flex;justify-content:space-between;align-items:center;">';
+        html += '<div><span style="font-size:13px;color:var(--tx);">' + (req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + (req.email || '') + '</span></div>';
+        html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
+        html += '</div>';
+      });
+    }
+
+    if (rejected.length > 0) {
+      html += '<div style="font-size:12px;font-weight:600;color:var(--red);margin:10px 0 4px;">✗ Rechazadas (' + rejected.length + ')</div>';
+      rejected.forEach(req => {
+        const date = new Date(req.created_at).toLocaleDateString();
+        html += '<div style="padding:8px 12px;margin:3px 0;background:var(--bg2);border-radius:6px;border-left:3px solid var(--red);opacity:0.6;display:flex;justify-content:space-between;align-items:center;">';
+        html += '<div><span style="font-size:13px;color:var(--tx);">' + (req.name || '') + '</span> <span style="font-size:12px;color:var(--tx3);">' + (req.email || '') + '</span></div>';
+        html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
+        html += '</div>';
+      });
+    }
+
+    html += '</details>';
+  }
 
   html += '<div style="margin-top:12px;text-align:right;"><button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="background:var(--bg3);color:var(--tx2);border:none;border-radius:6px;padding:8px 16px;cursor:pointer;">Cerrar</button></div>';
   html += '</div>';
