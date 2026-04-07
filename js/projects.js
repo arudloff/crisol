@@ -3128,18 +3128,19 @@ function renderProjectDash(projId) {
   h += `<div id="proj-team-dashboard"></div>`;
   loadTeamDashboard(projId);
 
-  // === WORKFLOW: Barra de fases (SIEMPRE VISIBLE) ===
+  // === WORKFLOW: Mode selector + standard phases ===
   if (!proj.fases) { proj.fases = JSON.parse(JSON.stringify(DEFAULT_FASES)); saveProjects(projects); }
-  h += `<div style="margin:16px 0 8px;"><div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:8px;">🔄 Workflow del proyecto</div>`;
-  h += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">`;
-  h += `<span style="font-size:11px;color:var(--tx3);">Click en cada fase para cambiar estado: ○ → 🔵 → ✅ → ⚪</span>`;
   const wfm = proj.workflowMode || (proj.drMode ? 'dr' : 'default');
+  h += `<div style="margin:16px 0 8px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">`;
+  h += `<div style="font-size:15px;font-weight:700;color:var(--tx);">🔄 Workflow del proyecto</div>`;
   h += `<div style="display:flex;gap:4px;">`;
   h += `<button class="btn bo" onclick="setWorkflowMode('${proj.id}','dr')" style="font-size:11px;padding:3px 8px;border-color:${wfm==='dr'?'var(--purple)':'rgba(155,125,207,0.3)'};color:${wfm==='dr'?'var(--purple)':'rgba(155,125,207,0.5)'};${wfm==='dr'?'background:rgba(155,125,207,0.08);':''}" title="Tesis, ensayos teóricos, español">🧬 /dr</button>`;
   h += `<button class="btn bo" onclick="setWorkflowMode('${proj.id}','clo')" style="font-size:11px;padding:3px 8px;border-color:${wfm==='clo'?'#2dd4bf':'rgba(45,212,191,0.3)'};color:${wfm==='clo'?'#2dd4bf':'rgba(45,212,191,0.5)'};${wfm==='clo'?'background:rgba(45,212,191,0.08);':''}" title="Paper empírico, R, LaTeX, inglés">🔬 clo-author</button>`;
   h += `<button class="btn bo" onclick="setWorkflowMode('${proj.id}','mixed')" style="font-size:11px;padding:3px 8px;border-color:${wfm==='mixed'?'var(--gold)':'rgba(232,168,56,0.3)'};color:${wfm==='mixed'?'var(--gold)':'rgba(232,168,56,0.5)'};${wfm==='mixed'?'background:rgba(232,168,56,0.08);':''}" title="Marco teórico + validación empírica">🔗 Mixto</button>`;
-  h += `</div>`;
-  h += `</div>`;
+  h += `</div></div>`;
+
+  // Standard phases — hidden when any specialized mode is active
+  if (wfm === 'default') {
   h += `<div class="proj-phases">`;
   proj.fases.forEach((f, fi) => {
     const icon = f.estado === 'completado' ? '✅' : f.estado === 'en_progreso' ? '🔵' : f.estado === 'no_aplica' ? '⚪' : '○';
@@ -3170,7 +3171,6 @@ function renderProjectDash(projId) {
     }
     h += `</div>`;
   }
-  h += `</div>`; // close workflow section
 
   // === WIZARD GUIDE — contextual per active phase (ALWAYS VISIBLE) ===
   if (activePhase) {
@@ -3253,6 +3253,8 @@ function renderProjectDash(projId) {
 
     h += `</div>`;
   }
+  } // end if (wfm === 'default') — standard workflow hidden when /dr, clo, or mixed active
+  h += `</div>`; // close workflow section
 
   // === BRANCHES — Ramas argumentativas ===
   {
