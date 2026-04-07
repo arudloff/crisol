@@ -4464,11 +4464,29 @@ function showInviteModal(projId) {
   html += `</select>`;
   html += `<button id="invite-gen-btn" onclick="generateInviteLink('${projId}')" class="btn bo" style="white-space:nowrap;">Generar link</button>`;
   html += `</div>`;
-  html += `<div id="invite-link-area" style="margin-top:8px;display:none;">`;
-  html += `<div style="display:flex;gap:6px;">`;
-  html += `<input id="invite-link" readonly style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--green);font-family:monospace;font-size:11px;">`;
-  html += `<button onclick="navigator.clipboard.writeText(document.getElementById('invite-link').value);this.textContent='Copiado!';setTimeout(()=>this.textContent='Copiar',2000)" class="btn bg" style="white-space:nowrap;">Copiar</button>`;
-  html += `</div><p style="font-size:11px;color:var(--tx3);margin-top:4px;">Expira en 7 días. Funciona para usuarios nuevos y existentes.</p>`;
+  html += `<div id="invite-link-area" style="margin-top:10px;display:none;">`;
+  html += `<div style="padding:12px;background:rgba(93,187,138,0.06);border:1px solid rgba(93,187,138,0.2);border-radius:8px;">`;
+  html += `<div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:10px;">✅ Link generado — completa estos pasos:</div>`;
+  // Step 1: Google Drive
+  html += `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding:8px;background:var(--bg2);border-radius:6px;">`;
+  html += `<input type="checkbox" id="invite-check-drive" style="margin-top:3px;accent-color:var(--green);">`;
+  html += `<div style="flex:1;">`;
+  html += `<div style="font-size:13px;color:var(--tx);font-weight:600;">Compartir carpeta de fuentes en Google Drive</div>`;
+  html += `<div style="font-size:12px;color:var(--tx3);margin-top:2px;">Comparte la carpeta de PDFs y documentos del proyecto con el invitado en modo <b>lector</b>.</div>`;
+  html += `<a href="https://drive.google.com" target="_blank" style="font-size:12px;color:var(--blue);text-decoration:underline;margin-top:4px;display:inline-block;">Abrir Google Drive →</a>`;
+  html += `</div></div>`;
+  // Step 2: Copy link
+  html += `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--bg2);border-radius:6px;">`;
+  html += `<input type="checkbox" id="invite-check-link" style="margin-top:3px;accent-color:var(--green);">`;
+  html += `<div style="flex:1;">`;
+  html += `<div style="font-size:13px;color:var(--tx);font-weight:600;">Copiar y enviar el link de invitación</div>`;
+  html += `<div style="display:flex;gap:6px;margin-top:6px;">`;
+  html += `<input id="invite-link" readonly style="flex:1;padding:6px 8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--green);font-family:monospace;font-size:11px;">`;
+  html += `<button onclick="navigator.clipboard.writeText(document.getElementById('invite-link').value);this.textContent='✓ Copiado';document.getElementById('invite-check-link').checked=true;setTimeout(()=>this.textContent='Copiar',2000)" class="btn bg" style="white-space:nowrap;font-size:12px;">Copiar</button>`;
+  html += `</div>`;
+  html += `<div style="font-size:11px;color:var(--tx3);margin-top:4px;">Expira en 7 días. Funciona para usuarios nuevos y existentes.</div>`;
+  html += `</div></div>`;
+  html += `</div>`;
   html += `</div></div>`;
 
   html += `<div class="proj-modal-actions" style="margin-top:14px;">`;
@@ -4528,7 +4546,7 @@ async function addMemberByEmail(projId) {
 
     if (insertErr) throw insertErr;
 
-    showInviteMsg(`${profile.display_name || email} agregado como ${role}`, 'var(--green)');
+    showInviteMsg(`✅ ${profile.display_name || email} agregado como ${role}. Recuerda compartir la carpeta de Google Drive con ${email} en modo lector.`, 'var(--green)');
     btn.textContent = 'Agregar'; btn.disabled = false;
     document.getElementById('invite-email').value = '';
 
