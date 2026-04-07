@@ -1242,7 +1242,7 @@ export function renderAyuda() {
 
   <div class="help-section"><div class="help-head" onclick="togHelp(this)"><span class="hchv">▸</span> Proyectos y colaboración</div><div class="help-body">
     <div class="help-item"><h4>📁 Crear proyecto</h4><p>Sidebar → <b>"+ Nuevo proyecto"</b> → nombre, descripción, deadline, carpeta Drive. Agregar artículos y documentos desde el dashboard del proyecto.</p></div>
-    <div class="help-item"><h4>🔄 Workflow de 9 fases (estándar)</h4><p>Ideación → Fundamentación → Diseño → Escritura → Revisión → Submission → Peer Review → Respuesta → Publicación. Click para cambiar estado.</p></div>
+    <div class="help-item"><h4>🔄 Workflow</h4><p>Selecciona un modo de producción (🧬 /dr, 🔬 clo-author, o 🔗 Mixto) desde los botones en la cabecera del workflow. El modo activo reemplaza las fases estándar con un wizard especializado. Si no seleccionas ningún modo, se muestran las 9 fases genéricas (Ideación → Publicación).</p></div>
     <div class="help-item"><h4>🧬🔬🔗 Tres modos de producción doctoral</h4><p>En la barra de workflow, tres botones activan modos especializados:<br><br>
     <b>🧬 /dr</b> — Tesis y ensayos teóricos en español. 10 fases: 🔭 Exploración → 📖 Lectura → ✍ Escritura → 🔍 Crítica → 🧬 Humanización → 📎 Verificación → 🧠 Profundización → 💎 Impacto → ⚖ Benchmarking → 🚀 Entrega. Incluye 4 agentes en review, 30 principios de escritura, mentor socrático, abogado del diablo, evaluación de impacto con 4 agentes antagónicos, y benchmarking contra publicaciones ancla.<br><br>
     <b>🔬 clo-author</b> — Papers empíricos con R, LaTeX, inglés. 7 fases: Descubrimiento → Estrategia → Análisis → Escritura → Peer Review simulado → R&R → Submission. Basado en clo-author v3.1.1 (16 agentes, worker-critic pairs).<br><br>
@@ -1258,12 +1258,12 @@ export function renderAyuda() {
     Los gates son personales — cada investigador los pasa independientemente.</p></div>
     <div class="help-item"><h4>🌿 Ramas argumentativas</h4><p>Cuando emerge un replanteamiento, en vez de reabrir una fase (destruye trazabilidad), puedes <b>bifurcar el proyecto</b>:<br><br>
     Click <b>🌿 Bifurcar</b> en el wizard → nombra la rama → se crea una copia desde la fase actual.<br><br>
-    La rama hereda todo el trabajo previo pero permite explorar un argumento alternativo sin afectar la línea principal. Puedes:<br>
-    - Tener múltiples ramas activas simultáneamente<br>
-    - Pausar o archivar ramas descartadas<br>
-    - Comparar ramas (scores, argumentos)<br>
-    - El portafolio incluye TODAS las ramas como evidencia de exploración<br><br>
-    Para el comité: demuestra que exploraste alternativas, no que seguiste la primera idea ciegamente.</p></div>
+    La rama hereda todo el trabajo previo pero permite explorar un argumento alternativo sin afectar la línea principal.<br><br>
+    <b>4 estados:</b> 🔵 En curso · ⏸ En espera · ✗ Descartada · ✅ Completada<br>
+    <b>📌 Notas:</b> Agrega observaciones a cada rama — documenta por qué bifurcaste, qué descubriste, por qué descartaste.<br>
+    <b>🧊 Congelar:</b> Crea un snapshot inmutable antes de presentar al comité. La rama sigue editable, el snapshot queda como registro permanente.<br>
+    <b>Eliminar:</b> Solo ramas sin sub-ramas. Main nunca se elimina.<br><br>
+    El portafolio incluye TODAS las ramas (activas, descartadas, completadas) como evidencia de exploración intelectual genuina.</p></div>
     <div class="help-item"><h4>📎 Artefactos del proceso</h4><p>Cada fase produce artefactos (borradores, scores, fichas, decisiones). La sección <b>"📎 Artefactos"</b> los registra con:<br><br>
     <b>11 tags transversales</b> en 3 categorías:<br>
     Sustancia: 📜 Argumento · 🔗 Síntesis · 📊 Evidencia · 🧭 Diseño<br>
