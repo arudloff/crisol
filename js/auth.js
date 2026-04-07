@@ -103,9 +103,16 @@ async function enterApp() {
   // Load profile from Supabase
   const profileComplete = await checkProfileComplete();
 
+  // Hide landing page if still visible
+  const landingEl = document.getElementById('landing-page');
+  if (landingEl) landingEl.style.display = 'none';
+
   if (profileComplete) {
     document.getElementById('profile-screen').style.display = 'none';
     document.getElementById('main-app').style.display = 'grid';
+    // Show quick capture button after login
+    const qcBtn = document.getElementById('qc-btn');
+    if (qcBtn) qcBtn.style.display = 'flex';
 
     // Check for pending invitation in URL (?invite=TOKEN)
     try {
@@ -180,6 +187,9 @@ export async function saveProfile() {
   // Hide profile screen, show main app
   document.getElementById('profile-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'grid';
+  // Show quick capture button
+  const qcBtn = document.getElementById('qc-btn');
+  if (qcBtn) qcBtn.style.display = 'flex';
 }
 window.saveProfile = saveProfile;
 
@@ -195,6 +205,12 @@ export async function logout() {
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('profile-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
+  // Hide quick capture and show landing on logout
+  const qcBtn = document.getElementById('qc-btn');
+  if (qcBtn) qcBtn.style.display = 'none';
+  const landingEl = document.getElementById('landing-page');
+  if (landingEl) landingEl.style.display = '';
+  document.getElementById('login-screen').style.display = 'none';
   document.getElementById('login-email').value = '';
   document.getElementById('login-pw').value = '';
   document.getElementById('login-error').style.display = 'none';
