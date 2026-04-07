@@ -1989,17 +1989,46 @@ function switchBranch(projId, branchId) {
   }
 }
 
-function setBranchStatus(projId, branchId, status) {
+function setBranchStatus(projId, branchId, newStatus) {
   const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
   const branch = (proj.drBranches || []).find(b => b.id === branchId);
   if (!branch) return;
-  if (branchId === 'main') { showToast('No se puede modificar la rama principal', 'error'); return; }
-  branch.status = status;
+
+  const currentStatus = branch.status || 'active';
+
+  // Validate transitions
+  const allowed = {
+    'active':    ['paused', 'discarded', 'completed'],
+    'paused':    ['active', 'discarded'],
+    'discarded': ['paused'],
+    'completed': ['active']
+  };
+  if (allowed[currentStatus] && !allowed[currentStatus].includes(newStatus)) {
+    showToast('No se puede pasar de ' + currentStatus + ' a ' + newStatus, 'error');
+    return;
+  }
+
+  // Main can't be discarded
+  if (branchId === 'main' && newStatus === 'discarded') {
+    showToast('La rama principal no se puede descartar', 'error');
+    return;
+  }
+
+  branch.status = newStatus;
+
+  // Add automatic note on status change
+  if (!branch.notes) branch.notes = [];
+  const statusLabels = { active: 'En curso', paused: 'En espera', discarded: 'Descartada', completed: 'Completada' };
+  branch.notes.push({
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toTimeString().substring(0, 5),
+    text: '→ Estado cambió a: ' + (statusLabels[newStatus] || newStatus)
+  });
+
   proj.updated = new Date().toISOString();
   saveProjects(projects);
   renderProjectDash(projId);
-  const labels = { active: 'activada', paused: 'pausada', archived: 'archivada' };
-  showToast('🌿 Rama ' + (labels[status] || status) + ': ' + branch.name, 'success');
+  showToast('🌿 Rama ' + (statusLabels[newStatus] || newStatus) + ': ' + branch.name, 'success');
 }
 
 function addBranchNote(projId, branchId) {
@@ -3191,8 +3220,9 @@ function renderProjectDash(projId) {
       function renderBranchTree(branch, depth) {
         const isActive = branch.id === activeBranch;
         const indent = depth * 20;
-        const statusColors = { active: 'var(--green)', paused: 'var(--gold)', archived: 'var(--tx3)' };
-        const statusLabels = { active: 'activa', paused: 'pausada', archived: 'archivada' };
+        const statusColors = { active: 'var(--green)', paused: 'var(--gold)', discarded: 'var(--red)', completed: 'var(--blue)' };
+        const statusLabels = { active: 'en curso', paused: 'en espera', discarded: 'descartada', completed: 'completada' };
+        const statusIcons = { active: '🔵', paused: '⏸', discarded: '✗', completed: '✅' };
         const branchData = proj.drBranchData?.[branch.id];
         const branchFases = branchData?.drFases || (isActive ? proj.drFases : []);
         const activePhase = branchFases.find(f => f.estado === 'en_progreso');
@@ -3213,26 +3243,38 @@ function renderProjectDash(projId) {
         bh += `</div>`;
         bh += `</div>`;
         // Status badge
-        bh += `<span style="font-size:10px;padding:2px 6px;background:rgba(220,215,205,0.06);border-radius:4px;color:${statusColors[branch.status]};">${statusLabels[branch.status] || branch.status}</span>`;
-        // Actions
-        if (!isActive) {
+        bh += `<span style="font-size:10px;padding:2px 6px;background:rgba(220,215,205,0.06);border-radius:4px;color:${statusColors[branch.status] || 'var(--tx3)'};">${statusIcons[branch.status] || ''} ${statusLabels[branch.status] || branch.status}</span>`;
+
+        // Actions — always available
+        if (!isActive && branch.status !== 'discarded') {
           bh += `<button class="btn bo" onclick="switchBranch('${proj.id}','${branch.id}')" style="font-size:11px;padding:2px 8px;">Activar</button>`;
         }
-        // Note and freeze buttons (all branches including main)
         bh += `<span style="font-size:11px;color:var(--tx3);cursor:pointer;" onclick="addBranchNote('${proj.id}','${branch.id}')" title="Agregar nota">📌</span>`;
-        bh += `<span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="freezeBranch('${proj.id}','${branch.id}')" title="Congelar versión">🧊</span>`;
-
-        if (branch.id !== 'main' && branch.status === 'active') {
-          const hasChildBranches = branches.some(b => b.forkedFrom === branch.id);
-          bh += `<select onchange="if(this.value==='delete'){deleteBranch('${proj.id}','${branch.id}')}else if(this.value){setBranchStatus('${proj.id}','${branch.id}',this.value)};this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
-          bh += `<option value="">···</option><option value="paused">Pausar</option><option value="archived">Archivar</option>`;
-          if (!hasChildBranches) bh += `<option value="delete">Eliminar</option>`;
-          bh += `</select>`;
+        if (branch.status !== 'discarded') {
+          bh += `<span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="freezeBranch('${proj.id}','${branch.id}')" title="Congelar versión">🧊</span>`;
         }
-        if (branch.status !== 'active' && branch.id !== 'main') {
-          const hasChildBranches2 = branches.some(b => b.forkedFrom === branch.id);
-          bh += `<button class="btn bo" onclick="setBranchStatus('${proj.id}','${branch.id}','active')" style="font-size:11px;padding:2px 6px;color:var(--green);">Reactivar</button>`;
-          if (!hasChildBranches2) bh += `<button class="btn bo" onclick="deleteBranch('${proj.id}','${branch.id}')" style="font-size:11px;padding:2px 6px;color:var(--red);">Eliminar</button>`;
+
+        // Status transitions menu
+        const st = branch.status || 'active';
+        const hasChildBranches = branches.some(b => b.forkedFrom === branch.id);
+        if (branch.id !== 'main' || st === 'completed') {
+          bh += `<select onchange="if(this.value==='delete'){deleteBranch('${proj.id}','${branch.id}')}else if(this.value){setBranchStatus('${proj.id}','${branch.id}',this.value)};this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
+          bh += `<option value="">···</option>`;
+          // Show allowed transitions
+          if (st === 'active') {
+            bh += `<option value="paused">⏸ En espera</option>`;
+            if (branch.id !== 'main') bh += `<option value="discarded">✗ Descartar</option>`;
+            bh += `<option value="completed">✅ Completar</option>`;
+          } else if (st === 'paused') {
+            bh += `<option value="active">🔵 Retomar</option>`;
+            if (branch.id !== 'main') bh += `<option value="discarded">✗ Descartar</option>`;
+          } else if (st === 'discarded') {
+            bh += `<option value="paused">⏸ Reactivar</option>`;
+          } else if (st === 'completed') {
+            bh += `<option value="active">🔵 Reabrir</option>`;
+          }
+          if (!hasChildBranches && branch.id !== 'main') bh += `<option value="delete">🗑 Eliminar</option>`;
+          bh += `</select>`;
         }
         bh += `</div>`;
 
