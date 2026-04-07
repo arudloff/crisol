@@ -88,6 +88,21 @@ async function main() {
     }
   });
 
+  // Check if data changed since last backup
+  const crypto = require('crypto');
+  // Exclude dr_backups from hash (its timestamps change every run)
+  const hashTables = { ...backup.tables };
+  delete hashTables.dr_backups;
+  const dataStr = JSON.stringify(hashTables);
+  const currentHash = crypto.createHash('md5').update(dataStr).digest('hex');
+  const hashFile = path.join(BACKUP_DIR, '.last_backup_hash');
+  const lastHash = fs.existsSync(hashFile) ? fs.readFileSync(hashFile, 'utf8').trim() : '';
+
+  if (currentHash === lastHash) {
+    console.log('\n⏭ Sin cambios desde el último backup. No se genera archivo.');
+    return;
+  }
+
   // Save to file
   const now = new Date();
   const dateStr = now.toISOString().replace(/[:.]/g, '-').substring(0, 19);
@@ -100,6 +115,7 @@ async function main() {
   }
 
   fs.writeFileSync(filepath, JSON.stringify(backup, null, 2), 'utf8');
+  fs.writeFileSync(hashFile, currentHash, 'utf8');
   const sizeMB = (fs.statSync(filepath).size / 1024 / 1024).toFixed(2);
   console.log(`\n💾 Saved: ${filename} (${sizeMB} MB, ${totalRows} rows)`);
 
