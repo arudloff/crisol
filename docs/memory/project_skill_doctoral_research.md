@@ -1,47 +1,89 @@
 ---
-name: Skill doctoral-research - v3.0 (Claude ↔ CRISOL via Supabase)
-description: Sistema híbrido con comunicación directa Claude-CRISOL. 12 skills, 10 fases, 4 agentes en review, 30 principios escritura, gates socráticos obligatorios, zero-tolerance citas, phase-sensitive severity, cross-round learning, alertas/bloqueos en tiempo real.
+name: CRISOL v3.2 PRODUCCIÓN COMPLETA
+description: Sistema de producción doctoral con integridad verificable. Landing page, 12 skills /dr, 10 fases wizard, 4 agentes review, 30 principios, gates socráticos, zero-tolerance citas, ramas argumentativas, artefactos 11 tags, conexión Claude↔CRISOL via Supabase, admin invitaciones, benchmarking.
 type: project
 ---
 
-## v3.0 — Claude y CRISOL conversan directamente (7 abril 2026)
+## CRISOL v3.2 — Producción completa (7 abril 2026)
 
-### Cambio arquitectónico fundamental
+### URLs
+- Producción: https://crisol-psi.vercel.app
+- GitHub: https://github.com/arudloff/crisol (private)
+- Supabase: proyecto investigacion-cch (cupykpcsxjihnzwyflbm)
 
-ANTES: Claude ←(investigador copia/pega)→ CRISOL
-AHORA: Claude ←(Supabase)→ CRISOL
+### Commits en GitHub: 20+
 
-### 4 puntos de conexión implementados
+### Stack
+- Frontend: Vanilla JS (ES modules) + CSS custom
+- Backend: Supabase (auth + DB + RLS + realtime)
+- Hosting: Vercel (deploy via /tmp por Google Drive path issue)
+- IA: Claude Code con 5 familias de skills
+- Archivos: Google Drive
 
-| # | Flujo | Tabla Supabase | Estado |
-|---|-------|---------------|--------|
-| 1 | Respuestas gates → Claude lee contexto | dr_wizard_context | Código listo, tabla pendiente |
-| 2 | Diálogo socrático → CRISOL personaliza gates | dr_socratic_log | Código listo, tabla pendiente |
-| 3 | Fase activa wizard → Claude ajusta severidad | dr_wizard_context | Código listo, tabla pendiente |
-| 4 | Alertas/bloqueos → CRISOL muestra y bloquea | dr_alerts | Código listo, tabla pendiente |
+### Landing page (pre-login)
+- Tagline: "De la pregunta a la solución. Sin atajos, sin riesgos."
+- Sub: "Donde la asistencia de IA se convierte en autoría demostrable"
+- 4 bloques: camino claro, preguntas adaptativas, asistentes que mejoran, documentado
+- 4 audiencias: investigadores, universidades, profesionales, empresas
+- Guía de inicio en 4 pasos
+- Botón "Iniciar sesión" tenue (usuarios existentes)
+- Registro con código de invitación
 
-### PENDIENTE MANUAL: Ejecutar SQL en Supabase Dashboard
-Archivo: G:\Mi unidad\Doctorado MGT\SILA\crisol\supabase_migration_dr_tables.sql
-Crea 3 tablas: dr_socratic_log, dr_alerts, dr_wizard_context
+### Sistema de invitaciones
+- Códigos válidos: CRISOL-2026, TALCA-MGT, DR-RESEARCH
+- Formulario de solicitud → tabla invite_requests en Supabase
+- Panel admin (solo alejandro@chenriquez.cl): ⚙ → 📨
+- Pendientes + historial (aprobadas/rechazadas)
+- Al aprobar: mensaje pre-escrito copiable con email + código
 
-### Skills /dr — 12 activas
-humanize, journal, review (4 agentes), verify, read, write, mentor, devil, report, impact (4 agentes), benchmark
+### Skills — 5 familias
+- /dr (12 comandos + 11 references)
+- /sila (procesamiento artículos)
+- /sila-v2 (versión mejorada con build scripts)
+- /prisma (metarrelato investigativo)
+- /sync (Supabase ↔ Obsidian)
 
-### Elementos restaurados de las inspiraciones originales
-- Gates socráticos obligatorios (19 preguntas en 9 gates, min 20 chars)
-- Zero-tolerance citas F1-F5 (gate verificación no se puede saltar)
-- 30 principios de escritura (Agente 4 en /dr review)
-- Phase-sensitive severity (×0.5 exploración a ×1.25 entrega)
-- Cross-round learning (errores recurrentes ×1.5)
-- Cross-skill findings sharing (cruce de hallazgos entre agentes)
+### /dr — 12 skills
+read, write, review (4 agentes), verify, humanize, mentor, devil, report, impact (4 agentes), benchmark, journal
 
 ### Wizard — 10 fases
 🔭→📖→✍→🔍→🧬→📎→🧠→💎→⚖→🚀
 
-### Archivos del sistema
-- Skills: ~/.claude/skills/dr/ (SKILL.md + 9 references)
-- CRISOL: data/wizard_config.js, js/projects.js, js/sync.js, js/articles.js
-- SQL: supabase_migration_dr_tables.sql
-- Auditoría: REPORTE_AUDITORIA_DR_CLUSTER.md, BENCHMARKING_ANCLAS_CLUSTER.md
-- Journal: dr_journal.md
-- 30 principios: references/writing_principles_30.md
+### 3 modos por proyecto
+🧬 /dr · 🔬 clo-author · 🔗 Mixto
+
+### Conexión Claude ↔ CRISOL (Supabase)
+4 tablas: dr_socratic_log, dr_alerts, dr_wizard_context, invite_requests
+4 flujos: gates→Claude, diálogo→CRISOL, fase→Claude, alertas→CRISOL
+
+### Verificaciones implementadas
+- Gates socráticos obligatorios (19 preguntas, 9 gates, min 20 chars)
+- Zero-tolerance citas F1-F5 (gate no se salta)
+- 30 principios escritura (Agente 4 en review)
+- Phase-sensitive severity (×0.5 a ×1.25)
+- Cross-round learning (errores recurrentes ×1.5)
+- Cross-skill findings sharing
+
+### Ramas argumentativas
+- Fork desde fase activa
+- 4 estados: En curso 🔵, En espera ⏸, Descartada ✗, Completada ✅
+- Notas por rama (📌)
+- Congelar snapshots inmutables (🧊)
+- Eliminar protegido (sin sub-ramas)
+- Rama activa sincronizada a Supabase para Claude
+
+### Artefactos
+- 11 tags transversales: Sustancia (4) + Proceso (3) + Integridad (3) + Otro
+- Trayectoria de scores con deltas
+- Portafolio descargable .md
+
+### Auditoría cluster COEX-IA
+- 21 agentes, 47 correcciones, score 79.2→87.3
+- Benchmarking vs March/Teece/Kahneman/Edmondson/Bustamante
+- Mapa de 35 vacíos con scores de impacto
+
+### Documentación
+- README.md, SETUP.md, ARCHITECTURE.md
+- Protocolo_Workflow_Hibridado_CRISOL.docx (documento técnico para comité)
+- REPORTE_AUDITORIA_DR_CLUSTER.md
+- BENCHMARKING_ANCLAS_CLUSTER.md
