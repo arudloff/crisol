@@ -112,11 +112,31 @@ window.showInviteRequests = function() {
 
 window.approveInvite = async function(id, idx) {
   if (!state.sdb) return;
+  const req = state._pendingInvites ? state._pendingInvites[idx] : null;
   await state.sdb.from('invite_requests').update({ status: 'approved' }).eq('id', id);
   if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
   document.querySelector('.proj-modal-overlay')?.remove();
-  showToast('✅ Solicitud aprobada. Envía el código al solicitante.', 'success');
-  if (state._pendingInvites && state._pendingInvites.length > 0) showInviteRequests();
+
+  // Show approved details for copying
+  if (req) {
+    const code = VALID_INVITE_CODES[0];
+    const msg = 'Hola ' + req.name + ',\n\nTu solicitud de acceso a CRISOL fue aprobada.\n\nTu código de invitación es: ' + code + '\n\nIngresa a https://crisol-psi.vercel.app, haz click en "Crear cuenta", e ingresa el código.\n\nBienvenido/a.\nAlejandro Rudloff';
+    const overlay2 = document.createElement('div');
+    overlay2.className = 'proj-modal-overlay';
+    overlay2.onclick = function(e) { if (e.target === overlay2) overlay2.remove(); };
+    let h2 = '<div class="logbook-modal" style="max-width:500px;">';
+    h2 += '<h3 style="font-size:17px;color:var(--green);">✅ Solicitud aprobada</h3>';
+    h2 += '<div style="font-size:13px;color:var(--tx2);margin-bottom:8px;"><strong>' + req.name + '</strong> · ' + req.email + '</div>';
+    h2 += '<div style="font-size:12px;color:var(--tx3);margin-bottom:12px;">' + req.institution + ' · ' + req.role + '</div>';
+    h2 += '<label style="font-size:12px;color:var(--gold);">Mensaje para enviar (click para copiar):</label>';
+    h2 += '<div onclick="navigator.clipboard.writeText(this.dataset.msg);this.style.borderColor=\'var(--green)\';showToast(\'Mensaje copiado\',\'success\')" data-msg="' + msg.replace(/"/g, '&quot;') + '" style="padding:12px;background:var(--bg);border:2px solid rgba(155,125,207,0.3);border-radius:8px;font-size:13px;color:var(--tx);white-space:pre-wrap;cursor:pointer;line-height:1.6;margin-bottom:12px;">' + msg.replace(/\n/g, '<br>') + '</div>';
+    h2 += '<div style="text-align:right;"><button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="background:var(--green);color:#000;border:none;border-radius:6px;padding:8px 20px;font-weight:600;cursor:pointer;">Listo</button></div>';
+    h2 += '</div>';
+    overlay2.innerHTML = h2;
+    document.body.appendChild(overlay2);
+  } else {
+    showToast('✅ Solicitud aprobada', 'success');
+  }
 };
 
 window.rejectInvite = async function(id, idx) {
