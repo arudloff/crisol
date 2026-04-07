@@ -341,12 +341,12 @@ function showProjectModal(projId) {
   document.body.appendChild(overlay);
 
   document.getElementById('proj-save-btn').onclick = async function () {
-    const nombre = document.getElementById('proj-name').value.trim();
-    if (!nombre) { alert('El nombre es obligatorio.'); return; }
-    const desc = document.getElementById('proj-desc').value.trim();
-    const eje = document.getElementById('proj-eje').value.trim();
+    const nombre = document.getElementById('proj-name').value.trim().substring(0, 150);
+    if (!nombre) { showToast('El nombre es obligatorio', 'error'); return; }
+    const desc = document.getElementById('proj-desc').value.trim().substring(0, 1000);
+    const eje = document.getElementById('proj-eje').value.trim().substring(0, 200);
     const deadline = document.getElementById('proj-deadline').value;
-    const drive = document.getElementById('proj-drive').value.trim();
+    const drive = document.getElementById('proj-drive').value.trim().substring(0, 500);
     const estado = document.getElementById('proj-estado').value;
     const priority = document.getElementById('proj-priority')?.checked || false;
 

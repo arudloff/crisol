@@ -19,6 +19,14 @@ export function escH(str) {
     .replace(/'/g, '&#39;');
 }
 
+// --- Input validation ---
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export function isValidEmail(str) { return EMAIL_RE.test(str); }
+export function sanitizeText(str, maxLen = 500) {
+  if (!str) return '';
+  return String(str).trim().substring(0, maxLen);
+}
+
 export function linkify(str) {
   if (!str) return '';
   return escH(str).replace(

@@ -3,7 +3,7 @@
 // ============================================================
 
 import { state } from './state.js';
-import { showToast, setSyncStatus, escH } from './utils.js';
+import { showToast, setSyncStatus, escH, isValidEmail, sanitizeText } from './utils.js';
 window.showToast = showToast; // expose for inline onclick in invite modals
 import './db.js'; // side-effect: initializes state.sdb
 
@@ -18,6 +18,7 @@ export async function checkLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pw = document.getElementById('login-pw').value;
   if (!email || !pw) { showAuthError('Ingresa email y contraseña'); return; }
+  if (!isValidEmail(email)) { showAuthError('Ingresa un email válido'); return; }
 
   // Check if we're in register mode
   if (state.authMode === 'register') {
@@ -229,15 +230,19 @@ window.rejectInvite = async function(id, idx) {
 
 // Submit invitation request to Supabase
 window.submitInviteRequest = async function() {
-  const name = document.getElementById('req-name')?.value?.trim();
+  const name = sanitizeText(document.getElementById('req-name')?.value, 100);
   const email = document.getElementById('req-email')?.value?.trim();
-  const institution = document.getElementById('req-institution')?.value?.trim();
+  const institution = sanitizeText(document.getElementById('req-institution')?.value, 200);
   const role = document.getElementById('req-role')?.value;
-  const reason = document.getElementById('req-reason')?.value?.trim();
+  const reason = sanitizeText(document.getElementById('req-reason')?.value, 500);
   const statusEl = document.getElementById('req-status');
 
   if (!name || !email || !institution || !role) {
     if (statusEl) { statusEl.textContent = 'Completa todos los campos obligatorios'; statusEl.style.color = 'var(--red)'; statusEl.style.display = 'block'; }
+    return;
+  }
+  if (!isValidEmail(email)) {
+    if (statusEl) { statusEl.textContent = 'Ingresa un email válido'; statusEl.style.color = 'var(--red)'; statusEl.style.display = 'block'; }
     return;
   }
 
