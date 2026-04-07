@@ -327,6 +327,7 @@
       <button onclick="exportUserData()">💾 Backup externo</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importUserData(event)">
       <button onclick="document.getElementById('import-file').click()">📂 Restaurar</button>
+      <button id="admin-invites-btn" onclick="showInviteRequests()" style="display:none;color:var(--purple);">📨 Solicitudes de invitación</button>
       <button onclick="logout()" style="color:var(--tx3);">🚪 Cerrar sesión</button>
     </div>
   </div>

@@ -47,6 +47,87 @@ export async function checkLogin() {
 // Invitation codes — add codes here to allow new registrations
 const VALID_INVITE_CODES = ['CRISOL-2026', 'TALCA-MGT', 'DR-RESEARCH'];
 
+// Admin email(s) — these users see the invite requests panel
+const ADMIN_EMAILS = ['alejandro@chenriquez.cl'];
+
+function isAdmin() {
+  return state.currentUser && ADMIN_EMAILS.includes(state.currentUser.email);
+}
+
+// Load and show pending invite requests (admin only)
+async function checkInviteRequests() {
+  if (!isAdmin() || !state.sdb) return;
+  try {
+    const { data, error } = await state.sdb.from('invite_requests')
+      .select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (error || !data || data.length === 0) return;
+    // Show badge on notification bell
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      const current = parseInt(badge.textContent) || 0;
+      badge.textContent = current + data.length;
+      badge.style.display = 'block';
+    }
+    // Store for rendering
+    state._pendingInvites = data;
+  } catch (e) { console.error('Invite check error:', e); }
+}
+
+window.showInviteRequests = function() {
+  if (!state._pendingInvites || state._pendingInvites.length === 0) {
+    showToast('No hay solicitudes pendientes', 'info');
+    return;
+  }
+  const overlay = document.createElement('div');
+  overlay.className = 'proj-modal-overlay';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+
+  let html = '<div class="logbook-modal" style="max-width:600px;max-height:80vh;overflow-y:auto;">';
+  html += '<h3 style="font-size:17px;">📨 Solicitudes de invitación (' + state._pendingInvites.length + ')</h3>';
+
+  state._pendingInvites.forEach((req, i) => {
+    const code = VALID_INVITE_CODES[0];
+    const date = new Date(req.created_at).toLocaleDateString();
+    html += '<div style="padding:12px;margin:8px 0;background:var(--bg2);border:1px solid rgba(155,125,207,0.15);border-radius:8px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+    html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + (req.name || 'Sin nombre') + '</div>';
+    html += '<span style="font-size:11px;color:var(--tx3);">' + date + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:13px;color:var(--tx2);margin:4px 0;">' + (req.email || '') + '</div>';
+    html += '<div style="font-size:12px;color:var(--tx3);">' + (req.institution || '') + ' · ' + (req.role || '') + '</div>';
+    if (req.reason) html += '<div style="font-size:12px;color:var(--tx3);margin-top:4px;font-style:italic;">"' + req.reason + '"</div>';
+    html += '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">';
+    html += '<div style="flex:1;padding:6px 10px;background:var(--bg);border:1px solid rgba(155,125,207,0.3);border-radius:6px;font-family:monospace;font-size:14px;color:var(--purple);letter-spacing:2px;text-align:center;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + code + '\\nPara: ' + (req.name || '') + '\\nEmail: ' + (req.email || '') + '\');this.style.borderColor=\'var(--green)\';showToast(\'Código copiado al portapapeles\',\'success\')" title="Click para copiar código + datos">' + code + ' 📋</div>';
+    html += '<button onclick="approveInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--green);color:#000;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">Aprobar</button>';
+    html += '<button onclick="rejectInvite(\'' + req.id + '\',' + i + ')" style="padding:6px 12px;background:var(--bg3);color:var(--tx3);border:none;border-radius:6px;font-size:12px;cursor:pointer;">Rechazar</button>';
+    html += '</div>';
+    html += '</div>';
+  });
+
+  html += '<div style="margin-top:12px;text-align:right;"><button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="background:var(--bg3);color:var(--tx2);border:none;border-radius:6px;padding:8px 16px;cursor:pointer;">Cerrar</button></div>';
+  html += '</div>';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+};
+
+window.approveInvite = async function(id, idx) {
+  if (!state.sdb) return;
+  await state.sdb.from('invite_requests').update({ status: 'approved' }).eq('id', id);
+  if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
+  document.querySelector('.proj-modal-overlay')?.remove();
+  showToast('✅ Solicitud aprobada. Envía el código al solicitante.', 'success');
+  if (state._pendingInvites && state._pendingInvites.length > 0) showInviteRequests();
+};
+
+window.rejectInvite = async function(id, idx) {
+  if (!state.sdb) return;
+  await state.sdb.from('invite_requests').update({ status: 'rejected' }).eq('id', id);
+  if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
+  document.querySelector('.proj-modal-overlay')?.remove();
+  showToast('Solicitud rechazada', 'info');
+  if (state._pendingInvites && state._pendingInvites.length > 0) showInviteRequests();
+};
+
 // Submit invitation request to Supabase
 window.submitInviteRequest = async function() {
   const name = document.getElementById('req-name')?.value?.trim();
@@ -168,6 +249,12 @@ async function enterApp() {
       const { checkPendingInvitation } = await import('./projects.js');
       if (checkPendingInvitation) await checkPendingInvitation();
     } catch (e) { console.error('Invitation check error:', e); }
+
+    // Check for pending invite requests (admin only)
+    checkInviteRequests();
+    // Show admin button if admin
+    const adminBtn = document.getElementById('admin-invites-btn');
+    if (adminBtn && isAdmin()) adminBtn.style.display = 'block';
   } else {
     // Show profile completion screen
     document.getElementById('profile-screen').style.display = 'flex';
