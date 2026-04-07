@@ -1981,12 +1981,81 @@ function setBranchStatus(projId, branchId, status) {
   const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
   const branch = (proj.drBranches || []).find(b => b.id === branchId);
   if (!branch) return;
+  if (branchId === 'main') { showToast('No se puede modificar la rama principal', 'error'); return; }
   branch.status = status;
   proj.updated = new Date().toISOString();
   saveProjects(projects);
   renderProjectDash(projId);
   const labels = { active: 'activada', paused: 'pausada', archived: 'archivada' };
   showToast('🌿 Rama ' + (labels[status] || status) + ': ' + branch.name, 'success');
+}
+
+function addBranchNote(projId, branchId) {
+  const note = prompt('Nota / observación para esta rama:');
+  if (!note || !note.trim()) return;
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  const branch = (proj.drBranches || []).find(b => b.id === branchId);
+  if (!branch) return;
+  if (!branch.notes) branch.notes = [];
+  branch.notes.push({
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toTimeString().substring(0, 5),
+    text: note.trim()
+  });
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  showToast('📌 Nota agregada a rama', 'success');
+}
+
+function freezeBranch(projId, branchId) {
+  const label = prompt('Etiqueta de congelamiento (ej: "Presentación comité marzo", "Avance tutor"):');
+  if (!label || !label.trim()) return;
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  const branch = (proj.drBranches || []).find(b => b.id === branchId);
+  if (!branch) return;
+  if (!branch.frozen) branch.frozen = [];
+  // Save current state as frozen snapshot
+  const branchData = (proj.drActiveBranch === branchId)
+    ? { drFases: proj.drFases, drOutputs: proj.drOutputs, drGateRecords: proj.drGateRecords, drArtifacts: proj.drArtifacts }
+    : proj.drBranchData?.[branchId];
+  branch.frozen.push({
+    label: label.trim(),
+    date: new Date().toISOString().split('T')[0],
+    snapshot: JSON.parse(JSON.stringify(branchData || {}))
+  });
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  showToast('🧊 Rama congelada: ' + label.trim() + ' (el trabajo puede continuar)', 'success');
+}
+
+function deleteBranch(projId, branchId) {
+  const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj) return;
+  if (branchId === 'main') { showToast('No se puede eliminar la rama principal', 'error'); return; }
+  // Check for sub-branches
+  const hasChildren = (proj.drBranches || []).some(b => b.forkedFrom === branchId);
+  if (hasChildren) { showToast('Esta rama tiene sub-ramas. Solo se puede archivar, no eliminar.', 'error'); return; }
+  if (!confirm('¿Eliminar rama "' + ((proj.drBranches || []).find(b => b.id === branchId)?.name || branchId) + '"? Esta acción no se puede deshacer.')) return;
+  // If active branch, switch to main first
+  if (proj.drActiveBranch === branchId) {
+    const mainData = proj.drBranchData?.['main'];
+    if (mainData) {
+      proj.drFases = JSON.parse(JSON.stringify(mainData.drFases));
+      proj.drOutputs = JSON.parse(JSON.stringify(mainData.drOutputs));
+      proj.drGateRecords = JSON.parse(JSON.stringify(mainData.drGateRecords));
+      proj.drWizardProgress = JSON.parse(JSON.stringify(mainData.drWizardProgress));
+      proj.drArtifacts = JSON.parse(JSON.stringify(mainData.drArtifacts || []));
+    }
+    proj.drActiveBranch = 'main';
+  }
+  // Remove branch and its data
+  proj.drBranches = (proj.drBranches || []).filter(b => b.id !== branchId);
+  if (proj.drBranchData) delete proj.drBranchData[branchId];
+  proj.updated = new Date().toISOString();
+  saveProjects(projects);
+  renderProjectDash(projId);
+  showToast('🗑 Rama eliminada', 'success');
 }
 
 function generatePortfolio(projId) {
@@ -3133,14 +3202,45 @@ function renderProjectDash(projId) {
         if (!isActive) {
           bh += `<button class="btn bo" onclick="switchBranch('${proj.id}','${branch.id}')" style="font-size:11px;padding:2px 8px;">Activar</button>`;
         }
+        // Note and freeze buttons (all branches including main)
+        bh += `<span style="font-size:11px;color:var(--tx3);cursor:pointer;" onclick="addBranchNote('${proj.id}','${branch.id}')" title="Agregar nota">📌</span>`;
+        bh += `<span style="font-size:11px;color:var(--blue);cursor:pointer;" onclick="freezeBranch('${proj.id}','${branch.id}')" title="Congelar versión">🧊</span>`;
+
         if (branch.id !== 'main' && branch.status === 'active') {
-          bh += `<select onchange="if(this.value)setBranchStatus('${proj.id}','${branch.id}',this.value);this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
-          bh += `<option value="">···</option><option value="paused">Pausar</option><option value="archived">Archivar</option></select>`;
+          const hasChildBranches = branches.some(b => b.forkedFrom === branch.id);
+          bh += `<select onchange="if(this.value==='delete'){deleteBranch('${proj.id}','${branch.id}')}else if(this.value){setBranchStatus('${proj.id}','${branch.id}',this.value)};this.value=''" style="font-size:11px;padding:2px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:4px;color:var(--tx3);">`;
+          bh += `<option value="">···</option><option value="paused">Pausar</option><option value="archived">Archivar</option>`;
+          if (!hasChildBranches) bh += `<option value="delete">Eliminar</option>`;
+          bh += `</select>`;
         }
         if (branch.status !== 'active' && branch.id !== 'main') {
+          const hasChildBranches2 = branches.some(b => b.forkedFrom === branch.id);
           bh += `<button class="btn bo" onclick="setBranchStatus('${proj.id}','${branch.id}','active')" style="font-size:11px;padding:2px 6px;color:var(--green);">Reactivar</button>`;
+          if (!hasChildBranches2) bh += `<button class="btn bo" onclick="deleteBranch('${proj.id}','${branch.id}')" style="font-size:11px;padding:2px 6px;color:var(--red);">Eliminar</button>`;
         }
         bh += `</div>`;
+
+        // Frozen versions
+        if (branch.frozen && branch.frozen.length > 0) {
+          bh += `<div style="margin-left:${indent + 20}px;margin:2px 0 2px ${indent + 20}px;">`;
+          branch.frozen.forEach(f => {
+            bh += `<div style="font-size:11px;color:var(--blue);padding:1px 8px;">🧊 ${f.label} — ${f.date}</div>`;
+          });
+          bh += `</div>`;
+        }
+
+        // Notes
+        if (branch.notes && branch.notes.length > 0) {
+          bh += `<div style="margin-left:${indent + 20}px;margin:2px 0 4px ${indent + 20}px;">`;
+          branch.notes.slice(-3).forEach(n => {
+            bh += `<div style="font-size:11px;color:var(--tx3);padding:1px 8px;font-style:italic;">📌 ${n.date} — ${n.text.length > 80 ? n.text.substring(0, 80) + '...' : n.text}</div>`;
+          });
+          if (branch.notes.length > 3) {
+            bh += `<div style="font-size:10px;color:var(--tx3);padding:1px 8px;">... y ${branch.notes.length - 3} notas más</div>`;
+          }
+          bh += `</div>`;
+        }
+
         h += bh;
 
         // Render children
@@ -4390,6 +4490,9 @@ window.generatePortfolio = generatePortfolio;
 window.forkBranch = forkBranch;
 window.switchBranch = switchBranch;
 window.setBranchStatus = setBranchStatus;
+window.deleteBranch = deleteBranch;
+window.addBranchNote = addBranchNote;
+window.freezeBranch = freezeBranch;
 window.generateDrReport = generateDrReport;
 window.saveCloPath = saveCloPath;
 window.toggleCloWizardStep = toggleCloWizardStep;
