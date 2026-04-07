@@ -62,7 +62,7 @@ async function loadAdminStatus() {
   if (!state.sdb || !state.currentUser) { state.isAdmin = false; return; }
   try {
     const { data } = await state.sdb.from('admins')
-      .select('id').eq('id', state.currentUser.id).maybeSingle();
+      .select('email').eq('email', state.currentUser.email).maybeSingle();
     state.isAdmin = !!data;
   } catch (e) {
     console.error('Admin check error:', e);
