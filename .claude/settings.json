@@ -5,5 +5,30 @@
       "Read(//g/Mi unidad/DOCTORADO/Organizaciones Hibridadas/**)",
       "Edit(~/.claude/skills/dr/**)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/PROJECT_STATE.md\" 2>/dev/null || echo 'No PROJECT_STATE.md found'",
+            "statusMessage": "Cargando estado del proyecto..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚙ Recordatorio: Si esta sesión incluyó desarrollo de software, verificar que se aplicó la regla anti-omisión del CLAUDE.md (15 dimensiones). Si se completó un hito, actualizar PROJECT_STATE.md.'"
+          }
+        ]
+      }
+    ]
   }
 }
