@@ -5,6 +5,7 @@
 
 import { state } from './state.js';
 import { ld, sv, getSK, calcProgress, userKey } from './storage.js';
+import { showToast } from './utils.js';
 
 // --------------- helpers ---------------
 function setSyncStatus(msg, color) {
@@ -569,13 +570,18 @@ export async function restoreFromBackup(backupJson) {
     for (const { key, table } of tablesToRestore) {
       const rows = d[key];
       if (!rows || !Array.isArray(rows) || rows.length === 0) continue;
-      try {
-        for (const row of rows) {
-          await state.sdb.from(table).upsert(row, { onConflict: 'id' });
+      let tableRestored = 0;
+      for (const row of rows) {
+        try {
+          const { error } = await state.sdb.from(table).upsert(row, { onConflict: 'id' });
+          if (!error) tableRestored++;
+        } catch (e) {
+          // Individual row failed, continue with others
         }
-        restored += rows.length;
-      } catch (e) {
-        console.error(`Restore ${table} error:`, e);
+      }
+      restored += tableRestored;
+      if (tableRestored < rows.length) {
+        console.warn(`Restore ${table}: ${tableRestored}/${rows.length} rows`);
         errors++;
       }
     }

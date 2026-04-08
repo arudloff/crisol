@@ -578,7 +578,7 @@ function doAdvancePhase(projId, currentIdx) {
   saveProjects(projects);
   renderProjectDash(projId);
   // Notify team if shared project
-  if (proj._isShared || proj._db_owner_id) {
+  if (proj._isShared) {
     notifyTeam(projId, 'Fase completada', 'completo "' + completedPhase + '"');
   }
 }
@@ -662,7 +662,7 @@ function completeGate(projId, currentIdx, gateKey, numQ) {
   doAdvancePhase(projId, currentIdx);
   showToast('Gate completado — fase avanzada', 'success', 3000);
   // Notify team
-  if (proj._isShared || proj._db_owner_id) {
+  if (proj._isShared) {
     notifyTeam(projId, 'Gate completado', 'completo gate "' + (gate.title?.split(':')[0] || gateKey) + '"');
   }
 }
