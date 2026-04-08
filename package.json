@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx jest --verbose",
     "lint": "eslint js/ --ext .js",
-    "backup": "node scripts/backup-local.js",
+    "backup": "node scripts/backup-local.cjs",
     "deploy": "bash deploy.sh"
   },
   "devDependencies": {

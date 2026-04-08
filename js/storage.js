@@ -175,3 +175,4 @@ export function executeReset() {
 // --------------- global bindings ---------------
 window.executeReset = executeReset;
 window.clearField = clearField;
+window.svF = svF;
