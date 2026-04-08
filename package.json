@@ -1,0 +1,18 @@
+{
+  "name": "crisol",
+  "version": "3.3.0",
+  "description": "CRISOL — Plataforma de produccion doctoral con trazabilidad IA",
+  "private": true,
+  "scripts": {
+    "test": "npx jest --verbose",
+    "lint": "eslint js/ --ext .js",
+    "backup": "node scripts/backup-local.js",
+    "deploy": "bash deploy.sh"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "@jest/globals": "^29.7.0",
+    "eslint": "^8.56.0"
+  },
+  "type": "module"
+}

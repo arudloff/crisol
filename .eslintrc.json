@@ -1,0 +1,25 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-undef": "warn",
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-empty": ["warn", { "allowEmptyCatch": true }],
+    "no-constant-condition": "warn",
+    "eqeqeq": ["warn", "always"],
+    "no-eval": "error",
+    "no-implied-eval": "error"
+  },
+  "globals": {
+    "SILA_MANIFEST": "readonly",
+    "SILA_ARTICLES": "readonly",
+    "PRISMA_INITIAL": "readonly",
+    "supabase": "readonly"
+  }
+}
