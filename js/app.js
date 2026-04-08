@@ -54,6 +54,8 @@ state._saveNavState = saveNavState;
 state._closeSidebarMobile = closeSidebarMobile;
 state._cleanupNotifications = cleanupNotifications;
 window.logAudit = logAudit;
+state.getKanban = getKanban;
+state.getPrisma = getPrisma;
 
 // ============================================================
 // SIDEBAR TOGGLE (mobile)

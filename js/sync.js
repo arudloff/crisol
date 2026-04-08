@@ -159,14 +159,14 @@ export async function initProjectsSync() {
     const { data, error } = await state.sdb.from('sila_projects')
       .select('data,updated_at').eq('user_id', state.currentUser.id).single();
     if (!error && data && data.data) {
-      const local = state.getProjects ? state.getProjects() : [];
+      const local = state._getProjects ? state._getProjects() : [];
       const cloud = data.data;
       const localTime = localStorage.getItem('sila_projects_ts') || '0';
       const cloudTime = new Date(data.updated_at).getTime();
       if (cloud.length > 0 && (local.length === 0 || cloudTime > parseInt(localTime))) {
         localStorage.setItem('sila_projects', JSON.stringify(cloud));
         localStorage.setItem('sila_projects_ts', String(cloudTime));
-        if (state.buildProjectSidebar) state.buildProjectSidebar();
+        if (state._buildProjectSidebar) state._buildProjectSidebar();
         console.log('Projects loaded from cloud (' + cloud.length + ')');
       } else if (local.length > 0) {
         syncProjectsToCloud(local);
@@ -188,9 +188,9 @@ export async function initProjectsSync() {
         if (cloud && Array.isArray(cloud)) {
           localStorage.setItem('sila_projects', JSON.stringify(cloud));
           localStorage.setItem('sila_projects_ts', String(cloudTs));
-          if (state.buildProjectSidebar) state.buildProjectSidebar();
-          if (state.currentProjectId && state.renderProjectDash) {
-            state.renderProjectDash(state.currentProjectId);
+          if (state._buildProjectSidebar) state._buildProjectSidebar();
+          if (state.currentProjectId && state._renderProjectDash) {
+            state._renderProjectDash(state.currentProjectId);
           }
         }
         setTimeout(() => { projSyncPaused = false; }, 3000);

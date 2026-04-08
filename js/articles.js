@@ -111,7 +111,7 @@ export function restoreNavState(key) {
       setTimeout(() => { state.ct.scrollTop = s.scrollTop; }, 100);
     }
   } else if (key.startsWith('doc_')) {
-    if (state.renderDocEditor) state.renderDocEditor();
+    if (state._renderDocEditor) state._renderDocEditor();
     if (s.scrollTop) setTimeout(() => { state.ct.scrollTop = s.scrollTop; }, 50);
   }
   return true;
@@ -219,8 +219,8 @@ export function renderDash() {
   const m = DATA.meta;
   const nSec = DATA.sections.length;
   const wt = m.weight === 'critico' ? '◆◆◆ Crítico' : m.weight === 'importante' ? '◆◆ Importante' : '◆ Complementario';
-  const renderProjectBadges = state.renderProjectBadges || (() => '');
-  const getProjectsForArticle = state.getProjectsForArticle || (() => []);
+  const renderProjectBadges = state._renderProjectBadges || (() => '');
+  const getProjectsForArticle = state._getProjectsForArticle || (() => []);
 
   ct.innerHTML = getBreadcrumb() + `<h2 style="font-size:clamp(17px,2.5vw,24px);font-weight:800;color:#fff;margin-bottom:6px;">${m.authors} (${m.year})</h2>
   <p style="font-size:15px;color:var(--tx2);line-height:1.5;">${m.title}<br><span style="color:var(--blue);">${m.journal} · ${m.institution}</span></p>
