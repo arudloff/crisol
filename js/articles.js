@@ -1139,8 +1139,20 @@ export function renderAyuda() {
 
   const ct = state.ct;
   ct.innerHTML = getBreadcrumb() + `
-  <div class="sb"><h3>Ayuda — CRISOL v1</h3></div>
-  <p style="font-size:15px;color:var(--tx2);margin-bottom:18px;">Plataforma colaborativa de producción intelectual donde el investigador transforma fuentes complejas en publicaciones terminadas. CRISOL funciona como: <b>(1)</b> Llamado a la acción — proyectos, kanban, sidebar; <b>(2)</b> Espacio de trabajo multitask — pestañas, editor-taller; <b>(3)</b> Control de riesgos — gates anti-deuda intelectual entre fases; <b>(4)</b> Trazabilidad reflexiva — bitácora con enlaces, prompts, decisiones; <b>(5)</b> Dominio del conocimiento — procesar tus propios textos con /sila; <b>(6)</b> Colaboración — invitaciones, roles, proyectos compartidos.</p>
+  <div class="sb"><h3>Ayuda — CRISOL v4</h3></div>
+  <p style="font-size:15px;color:var(--tx2);margin-bottom:18px;">Plataforma de produccion doctoral con trazabilidad IA. CRISOL funciona como: <b>(1)</b> Espacio de trabajo — proyectos, kanban, editor, PRISMA; <b>(2)</b> Produccion doctoral — wizard DR con 10 fases, gates socraticos, skills /dr; <b>(3)</b> Control de calidad — verificacion de citas, humanizer, critico adversarial; <b>(4)</b> Colaboracion — invitaciones, roles, proyectos compartidos, feed de actividad; <b>(5)</b> Trazabilidad — bitacora, audit log, respaldos automaticos; <b>(6)</b> Seguridad — RLS por usuario, admin dinamico, CSP headers.</p>
+
+  <div class="help-section"><div class="help-head open" onclick="togHelp(this)"><span class="hchv">▸</span> Novedades v4</div><div class="help-body open">
+    <div class="help-item"><h4>Sistema de invitaciones</h4><p>Los nuevos investigadores solicitan acceso desde la landing page. El admin aprueba y genera un codigo unico (CR-XXXXXX) que el solicitante usa para registrarse.</p></div>
+    <div class="help-item"><h4>Wizard de produccion doctoral (/dr)</h4><p>10 fases guiadas: lectura profunda, escritura, revision, humanizacion, verificacion de citas, evaluacion de impacto, benchmark, mentor socratico, abogado del diablo, y reporte de trazabilidad. Cada fase tiene tareas, prompts copiables y gates socraticos obligatorios.</p></div>
+    <div class="help-item"><h4>Ramas de proyecto</h4><p>Explora lineas argumentales alternativas sin perder la rama principal. Cada rama tiene su propio estado (en curso, en espera, completada, descartada) y notas.</p></div>
+    <div class="help-item"><h4>Registro de artefactos</h4><p>Documenta cada producto de tu investigacion con tags transversales (Sustancia, Proceso, Integridad) y genera un portfolio academico exportable.</p></div>
+    <div class="help-item"><h4>Colaboracion multi-usuario</h4><p>Invita investigadores a tus proyectos por email o link. Roles: owner, reviewer, lector. Feed de actividad muestra quien hizo que. Deteccion de conflictos en edicion concurrente.</p></div>
+    <div class="help-item"><h4>Respaldos automaticos</h4><p>Backup cada 30 minutos a Supabase (7 dias de retencion) + backup local diario programado. Restauracion completa desde archivo JSON.</p></div>
+    <div class="help-item"><h4>Seguridad</h4><p>Row Level Security en todas las tablas. Admin dinamico desde base de datos. Headers de seguridad (CSP, HSTS, X-Frame-Options). Validacion de email y sanitizacion de inputs.</p></div>
+    <div class="help-item"><h4>Observabilidad</h4><p>Errores se registran automaticamente en Supabase. Audit log para operaciones sensibles (aprobar, rechazar, borrar). Indicador de conexion en tiempo real.</p></div>
+    <div class="help-item"><h4>Accesibilidad</h4><p>Navegacion completa por teclado (Tab + Enter). Modales con Escape para cerrar. Screen readers soportados (aria-live, role=alert). Labels en formularios.</p></div>
+  </div></div>
 
   <div class="help-section"><div class="help-head open" onclick="togHelp(this)"><span class="hchv">▸</span> Los tres niveles de la mente investigadora</div><div class="help-body open">
     <div class="help-item"><h4>Micro · Meso · Macro</h4><p>La mente del investigador opera en tres niveles <b>simultáneamente</b>, no secuencialmente. CRISOL replica esta simultaneidad:</p></div>

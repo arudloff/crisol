@@ -1,6 +1,6 @@
 {
   "name": "crisol",
-  "version": "3.3.0",
+  "version": "4.0.0",
   "description": "CRISOL — Plataforma de produccion doctoral con trazabilidad IA",
   "private": true,
   "scripts": {
