@@ -68,9 +68,14 @@ async function migrateLocalProjects() {
   const idMap = {}; // old_id → new_uuid
   let allOk = true;
 
+  // Check existing projects to avoid duplicates on retry
+  const { data: existing } = await state.sdb.from('projects').select('title').eq('owner_id', state.currentUser.id);
+  const existingTitles = new Set((existing || []).map(p => p.title));
+
   for (const proj of oldProjects) {
     const oldId = proj.id;
     const { id, created, updated, ...rest } = proj;
+    if (existingTitles.has(rest.nombre)) { console.log('Skip duplicate:', rest.nombre); continue; }
     const newId = await createProjectInDb(rest);
     if (newId) {
       idMap[oldId] = newId;

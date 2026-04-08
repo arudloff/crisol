@@ -32,7 +32,7 @@ export async function saveOneProject(proj) {
     await state.sdb.from('projects').update({
       title: proj.nombre || '',
       description: proj.descripcion || '',
-      metadata: metadata,
+      metadata: { ...metadata, _version: 2 },
       updated_at: newTimestamp
     }).eq('id', id);
 
