@@ -188,10 +188,10 @@
     <div style="font-size:48px;margin-bottom:16px;">🧪</div>
     <h1 style="font-size:24px;font-weight:800;color:#fff;margin-bottom:4px;">CRISOL <span style="color:var(--gold);">v1</span></h1>
     <p style="font-size:14px;color:var(--tx2);margin-bottom:24px;">Donde tu investigación toma forma</p>
-    <input type="email" id="login-email" placeholder="Email" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()"
+    <input type="email" id="login-email" placeholder="Email" aria-label="Email" onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()"
       style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(225,220,210,0.12);background:var(--bg2);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;text-align:center;outline:none;margin-bottom:8px;">
     <div style="position:relative;width:100%;">
-      <input type="password" id="login-pw" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkLogin()"
+      <input type="password" id="login-pw" placeholder="Contraseña" aria-label="Contraseña" onkeydown="if(event.key==='Enter')checkLogin()"
         style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(225,220,210,0.12);background:var(--bg2);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;text-align:center;outline:none;">
       <span onclick="const p=document.getElementById('login-pw');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'👁':'🙈';"
         style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;user-select:none;">👁</span>
@@ -202,7 +202,7 @@
     </button>
     <p id="login-error" style="font-size:14px;color:var(--red);margin-top:10px;display:none;"></p>
     <div id="invite-code-row" style="display:none;margin-top:10px;">
-      <input id="invite-code" type="text" placeholder="Código de invitación"
+      <input id="invite-code" type="text" placeholder="Código de invitación" aria-label="Código de invitación"
         style="width:100%;padding:10px 16px;border-radius:8px;border:1px solid rgba(155,125,207,0.3);background:var(--bg2);color:var(--purple);font-family:'Inter',sans-serif;font-size:14px;text-align:center;outline:none;letter-spacing:2px;" autocomplete="off">
       <p style="font-size:11px;color:var(--tx3);margin-top:6px;">&iquest;No tienes c&oacute;digo? <span onclick="document.getElementById('invite-request-form').style.display=document.getElementById('invite-request-form').style.display==='none'?'block':'none'" style="color:var(--purple);cursor:pointer;text-decoration:underline;">Solicitar invitaci&oacute;n</span></p>
       <div id="invite-request-form" style="display:none;margin-top:10px;padding:14px;background:var(--bg2);border:1px solid rgba(155,125,207,0.15);border-radius:8px;">
@@ -257,7 +257,7 @@
 <div class="app" id="main-app" style="display:none;">
 
 <!-- SIDEBAR -->
-<div class="sidebar">
+<nav class="sidebar" aria-label="Navegacion principal">
   <div class="s-logo" onclick="goHome()"><h1><span>CRISOL</span> v1</h1></div>
 
   <!-- Home -->
@@ -337,7 +337,7 @@
     <div class="s-kp"><span>Escritos</span><span class="v" id="s-total-docs">0</span></div>
     <div class="s-kp"><span>Proyectos</span><span class="v" id="s-total-projs">0</span></div>
   </div>
-</div>
+</nav>
 
 <!-- TOPBAR: Article tabs -->
 <div class="topbar" id="topbar-article">
@@ -376,7 +376,7 @@
 <!-- Sidebar toggles and topbar handled by js/app.js module -->
 
 <!-- CONTENT -->
-<div class="content" id="ct"></div>
+<div class="content" id="ct" aria-live="polite" role="main"></div>
 <div class="ws-tabs" id="ws-tabs"></div>
 <!-- Quick capture -->
 <button class="qc-btn" id="qc-btn" onclick="toggleQuickCapture()" title="Captura rápida (💡 idea → tarea)" style="display:none;">💡</button>

@@ -12,7 +12,7 @@ import {
 import './db.js'; // side-effect: initializes state.sdb
 import { checkLogin, logout } from './auth.js';
 import {
-  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor, logError, logAudit
+  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor, logError, logAudit, initAccessibility
 } from './utils.js';
 import {
   loadArticle, initArticleData, render, upd, saveNavState, restoreNavState,
@@ -846,6 +846,7 @@ window.addEventListener('offline', () => {
 (async function boot() {
   // Monitor connection status
   initConnectionMonitor();
+  initAccessibility();
 
   // Global error handler — log unhandled errors to Supabase
   window.addEventListener('error', e => {

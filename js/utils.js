@@ -62,6 +62,8 @@ export function showToast(msg, type = 'info', duration = 3000) {
   if (existing) existing.remove();
   const t = document.createElement('div');
   t.className = 'toast toast-' + type;
+  t.setAttribute('role', 'alert');
+  t.setAttribute('aria-live', 'assertive');
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => {
@@ -97,6 +99,42 @@ export function logAudit(action, targetType, targetId, detail) {
       detail: (detail || '').substring(0, 500)
     }).then(() => {}).catch(() => {});
   }
+}
+
+// --- Accessibility: keyboard navigation + ARIA ---
+export function initAccessibility() {
+  // Make all clickable divs keyboard-accessible
+  const observer = new MutationObserver(() => patchInteractiveElements());
+  observer.observe(document.body, { childList: true, subtree: true });
+  patchInteractiveElements(); // initial pass
+}
+
+function patchInteractiveElements() {
+  // Add tabindex and Enter/Space key handler to clickable divs without it
+  document.querySelectorAll('[onclick]:not(button):not(a):not([tabindex])').forEach(el => {
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+    });
+  });
+
+  // Patch modals with role="dialog" and Escape handler
+  document.querySelectorAll('.proj-modal-overlay:not([role])').forEach(overlay => {
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    const modal = overlay.querySelector('.proj-modal,.logbook-modal');
+    if (modal && !modal.dataset.a11y) {
+      modal.dataset.a11y = '1';
+      // Focus first focusable element
+      const focusable = modal.querySelector('input,button,select,textarea,[tabindex]');
+      if (focusable) setTimeout(() => focusable.focus(), 100);
+      // Escape to close
+      overlay.addEventListener('keydown', e => {
+        if (e.key === 'Escape') overlay.remove();
+      });
+    }
+  });
 }
 
 // --- Online/offline detection ---
