@@ -69,7 +69,7 @@ export function initArticleData() {
 const navMemory = (function () { try { return JSON.parse(localStorage.getItem('sila_navMemory')) || {}; } catch (e) { return {}; } })();
 let lastOpenPar = null;
 
-function persistNavMemory() { try { localStorage.setItem('sila_navMemory', JSON.stringify(navMemory)); } catch (e) { } }
+function persistNavMemory() { try { localStorage.setItem('sila_navMemory', JSON.stringify(navMemory)); } catch (e) { /* storage error */ } }
 
 export function saveNavState() {
   const ct = state.ct;
@@ -874,7 +874,7 @@ export function saveArticleTags(key, tags) {
     const d = raw ? JSON.parse(raw) : {};
     d.tags = tags;
     localStorage.setItem('sila4_' + key, JSON.stringify(d));
-  } catch (e) { }
+  } catch (e) { /* storage error */ }
 }
 
 export function renderArticleTagsHtml(key) {

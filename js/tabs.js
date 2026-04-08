@@ -22,7 +22,7 @@ const MAX_TABS = 4;
 // TAB STATE CRUD
 // ============================================================
 export function getWsTabs() {
-  try { const raw = localStorage.getItem('sila_tabs'); if (raw) return JSON.parse(raw); } catch (e) {}
+  try { const raw = localStorage.getItem('sila_tabs'); if (raw) return JSON.parse(raw); } catch (e) { /* storage error */ }
   return { tabs: [{ id: 't_' + Date.now(), label: 'Vista general', type: 'home' }], activeIdx: 0 };
 }
 

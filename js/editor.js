@@ -939,7 +939,7 @@ export async function createDocFromClaims() {
   for (const art of manifest) {
     await loadArticle(art.key);
     const data = window.SILA_ARTICLES[art.key]; if (!data) continue;
-    let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key); if (raw) d = JSON.parse(raw); } catch (e) {}
+    let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key); if (raw) d = JSON.parse(raw); } catch (e) { /* storage error */ }
     const claims = d.claims || {}; const notes = d.claimNotes || {};
     Object.entries(claims).forEach(([pid, type]) => {
       if (type !== 'support' && type !== 'contrast') return;

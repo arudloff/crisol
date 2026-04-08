@@ -45,7 +45,7 @@ let _saveInProgress = false;
 let _savePending = false;
 export async function saveProjects(projects) {
   state.projects = projects;
-  try { localStorage.setItem('sila_projects_cache', JSON.stringify(projects)); } catch (e) {}
+  try { localStorage.setItem('sila_projects_cache', JSON.stringify(projects)); } catch (e) { /* storage error */ }
   if (_saveInProgress) { _savePending = true; return; }
   _saveInProgress = true;
   try {
@@ -88,7 +88,7 @@ export async function loadProjects() {
       };
     });
 
-    try { localStorage.setItem('sila_projects_cache', JSON.stringify(state.projects)); } catch (e) {}
+    try { localStorage.setItem('sila_projects_cache', JSON.stringify(state.projects)); } catch (e) { /* storage error */ }
   } catch (e) {
     console.error('loadProjects error:', e);
     try { state.projects = JSON.parse(localStorage.getItem('sila_projects_cache')) || []; } catch (e2) { state.projects = []; }

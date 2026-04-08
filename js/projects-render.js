@@ -1423,7 +1423,7 @@ async function renderMiTesis() {
     await state._loadArticle(art.key);
     const artData = window.SILA_ARTICLES[art.key]; if (!artData) continue;
     let d = {};
-    try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) {}
+    try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) { /* storage error */ }
     const claims = d.claims || {};
     const notes = d.claimNotes || {};
     Object.entries(claims).forEach(([pid, type]) => {
@@ -1492,7 +1492,7 @@ function toggleProjFilter(estado) {
   const idx = window._projFilters.indexOf(estado);
   if (idx >= 0 && window._projFilters.length > 1) { window._projFilters.splice(idx, 1); }
   else if (idx < 0) { window._projFilters.push(estado); }
-  try { localStorage.setItem('sila_projFilters', JSON.stringify(window._projFilters)); } catch (e) {}
+  try { localStorage.setItem('sila_projFilters', JSON.stringify(window._projFilters)); } catch (e) { /* storage error */ }
   renderGlobalDash();
 }
 

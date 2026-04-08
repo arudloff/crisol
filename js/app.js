@@ -85,6 +85,18 @@ state._toggleProjFilter = toggleProjFilter;
 state._getActivePhase = getActivePhase;
 
 // ============================================================
+// Global error handlers (FF-U4.3)
+// ============================================================
+window.onerror = function(msg, url, line, col, error) {
+  console.error('Global error:', { msg, url, line, col }, error);
+  if (window.logAudit) window.logAudit('js_error', 'global', '', msg);
+};
+window.onunhandledrejection = function(event) {
+  console.error('Unhandled promise rejection:', event.reason);
+  if (window.logAudit) window.logAudit('unhandled_rejection', 'global', '', String(event.reason));
+};
+
+// ============================================================
 // SIDEBAR TOGGLE (mobile)
 // ============================================================
 function toggleSidebar() {
@@ -394,7 +406,7 @@ window.exportUserData = function() {
   const allArticleData = {};
   manifest.forEach(m => {
     const raw = localStorage.getItem('sila4_' + m.key);
-    if (raw) { try { allArticleData[m.key] = JSON.parse(raw); } catch (e) {} }
+    if (raw) { try { allArticleData[m.key] = JSON.parse(raw); } catch (e) { /* storage error */ } }
   });
   const backup = {
     _meta: { exported: new Date().toISOString(), version: 'crisol_v1', type: 'full_backup' },
@@ -436,12 +448,12 @@ window.importUserData = function(event) {
       const d = JSON.parse(e.target.result);
       if (d._meta && d._meta.type === 'full_backup') {
         if (!confirm('Esto reemplazará TODOS tus datos locales. ¿Continuar?')) return;
-        if (d.articles) Object.entries(d.articles).forEach(([key, val]) => { try { localStorage.setItem('sila4_' + key, JSON.stringify(val)); } catch (e) {} });
-        if (d.projects) try { localStorage.setItem('sila_projects', JSON.stringify(d.projects)); } catch (e) {}
-        if (d.docs) try { localStorage.setItem('sila_docs', JSON.stringify(d.docs)); } catch (e) {}
-        if (d.kanban) try { localStorage.setItem('sila_kanban', JSON.stringify(d.kanban)); } catch (e) {}
-        if (d.prisma) try { localStorage.setItem('sila_prisma', JSON.stringify(d.prisma)); } catch (e) {}
-        if (d.settings) Object.entries(d.settings).forEach(([k, v]) => { if (v) try { localStorage.setItem('sila_' + k, v); } catch (e) {} });
+        if (d.articles) Object.entries(d.articles).forEach(([key, val]) => { try { localStorage.setItem('sila4_' + key, JSON.stringify(val)); } catch (e) { /* storage error */ } });
+        if (d.projects) try { localStorage.setItem('sila_projects', JSON.stringify(d.projects)); } catch (e) { /* storage error */ }
+        if (d.docs) try { localStorage.setItem('sila_docs', JSON.stringify(d.docs)); } catch (e) { /* storage error */ }
+        if (d.kanban) try { localStorage.setItem('sila_kanban', JSON.stringify(d.kanban)); } catch (e) { /* storage error */ }
+        if (d.prisma) try { localStorage.setItem('sila_prisma', JSON.stringify(d.prisma)); } catch (e) { /* storage error */ }
+        if (d.settings) Object.entries(d.settings).forEach(([k, v]) => { if (v) try { localStorage.setItem('sila_' + k, v); } catch (e) { /* storage error */ } });
         showToast('Backup restaurado', 'success', 3000);
         location.reload();
         return;
@@ -888,7 +900,7 @@ window.addEventListener('offline', () => {
   // Flush pending saves on tab close
   window.addEventListener('beforeunload', () => {
     if (state.projects?.length > 0) {
-      try { localStorage.setItem('sila_projects_cache', JSON.stringify(state.projects)); } catch (e) {}
+      try { localStorage.setItem('sila_projects_cache', JSON.stringify(state.projects)); } catch (e) { /* storage error */ }
     }
   });
 

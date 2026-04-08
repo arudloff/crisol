@@ -335,7 +335,7 @@ function buildClaimsText() {
     let items = [];
     manifest.forEach(art => {
       const artData = window.SILA_ARTICLES[art.key]; if (!artData) return;
-      let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) {}
+      let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) { /* storage error */ }
       const claims = d.claims || {}; const notes = d.claimNotes || {};
       Object.entries(claims).forEach(([pid, t]) => {
         if (t !== type) return;

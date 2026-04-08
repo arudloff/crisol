@@ -23,7 +23,7 @@ export function getPrisma() {
   try {
     const stored = JSON.parse(localStorage.getItem(userKey('sila_prisma')));
     if (stored && (stored.documents?.length > 0 || stored.argument?.question)) return stored;
-  } catch (e) {}
+  } catch (e) { /* storage error */ }
   if (window.PRISMA_INITIAL) return window.PRISMA_INITIAL;
   return { ...EMPTY_PRISMA };
 }
@@ -36,7 +36,7 @@ export function savePrisma(data) {
   try {
     localStorage.setItem(userKey('sila_prisma'), JSON.stringify(data));
     localStorage.setItem(userKey('sila_prisma_ts'), String(Date.now()));
-  } catch (e) {}
+  } catch (e) { /* storage error */ }
 
   // Save to Supabase prisma_data table
   savePrismaToSupabase(data);

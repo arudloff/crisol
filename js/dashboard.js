@@ -64,7 +64,7 @@ export function renderGlobalDash() {
       const d = JSON.parse(raw);
       if (d.claims) Object.values(d.claims).forEach(c => { if (c === 'support') totalSupport++; else if (c === 'contrast') totalContrast++; else if (c === 'neutral') totalNeutral++; });
       if (d.d) Object.values(d.d).forEach(a => totalNotes += a.length);
-    } catch (e) {}
+    } catch (e) { /* storage error */ }
   });
 
   // Onboarding (first-time user)
@@ -109,7 +109,7 @@ export function renderGlobalDash() {
       const flujo = window.SILA_ARTICLES[art.key].flujo;
       if (!flujo || !flujo.revision) return;
       let artData = {};
-      try { const raw = localStorage.getItem('sila4_' + art.key); if (raw) artData = JSON.parse(raw); } catch (e) {}
+      try { const raw = localStorage.getItem('sila4_' + art.key); if (raw) artData = JSON.parse(raw); } catch (e) { /* storage error */ }
       const revState = artData.revState || {};
       const customDates = artData.revDates;
       flujo.revision.forEach((r, ri) => {
@@ -127,7 +127,7 @@ export function renderGlobalDash() {
           upcomingHtml += `<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(232,168,56,0.04);border:1px solid rgba(232,168,56,0.12);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;margin:4px 0;cursor:pointer;" onclick="goToArticle('${art.key}')"><span style="font-size:14px;color:var(--gold);font-weight:600;">${diff === 0 ? 'Hoy' : 'En ' + diff + 'd'}</span><span style="font-size:14px;color:var(--tx);">${art.authors} (${art.year}) — ${r.sesion}</span></div>`;
         }
       });
-    } catch (e) {}
+    } catch (e) { /* storage error */ }
   });
   if (overdueHtml || upcomingHtml) {
     h += `<h3 style="font-size:14px;color:var(--tx2);margin:18px 0 8px;">Revisiones pendientes</h3>`;
@@ -191,7 +191,7 @@ export function saveSources(s) {
     meta.sources = s;
     meta.ts = Date.now();
     localStorage.setItem('sila_sources_meta', JSON.stringify(meta));
-  } catch (e) {}
+  } catch (e) { /* storage error */ }
   syncSettingsToCloud();
 }
 
@@ -588,7 +588,7 @@ export function goReport() {
   let totalClaims = 0, bodyHtml = '';
   manifest.forEach(art => {
     const artData = window.SILA_ARTICLES[art.key]; if (!artData) return;
-    let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) {}
+    let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) { /* storage error */ }
     const claims = d.claims || {}; const notes = d.claimNotes || {};
     const reflexiones = d.f || {};
     let support = 0, contrast = 0;
