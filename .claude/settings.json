@@ -3,7 +3,8 @@
     "allow": [
       "Edit(~/.claude/skills/sila/**)",
       "Read(//g/Mi unidad/DOCTORADO/Organizaciones Hibridadas/**)",
-      "Edit(~/.claude/skills/dr/**)"
+      "Edit(~/.claude/skills/dr/**)",
+      "Edit(~/.claude/skills/dev/**)"
     ]
   },
   "hooks": {

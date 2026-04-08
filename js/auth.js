@@ -360,7 +360,7 @@ async function enterApp() {
 
     // Check for pending invitation in URL (?invite=TOKEN)
     try {
-      const { checkPendingInvitation } = await import('./projects.js');
+      const { checkPendingInvitation } = await import('./projects-team.js');
       if (checkPendingInvitation) await checkPendingInvitation();
     } catch (e) { console.error('Invitation check error:', e); }
 

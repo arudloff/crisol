@@ -815,52 +815,7 @@ export function renderClaimsSummary() {
   el.innerHTML = h;
 }
 
-// ============================================================
-// BUILD CLAIMS TEXT (for export)
-// ============================================================
-export function buildClaimsText() {
-  const manifest = window.SILA_MANIFEST || [];
-  let lines = ['YUNQUE — Claims para marco teórico', 'Generado: ' + new Date().toLocaleDateString(), '', ''];
-  ['support', 'contrast', 'neutral'].forEach(type => {
-    const label = type === 'support' ? 'APOYAN MI TESIS' : type === 'contrast' ? 'CONTRASTAN MI TESIS' : 'NEUTROS';
-    let items = [];
-    manifest.forEach(art => {
-      const artData = window.SILA_ARTICLES[art.key]; if (!artData) return;
-      let d = {}; try { const raw = localStorage.getItem('sila4_' + art.key) || localStorage.getItem('sila4'); if (raw) d = JSON.parse(raw); } catch (e) { }
-      const claims = d.claims || {}; const notes = d.claimNotes || {};
-      Object.entries(claims).forEach(([pid, t]) => {
-        if (t !== type) return;
-        const m = pid.match(/^p(\d+)-(\d+)$/); if (!m) return;
-        const si = parseInt(m[1]), pi = parseInt(m[2]);
-        const sec = artData.sections[si]; if (!sec) return;
-        const par = sec.paragraphs[pi]; if (!par) return;
-        items.push({ authors: art.authors, year: art.year, sec: sec.title, text: par.text.substring(0, 300), note: notes[pid] || '' });
-      });
-    });
-    if (items.length === 0) return;
-    lines.push('═══ ' + label + ' (' + items.length + ') ═══', '');
-    items.forEach((it, i) => {
-      lines.push((i + 1) + '. Según ' + it.authors + ' (' + it.year + '), ' + it.sec + ':');
-      lines.push('   "' + it.text + '"');
-      if (it.note) lines.push('   → Nota: ' + it.note);
-      lines.push('');
-    });
-  });
-  return lines.join('\n');
-}
-
-export function exportClaims() {
-  let text = buildClaimsText();
-  navigator.clipboard.writeText(text).then(() => alert('Claims copiados al portapapeles (' + text.split('\n').length + ' líneas)'));
-}
-window.exportClaims = exportClaims;
-
-export function exportClaimsFile() {
-  let text = buildClaimsText();
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'YUNQUE_claims_tesis.txt'; a.click();
-}
-window.exportClaimsFile = exportClaimsFile;
+// Claims functions (buildClaimsText, exportClaims, exportClaimsFile) → canonical source: projects-reports.js
 
 // ============================================================
 // PARAGRAPH NAVIGATION

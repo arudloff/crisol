@@ -358,7 +358,79 @@ export async function notifyTeam(projectId, action, detail) {
   }
 }
 
+// ============================================================
+// MEMBER MANAGEMENT — Remove members
+// ============================================================
+
+async function removeMember(projId, userId) {
+  if (!confirm('¿Revocar acceso de este miembro al proyecto?')) return;
+  if (!state.sdb) return;
+  try {
+    await state.sdb.from('project_members').delete()
+      .eq('project_id', projId).eq('user_id', userId);
+    showToast('Acceso revocado', 'success');
+    if (state._renderProjectDash) state._renderProjectDash(projId);
+  } catch (e) {
+    showToast('Error al revocar: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// CLONE PROJECT — Create independent copy
+// ============================================================
+
+async function cloneProject(projId) {
+  const projects = getProjects();
+  const source = projects.find(p => p.id === projId);
+  if (!source) { showToast('Proyecto no encontrado', 'error'); return; }
+
+  const newName = prompt('Nombre para tu copia del proyecto:', source.nombre + ' (mi versión)');
+  if (!newName || !newName.trim()) return;
+
+  if (!state.sdb || !state.currentUser) { showToast('Necesitas estar logueado', 'error'); return; }
+
+  try {
+    const metadata = JSON.parse(JSON.stringify(source));
+    delete metadata.id;
+    delete metadata.created;
+    delete metadata.updated;
+    delete metadata._db_owner_id;
+    metadata.nombre = newName.trim();
+    metadata.descripcion = (source.descripcion || '') + '\n\n[Clonado de: ' + source.nombre + ']';
+    metadata.clonedFrom = { projectId: projId, projectName: source.nombre, date: new Date().toISOString().split('T')[0] };
+    if (metadata.drWizardProgress) metadata.drWizardProgress = {};
+    if (metadata.drGateRecords) metadata.drGateRecords = [];
+    if (metadata.drArtifacts) metadata.drArtifacts = [];
+    if (metadata.drOutputs) metadata.drOutputs = {};
+    metadata.drBranches = [{ id: 'main', name: 'Línea principal', forkedFrom: null, forkedAtPhase: null, forkedDate: null, status: 'active' }];
+    metadata.drActiveBranch = 'main';
+    metadata.drBranchData = {};
+    if (metadata.drFases) {
+      metadata.drFases.forEach(f => { f.estado = 'pendiente'; });
+    }
+
+    const { data, error } = await state.sdb.from('projects').insert({
+      title: newName.trim(),
+      description: metadata.descripcion,
+      owner_id: state.currentUser.id,
+      metadata: metadata,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }).select().single();
+
+    if (error) { showToast('Error al clonar: ' + error.message, 'error'); return; }
+
+    await loadProjects();
+    showToast('🧬 Proyecto clonado: ' + newName.trim(), 'success');
+    if (state._renderProjectDash) state._renderProjectDash(data.id);
+  } catch (e) {
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
 // Window globals for inline onclick
 window.addMemberByEmail = addMemberByEmail;
 window.showInviteModal = showInviteModal;
 window.generateInviteLink = generateInviteLink;
+window.removeMember = removeMember;
+window.cloneProject = cloneProject;
