@@ -279,6 +279,7 @@ let docSyncTimer = null;
 let docSyncPaused = false; // pause during incoming sync to avoid loop
 
 export function syncDocsToCloud(docs) {
+  // Also registered as state._syncDocsToCloud for editor.js late-binding
   if (!state.sdb || !state.currentUser || docSyncPaused) return;
   clearTimeout(docSyncTimer);
   docSyncTimer = setTimeout(async () => {
@@ -453,14 +454,15 @@ function computeHash(obj) {
 export async function createFullBackup() {
   if (!state.sdb || !state.currentUser) return null;
   try {
-    // Collect ALL data from Supabase
+    // Collect user's data from Supabase (defense-in-depth: filter by user_id even with RLS)
+    const uid = state.currentUser.id;
     const [projects, docs, socratic, alerts, context, userdata] = await Promise.all([
-      state.sdb.from('projects').select('*').then(r => r.data || []),
-      state.sdb.from('sila_docs').select('*').then(r => r.data || []),
-      state.sdb.from('dr_socratic_log').select('*').then(r => r.data || []),
-      state.sdb.from('dr_alerts').select('*').then(r => r.data || []),
-      state.sdb.from('dr_wizard_context').select('*').then(r => r.data || []),
-      state.sdb.from('sila_userdata').select('*').then(r => r.data || [])
+      state.sdb.from('projects').select('*').eq('owner_id', uid).then(r => r.data || []),
+      state.sdb.from('sila_docs').select('*').eq('user_id', uid).then(r => r.data || []),
+      state.sdb.from('dr_socratic_log').select('*').eq('user_id', uid).then(r => r.data || []),
+      state.sdb.from('dr_alerts').select('*').eq('user_id', uid).then(r => r.data || []),
+      state.sdb.from('dr_wizard_context').select('*').eq('user_id', uid).then(r => r.data || []),
+      state.sdb.from('sila_userdata').select('*').eq('user_id', uid).then(r => r.data || [])
     ]);
 
     const backup = {

@@ -7,7 +7,7 @@ import { state, DEFAULT_FASES, PROJ_ESTADOS, PROJ_ROLE_LABELS } from './state.js
 import { ld, sv, getSK, migrateLegacy, calcProgress as storageCalcProgress } from './storage.js';
 import {
   initSync, syncSettingsToCloud, loadSettingsFromCloud,
-  initKanbanSync, initPrismaSync, initDocsSync
+  initKanbanSync, initPrismaSync, initDocsSync, syncDocsToCloud
 } from './sync.js';
 import './db.js'; // side-effect: initializes state.sdb
 import { checkLogin, logout } from './auth.js';
@@ -21,7 +21,7 @@ import {
 import {
   getDocs, renderDocEditor, countDocWords, saveDocs, openDoc
 } from './editor.js';
-import { renderGlobalDash } from './dashboard.js';
+import { renderGlobalDash, getSources } from './dashboard.js';
 import { getPrisma, renderPrisma, loadPrismaFromSupabase } from './prisma.js';
 import { getKanban, renderKanban } from './kanban.js';
 import { renderWsTabs, getWsTabs, saveWsTabs, openInTab } from './tabs.js';
@@ -47,6 +47,9 @@ state._ld = ld;
 state._loadArticle = loadArticle;
 state._initArticleData = initArticleData;
 state._renderDocEditor = renderDocEditor;
+state._syncDocsToCloud = syncDocsToCloud;
+state.getDocs = getDocs;
+state.getSources = getSources;
 state._saveNavState = saveNavState;
 state._closeSidebarMobile = closeSidebarMobile;
 state._cleanupNotifications = cleanupNotifications;

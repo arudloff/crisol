@@ -13,6 +13,7 @@ import {
   getProjectClaims, calcDaysRemaining, calcProjectAlert
 } from './utils.js';
 import { getDocs, countDocWords, renderDocEditor } from './editor.js';
+import { syncSettingsToCloud } from './sync.js';
 
 // ============================================================
 // GLOBAL DASHBOARD — cross-article overview
@@ -194,23 +195,7 @@ export function saveSources(s) {
   syncSettingsToCloud();
 }
 
-// Settings sync to Supabase (sources + preferences)
-let settingsSyncTimer = null;
-function syncSettingsToCloud() {
-  if (!state.sdb || !state.currentUser) return;
-  clearTimeout(settingsSyncTimer);
-  settingsSyncTimer = setTimeout(async () => {
-    try {
-      const payload = {
-        sources: getSources(),
-        fontSize: parseInt(localStorage.getItem('sila_fs')) || 15,
-        colCount: parseInt(localStorage.getItem('sila_cols')) || 2
-      };
-      const { error } = await state.sdb.from('sila_settings').upsert({ user_id: state.currentUser.id, data: payload }, { onConflict: 'user_id' });
-      if (error) { console.error('Settings sync error:', error); } else { console.log('Settings synced to cloud'); }
-    } catch (e) { console.error('Settings sync exception:', e); }
-  }, 2000);
-}
+// NOTE: syncSettingsToCloud now imported from sync.js (single source of truth)
 
 export async function loadSettingsFromCloud() {
   if (!state.sdb || !state.currentUser) return;

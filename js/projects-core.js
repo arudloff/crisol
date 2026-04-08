@@ -42,15 +42,20 @@ export async function saveOneProject(proj) {
 
 // --- Save all projects (backward compat — calls saveOne for each) ---
 let _saveInProgress = false;
+let _savePending = false;
 export async function saveProjects(projects) {
   state.projects = projects;
   try { localStorage.setItem('sila_projects_cache', JSON.stringify(projects)); } catch (e) {}
-  if (_saveInProgress) return; // prevent concurrent batch saves
+  if (_saveInProgress) { _savePending = true; return; }
   _saveInProgress = true;
   try {
-    for (const p of projects) await saveOneProject(p);
+    for (const p of state.projects) await saveOneProject(p);
   } finally {
     _saveInProgress = false;
+    if (_savePending) {
+      _savePending = false;
+      saveProjects(state.projects); // retry with latest state
+    }
   }
 }
 

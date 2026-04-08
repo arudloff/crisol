@@ -26,72 +26,12 @@ export function saveDocs(docs) {
     localStorage.setItem(userKey('sila_docs'), JSON.stringify(docs));
     localStorage.setItem(userKey('sila_docs_ts'), String(Date.now()));
   } catch (e) { alert('Error al guardar: almacenamiento lleno.'); }
-  syncDocsToCloud(docs);
+  // Delegate to sync.js (single source of truth for cloud sync)
+  if (state._syncDocsToCloud) state._syncDocsToCloud(docs);
 }
 
-// Sync docs to Supabase (Level 2: full sync + realtime listener)
-let docSyncTimer = null;
-let docSyncPaused = false;
-function syncDocsToCloud(docs) {
-  if (!state.sdb || !state.currentUser || docSyncPaused) return;
-  clearTimeout(docSyncTimer);
-  docSyncTimer = setTimeout(async () => {
-    try {
-      await state.sdb.from('sila_docs').upsert({
-        user_id: state.currentUser.id,
-        data: docs
-      }, { onConflict: 'user_id' });
-      console.log('Docs synced to cloud');
-    } catch (e) { console.error('Doc sync error:', e); }
-  }, 2000);
-}
-
-// Load docs from cloud on startup + subscribe to realtime changes
-export async function initDocsSync() {
-  if (!state.sdb || !state.currentUser) return;
-  try {
-    const { data, error } = await state.sdb.from('sila_docs')
-      .select('data,updated_at')
-      .eq('user_id', state.currentUser.id)
-      .single();
-    if (!error && data && data.data) {
-      const local = getDocs();
-      const cloud = data.data;
-      const localTime = localStorage.getItem('sila_docs_ts') || '0';
-      const cloudTime = new Date(data.updated_at).getTime();
-      if (cloud.length > 0 && (local.length === 0 || cloudTime > parseInt(localTime))) {
-        localStorage.setItem('sila_docs', JSON.stringify(cloud));
-        localStorage.setItem('sila_docs_ts', String(cloudTime));
-        buildDocSidebar();
-        console.log('Docs loaded from cloud (' + cloud.length + ' docs)');
-      } else if (local.length > 0) {
-        syncDocsToCloud(local);
-      }
-    }
-    // Subscribe to realtime changes (Level 2) — ignore own echoes
-    state.sdb.channel('docs-sync')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'sila_docs', filter: 'user_id=eq.' + state.currentUser.id }, payload => {
-        const localTs = parseInt(localStorage.getItem('sila_docs_ts') || '0');
-        const cloudTs = new Date(payload.new.updated_at || 0).getTime();
-        if (localTs >= cloudTs - 2000) { console.log('Docs realtime: ignoring own echo'); return; }
-        console.log('Docs updated from another device');
-        docSyncPaused = true;
-        const cloud = payload.new.data;
-        if (cloud && Array.isArray(cloud)) {
-          localStorage.setItem('sila_docs', JSON.stringify(cloud));
-          localStorage.setItem('sila_docs_ts', String(cloudTs));
-          buildDocSidebar();
-          if (state.currentDocId) {
-            const doc = cloud.find(d => d.id === state.currentDocId);
-            if (doc) renderDocEditor();
-          }
-        }
-        setTimeout(() => { docSyncPaused = false; }, 3000);
-      })
-      .subscribe();
-    console.log('Docs realtime listener active');
-  } catch (e) { console.error('Doc sync init error:', e); }
-}
+// NOTE: initDocsSync and syncDocsToCloud are now ONLY in sync.js
+// editor.js no longer has its own copy to prevent namespace bugs
 
 // ============================================================
 // UNDO STACK
