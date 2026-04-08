@@ -373,6 +373,13 @@ async function enterApp() {
     // Show admin button if admin
     const adminBtn = document.getElementById('admin-invites-btn');
     if (adminBtn && isAdmin()) adminBtn.style.display = 'block';
+
+    // Welcome popup for first-time users
+    const welcomeKey = 'crisol_welcomed_' + state.currentUser.id;
+    if (!localStorage.getItem(welcomeKey)) {
+      localStorage.setItem(welcomeKey, '1');
+      setTimeout(() => showWelcomePopup(), 1500);
+    }
   } else {
     // Show profile completion screen
     document.getElementById('profile-screen').style.display = 'flex';
@@ -470,6 +477,33 @@ export async function logout() {
   document.getElementById('login-error').style.display = 'none';
   const btn = document.getElementById('login-btn');
   if (btn) { btn.textContent = 'Entrar'; btn.disabled = false; }
+}
+
+// ============================================================
+// WELCOME POPUP (first-time users)
+// ============================================================
+function showWelcomePopup() {
+  const name = state.profile?.display_name || state.currentUser?.email?.split('@')[0] || '';
+  const overlay = document.createElement('div');
+  overlay.className = 'proj-modal-overlay';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+
+  let h = '<div class="logbook-modal" style="max-width:520px;text-align:center;">';
+  h += '<div style="font-size:40px;margin-bottom:12px;">🧪</div>';
+  h += '<h2 style="font-size:20px;color:var(--gold);margin:0 0 8px;">Bienvenido/a a CRISOL' + (name ? ', ' + escH(name) : '') + '</h2>';
+  h += '<p style="font-size:14px;color:var(--tx2);line-height:1.6;margin:12px 0;">CRISOL es tu espacio de trabajo para investigacion doctoral. Aqui puedes:</p>';
+  h += '<div style="text-align:left;margin:16px 0;font-size:13px;color:var(--tx2);line-height:2;">';
+  h += '<div>📁 <strong>Proyectos</strong> — Organiza tus articulos, fases y documentos</div>';
+  h += '<div>🔬 <strong>PRISMA</strong> — Construye tu argumento con evidencia posicionada</div>';
+  h += '<div>📖 <strong>Articulos</strong> — Lee, anota y extrae claims de tus fuentes</div>';
+  h += '<div>✍️ <strong>Documentos</strong> — Escribe con estructura y trazabilidad</div>';
+  h += '</div>';
+  h += '<p style="font-size:13px;color:var(--tx3);margin:12px 0;">Empieza creando tu primer proyecto en la seccion Proyectos del menu lateral.</p>';
+  h += '<button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="margin-top:12px;padding:10px 32px;background:var(--gold);color:#000;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">Comenzar</button>';
+  h += '</div>';
+
+  overlay.innerHTML = h;
+  document.body.appendChild(overlay);
 }
 
 // ============================================================

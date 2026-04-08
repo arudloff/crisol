@@ -58,14 +58,33 @@ function getProjects() {
 // --- Save a single project to Supabase ---
 async function saveOneProject(proj) {
   if (!state.sdb || !state.currentUser) return;
-  const { id, created, updated, _db_owner_id, ...metadata } = proj;
+  const { id, created, updated, _db_owner_id, _myRole, _isShared, ...metadata } = proj;
+  const newTimestamp = new Date().toISOString();
   try {
-    await state.sdb.from('projects').update({
+    // Optimistic locking: only update if updated_at matches what we loaded
+    let query = state.sdb.from('projects').update({
       title: proj.nombre || '',
       description: proj.descripcion || '',
       metadata: metadata,
-      updated_at: new Date().toISOString()
+      updated_at: newTimestamp
     }).eq('id', id);
+
+    // If we have a loaded timestamp, verify no one else changed it
+    if (updated) {
+      query = query.eq('updated_at', updated);
+    }
+
+    const { data, error } = await query.select('id');
+    if (error) throw error;
+
+    if (data && data.length === 0 && updated) {
+      // Conflict: someone else updated the project
+      showToast('⚠️ Conflicto: otro usuario modificó este proyecto. Recarga para ver sus cambios.', 'error', 6000);
+      return;
+    }
+
+    // Update local timestamp
+    proj.updated = newTimestamp;
   } catch (e) { console.error('Project save error:', e); }
 }
 
