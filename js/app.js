@@ -28,7 +28,10 @@ import { renderWsTabs, getWsTabs, saveWsTabs, openInTab } from './tabs.js';
 import {
   getProjects, saveProjects, buildProjectSidebar, renderProjectDash,
   renderMiTesis, updateSidebarKPIs, getProjectsForArticle, getProjectsForDoc,
-  renderProjectBadges, loadProjects, migrateLocalProjects
+  renderProjectBadges, loadProjects, migrateLocalProjects,
+  renderProjectsSummary, getProjectClaims, calcDaysRemaining, calcProjectAlert,
+  goPipeline, renderPipeline, calcArticleProgress, calcArticleClaims,
+  calcDocBlockStates, calcDaysElapsed, goToProject, toggleProjFilter, getActivePhase
 } from './projects.js';
 
 import { loadNotifications, startNotificationPolling, cleanup as cleanupNotifications } from './notifications.js';
@@ -56,6 +59,30 @@ state._cleanupNotifications = cleanupNotifications;
 window.logAudit = logAudit;
 state.getKanban = getKanban;
 state.getPrisma = getPrisma;
+
+// Project-related state._ registrations (moved from projects.js, Paso 9)
+state._getProjects = getProjects;
+state._saveProjects = saveProjects;
+state._buildProjectSidebar = buildProjectSidebar;
+state._renderProjectDash = renderProjectDash;
+state._renderMiTesis = renderMiTesis;
+state._getProjectsForArticle = getProjectsForArticle;
+state._getProjectsForDoc = getProjectsForDoc;
+state._renderProjectBadges = renderProjectBadges;
+state._renderProjectsSummary = renderProjectsSummary;
+state._getProjectClaims = getProjectClaims;
+state._calcDaysRemaining = calcDaysRemaining;
+state._calcProjectAlert = calcProjectAlert;
+state._updateSidebarKPIs = updateSidebarKPIs;
+state._goPipeline = goPipeline;
+state._renderPipeline = renderPipeline;
+state._calcArticleProgress = calcArticleProgress;
+state._calcArticleClaims = calcArticleClaims;
+state._calcDocBlockStates = calcDocBlockStates;
+state._calcDaysElapsed = calcDaysElapsed;
+state._goToProject = goToProject;
+state._toggleProjFilter = toggleProjFilter;
+state._getActivePhase = getActivePhase;
 
 // ============================================================
 // SIDEBAR TOGGLE (mobile)

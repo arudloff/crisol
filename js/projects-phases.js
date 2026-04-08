@@ -400,5 +400,6 @@ export {
   renderWizardTask,
   addWizardTask,
   toggleCustomWizardTask,
-  removeCustomWizardTask
+  removeCustomWizardTask,
+  _getDefaultChecklist
 };
