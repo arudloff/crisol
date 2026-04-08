@@ -53,7 +53,11 @@ const TABLES = [
   'profiles',
   'invite_requests',
   'project_members',
+  'project_invitations',
   'article_annotations',
+  'notifications',
+  'user_project_phase',
+  'prisma_data',
   'admins'
 ];
 

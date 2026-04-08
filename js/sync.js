@@ -454,22 +454,51 @@ function computeHash(obj) {
 export async function createFullBackup() {
   if (!state.sdb || !state.currentUser) return null;
   try {
-    // Collect user's data from Supabase (defense-in-depth: filter by user_id even with RLS)
+    // Collect ALL user data from Supabase
     const uid = state.currentUser.id;
-    const [projects, docs, socratic, alerts, context, userdata] = await Promise.all([
+    const q = (table, filter) => state.sdb.from(table).select('*').eq(filter || 'user_id', uid).then(r => r.data || []);
+    const [projects, docs, socratic, alerts, context, userdata,
+           kanban, prisma, settings, silaProjects, members,
+           annotations, notifications, phases] = await Promise.all([
       state.sdb.from('projects').select('*').eq('owner_id', uid).then(r => r.data || []),
-      state.sdb.from('sila_docs').select('*').eq('user_id', uid).then(r => r.data || []),
-      state.sdb.from('dr_socratic_log').select('*').eq('user_id', uid).then(r => r.data || []),
-      state.sdb.from('dr_alerts').select('*').eq('user_id', uid).then(r => r.data || []),
-      state.sdb.from('dr_wizard_context').select('*').eq('user_id', uid).then(r => r.data || []),
-      state.sdb.from('sila_userdata').select('*').eq('user_id', uid).then(r => r.data || [])
+      q('sila_docs'), q('dr_socratic_log'), q('dr_alerts'),
+      q('dr_wizard_context'), q('sila_userdata'),
+      q('sila_kanban'), q('sila_prisma'), q('sila_settings'),
+      q('sila_projects'),
+      state.sdb.from('project_members').select('*').then(r => r.data || []),
+      q('article_annotations'),
+      q('notifications'),
+      state.sdb.from('user_project_phase').select('*').eq('user_id', uid).then(r => r.data || [])
     ]);
 
     const backup = {
-      version: '3.2',
+      version: '3.3',
       created: new Date().toISOString(),
       user: state.currentUser.email,
-      data: { projects, documents: docs, dr_socratic_log: socratic, dr_alerts: alerts, dr_wizard_context: context, sila_userdata: userdata }
+      data: {
+        projects, documents: docs, dr_socratic_log: socratic,
+        dr_alerts: alerts, dr_wizard_context: context,
+        sila_userdata: userdata, sila_kanban: kanban,
+        sila_prisma: prisma, sila_settings: settings,
+        sila_projects: silaProjects, project_members: members,
+        article_annotations: annotations, notifications,
+        user_project_phase: phases
+      },
+      integrity: {
+        totalRows: projects.length + docs.length + socratic.length + alerts.length +
+          context.length + userdata.length + kanban.length + prisma.length +
+          settings.length + silaProjects.length + members.length +
+          annotations.length + notifications.length + phases.length,
+        tables: {
+          projects: projects.length, sila_docs: docs.length,
+          dr_socratic_log: socratic.length, dr_alerts: alerts.length,
+          dr_wizard_context: context.length, sila_userdata: userdata.length,
+          sila_kanban: kanban.length, sila_prisma: prisma.length,
+          sila_settings: settings.length, sila_projects: silaProjects.length,
+          project_members: members.length, article_annotations: annotations.length,
+          notifications: notifications.length, user_project_phase: phases.length
+        }
+      }
     };
 
     return backup;
@@ -563,7 +592,15 @@ export async function restoreFromBackup(backupJson) {
       { key: 'sila_projects', table: 'sila_projects' },
       { key: 'dr_socratic_log', table: 'dr_socratic_log' },
       { key: 'dr_alerts', table: 'dr_alerts' },
-      { key: 'dr_wizard_context', table: 'dr_wizard_context' }
+      { key: 'dr_wizard_context', table: 'dr_wizard_context' },
+      { key: 'project_members', table: 'project_members' },
+      { key: 'project_invitations', table: 'project_invitations' },
+      { key: 'article_annotations', table: 'article_annotations' },
+      { key: 'notifications', table: 'notifications' },
+      { key: 'user_project_phase', table: 'user_project_phase' },
+      { key: 'prisma_data', table: 'prisma_data' },
+      { key: 'profiles', table: 'profiles' },
+      { key: 'admins', table: 'admins' }
     ];
 
     let restored = 0;
