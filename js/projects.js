@@ -14,6 +14,7 @@ import { loadDrAlerts, loadSocraticLog, writeSocraticEntry, syncWizardContext, r
 
 // NOTE: Canonical CRUD in projects-core.js, team in projects-team.js
 // This file retains its own copies for now (gradual migration)
+import { notifyTeam, loadActivityFeed } from './projects-team.js';
 
 // ============================================================
 // Wizard config fallbacks (loaded from data/wizard_config.js as globals)
@@ -568,12 +569,17 @@ function advancePhase(projId) {
 
 function doAdvancePhase(projId, currentIdx) {
   const projects = getProjects(); const proj = projects.find(p => p.id === projId); if (!proj || !proj.fases) return;
+  const completedPhase = proj.fases[currentIdx].nombre || proj.fases[currentIdx].id;
   proj.fases[currentIdx].estado = 'completado';
   const nextIdx = proj.fases.findIndex((f, i) => i > currentIdx && f.estado === 'pendiente');
   if (nextIdx !== -1) { proj.fases[nextIdx].estado = 'en_progreso'; }
   proj.updated = new Date().toISOString();
   saveProjects(projects);
   renderProjectDash(projId);
+  // Notify team if shared project
+  if (proj._isShared || proj._db_owner_id) {
+    notifyTeam(projId, 'Fase completada', 'completo "' + completedPhase + '"');
+  }
 }
 
 // Show gate modal
@@ -654,6 +660,10 @@ function completeGate(projId, currentIdx, gateKey, numQ) {
   const _ov = document.querySelector('.proj-modal-overlay'); if (_ov) _ov.remove();
   doAdvancePhase(projId, currentIdx);
   showToast('Gate completado — fase avanzada', 'success', 3000);
+  // Notify team
+  if (proj._isShared || proj._db_owner_id) {
+    notifyTeam(projId, 'Gate completado', 'completo gate "' + (gate.title?.split(':')[0] || gateKey) + '"');
+  }
 }
 
 // Skip gate
@@ -3102,7 +3112,9 @@ function renderProjectDash(projId) {
 
   // === TEAM DASHBOARD (async, renders into placeholder) ===
   h += `<div id="proj-team-dashboard"></div>`;
+  h += `<div id="proj-activity-feed"></div>`;
   loadTeamDashboard(projId);
+  loadActivityFeed(projId);
 
   // === WORKFLOW: Mode selector + standard phases ===
   if (!proj.fases) { proj.fases = JSON.parse(JSON.stringify(DEFAULT_FASES)); saveProjects(projects); }

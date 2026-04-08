@@ -288,6 +288,76 @@ export async function checkPendingInvitation() {
   }
 }
 
+// ============================================================
+// ACTIVITY FEED — recent activity in shared project
+// ============================================================
+
+export async function loadActivityFeed(projectId) {
+  const area = document.getElementById('proj-activity-feed');
+  if (!area || !state.sdb || !state.currentUser) return;
+
+  try {
+    const { data } = await state.sdb
+      .from('notifications')
+      .select('title, body, created_at')
+      .eq('reference_id', projectId)
+      .eq('reference_type', 'project')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!data || data.length === 0) return;
+
+    let h = '<div style="margin:12px 0;">';
+    h += '<details><summary style="font-size:13px;font-weight:600;color:var(--tx3);cursor:pointer;">Actividad reciente (' + data.length + ')</summary>';
+    h += '<div style="margin-top:6px;">';
+
+    data.forEach(n => {
+      const time = new Date(n.created_at).toLocaleDateString('es', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      h += '<div style="padding:6px 10px;margin:3px 0;font-size:12px;color:var(--tx2);border-left:2px solid var(--bg3);display:flex;justify-content:space-between;">';
+      h += '<span>' + escH(n.body || n.title) + '</span>';
+      h += '<span style="color:var(--tx3);font-size:11px;white-space:nowrap;margin-left:8px;">' + time + '</span>';
+      h += '</div>';
+    });
+
+    h += '</div></details></div>';
+    area.innerHTML = h;
+  } catch (e) {
+    // Non-critical
+    console.error('loadActivityFeed error:', e);
+  }
+}
+
+// ============================================================
+// TEAM NOTIFICATIONS — notify other members of project activity
+// ============================================================
+
+export async function notifyTeam(projectId, action, detail) {
+  if (!state.sdb || !state.currentUser) return;
+  try {
+    const members = await loadProjectMembers(projectId);
+    const otherMembers = members.filter(m => m.user_id !== state.currentUser.id);
+    if (otherMembers.length === 0) return;
+
+    const proj = getProjects().find(p => p.id === projectId);
+    const projName = proj?.nombre || 'proyecto';
+    const userName = state.profile?.display_name || state.currentUser.email?.split('@')[0] || 'Alguien';
+
+    const notifications = otherMembers.map(m => ({
+      user_id: m.user_id,
+      type: 'project_activity',
+      title: action,
+      body: userName + ' en "' + projName + '": ' + detail,
+      reference_id: projectId,
+      reference_type: 'project'
+    }));
+
+    await state.sdb.from('notifications').insert(notifications);
+  } catch (e) {
+    // Non-critical — don't block the main action
+    console.error('notifyTeam error:', e);
+  }
+}
+
 // Window globals for inline onclick
 window.addMemberByEmail = addMemberByEmail;
 window.showInviteModal = showInviteModal;
