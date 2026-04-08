@@ -308,7 +308,7 @@ export async function initDocsSync() {
       if (cloud.length > 0 && (local.length === 0 || cloudTime > parseInt(localTime))) {
         localStorage.setItem(userKey('sila_docs'), JSON.stringify(cloud));
         localStorage.setItem(userKey('sila_docs_ts'), String(cloudTime));
-        if (state.buildDocSidebar) state.buildDocSidebar();
+        if (state._buildDocSidebar) state._buildDocSidebar();
         console.log('Docs loaded from cloud (' + cloud.length + ' docs)');
       } else if (local.length > 0) {
         syncDocsToCloud(local);
@@ -329,11 +329,11 @@ export async function initDocsSync() {
         if (cloud && Array.isArray(cloud)) {
           localStorage.setItem(userKey('sila_docs'), JSON.stringify(cloud));
           localStorage.setItem(userKey('sila_docs_ts'), String(cloudTs));
-          if (state.buildDocSidebar) state.buildDocSidebar();
+          if (state._buildDocSidebar) state._buildDocSidebar();
           // If viewing a doc, refresh it
           if (state.currentDocId) {
             const doc = cloud.find(d => d.id === state.currentDocId);
-            if (doc && state.renderDocEditor) state.renderDocEditor();
+            if (doc && state._renderDocEditor) state._renderDocEditor();
           }
         }
         setTimeout(() => { docSyncPaused = false; }, 3000); // resume sync after 3s
