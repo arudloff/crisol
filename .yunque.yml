@@ -1,0 +1,19 @@
+# .yunque.yml — CRISOL quality configuration
+version: 1
+app_type: web
+
+rules:
+  blocking:
+    - FF-DU3.1      # hardcoded secrets
+    - FF-DU3.2      # innerHTML/XSS
+    - FF-U4.1       # empty catches
+    - FF-U4.3       # global error handlers
+  advisory:
+    - FF-DU1        # file sizes (>500 lines)
+    - FF-DU14       # documentation
+    - FF-U2.1       # duplicate functions
+  disabled: []
+
+thresholds:
+  max_file_lines: 500
+  min_test_coverage_modules: 50
