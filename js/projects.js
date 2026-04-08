@@ -12,8 +12,8 @@ import { openInTab, getWsTabs, saveWsTabs, renderWsTabs } from './tabs.js';
 import { renderGlobalDash } from './dashboard.js';
 import { loadDrAlerts, loadSocraticLog, writeSocraticEntry, syncWizardContext, resolveDrAlert } from './sync.js';
 
-// NOTE: Canonical CRUD in projects-core.js, team in projects-team.js
-// This file retains its own copies for now (gradual migration)
+// CRUD imported from projects-core.js, team from projects-team.js
+import { getProjects, saveOneProject, saveProjects, loadProjects, createProjectInDb, deleteProjectFromDb, canEditProject } from './projects-core.js';
 import { notifyTeam, loadActivityFeed } from './projects-team.js';
 
 // ============================================================
@@ -107,8 +107,9 @@ async function migrateLocalProjects() {
   showToast('Proyectos migrados a la nube', 'success', 3000);
 }
 
-// Export for use in app.js boot
-export { loadProjects, migrateLocalProjects, canEditProject };
+// Re-export CRUD from projects-core.js (consumed by app.js, dashboard.js, etc.)
+export { getProjects, saveProjects, loadProjects, canEditProject } from './projects-core.js';
+export { migrateLocalProjects };
 
 // ============================================================
 // Pipeline view
@@ -4633,8 +4634,6 @@ window.exportClaimsFile = exportClaimsFile;
 // Exports
 // ============================================================
 export {
-  getProjects,
-  saveProjects,
   buildProjectSidebar,
   renderProjectDash,
   renderMiTesis,
