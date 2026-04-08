@@ -12,7 +12,7 @@ import {
 import './db.js'; // side-effect: initializes state.sdb
 import { checkLogin, logout } from './auth.js';
 import {
-  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH
+  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor
 } from './utils.js';
 import {
   loadArticle, initArticleData, render, upd, saveNavState, restoreNavState,
@@ -840,6 +840,9 @@ window.addEventListener('offline', () => {
 // BOOT SEQUENCE
 // ============================================================
 (async function boot() {
+  // Monitor connection status
+  initConnectionMonitor();
+
   // Build sidebars (projects will be empty until loaded from Supabase)
   buildSidebar();
   buildDocSidebar();

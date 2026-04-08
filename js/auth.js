@@ -370,9 +370,13 @@ async function enterApp() {
       const { startAutoBackup } = await import('./sync.js');
       if (startAutoBackup) startAutoBackup();
     } catch (e) { console.error('Auto-backup init error:', e); }
-    // Show admin button if admin
-    const adminBtn = document.getElementById('admin-invites-btn');
-    if (adminBtn && isAdmin()) adminBtn.style.display = 'block';
+    // Show admin buttons if admin
+    if (isAdmin()) {
+      const adminBtn = document.getElementById('admin-invites-btn');
+      if (adminBtn) adminBtn.style.display = 'block';
+      const usersBtn = document.getElementById('admin-users-btn');
+      if (usersBtn) usersBtn.style.display = 'block';
+    }
 
     // Welcome popup for first-time users
     const welcomeKey = 'crisol_welcomed_' + state.currentUser.id;
@@ -478,6 +482,48 @@ export async function logout() {
   const btn = document.getElementById('login-btn');
   if (btn) { btn.textContent = 'Entrar'; btn.disabled = false; }
 }
+
+// ============================================================
+// ADMIN — Users panel
+// ============================================================
+window.showAdminUsers = async function() {
+  if (!state.sdb || !isAdmin()) return;
+
+  let profiles = [];
+  try {
+    const { data } = await state.sdb.from('profiles').select('id, display_name, institution, research_area, created_at');
+    profiles = data || [];
+  } catch (e) { console.error('Load profiles error:', e); }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'proj-modal-overlay';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+
+  let html = '<div class="logbook-modal" style="max-width:600px;max-height:80vh;overflow-y:auto;">';
+  html += '<h3 style="font-size:17px;">👥 Usuarios registrados (' + profiles.length + ')</h3>';
+
+  if (profiles.length === 0) {
+    html += '<div style="padding:20px;text-align:center;color:var(--tx3);">Sin usuarios registrados</div>';
+  } else {
+    profiles.forEach(p => {
+      const date = p.created_at ? new Date(p.created_at).toLocaleDateString() : '—';
+      html += '<div style="padding:10px 12px;margin:4px 0;background:var(--bg2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">';
+      html += '<div>';
+      html += '<div style="font-size:14px;font-weight:600;color:var(--tx);">' + escH(p.display_name || 'Sin nombre') + '</div>';
+      html += '<div style="font-size:12px;color:var(--tx3);">' + escH(p.institution || '') + (p.research_area ? ' · ' + escH(p.research_area) : '') + '</div>';
+      html += '</div>';
+      html += '<div style="font-size:11px;color:var(--tx3);text-align:right;">';
+      html += '<div>Registro: ' + date + '</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+  }
+
+  html += '<div style="margin-top:12px;text-align:right;"><button onclick="this.closest(\'.proj-modal-overlay\').remove()" style="background:var(--bg3);color:var(--tx2);border:none;border-radius:6px;padding:8px 16px;cursor:pointer;">Cerrar</button></div>';
+  html += '</div>';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+};
 
 // ============================================================
 // WELCOME POPUP (first-time users)

@@ -75,6 +75,20 @@ export function setSyncStatus(msg, color) {
   if (el) { el.textContent = msg; el.style.color = color || 'var(--tx3)'; }
 }
 
+// --- Online/offline detection ---
+export function initConnectionMonitor() {
+  function updateStatus() {
+    if (!navigator.onLine) {
+      setSyncStatus('Sin conexion', 'var(--red)');
+      showToast('Sin conexion a internet', 'error', 5000);
+    } else {
+      setSyncStatus('Conectado', 'var(--green)');
+    }
+  }
+  window.addEventListener('online', updateStatus);
+  window.addEventListener('offline', updateStatus);
+}
+
 export function closeSidebarMobile() {
   if (window.innerWidth <= 768) {
     document.querySelector('.sidebar')?.classList.remove('sb-open');

@@ -544,30 +544,43 @@ export async function restoreFromBackup(backupJson) {
   if (!state.sdb || !state.currentUser) return false;
   try {
     const backup = typeof backupJson === 'string' ? JSON.parse(backupJson) : backupJson;
-    if (!backup.data) { showToast('Archivo de backup inválido', 'error'); return false; }
 
-    const d = backup.data;
+    // Support both formats: { data: {...} } (web backup) and { tables: {...} } (local script)
+    const d = backup.data || backup.tables;
+    if (!d) { showToast('Archivo de backup invalido', 'error'); return false; }
 
-    // Restore projects
-    if (d.projects && d.projects.length > 0) {
-      for (const p of d.projects) {
-        await state.sdb.from('projects').upsert(p, { onConflict: 'id' });
+    const tablesToRestore = [
+      { key: 'projects', table: 'projects' },
+      { key: 'documents', table: 'sila_docs' },
+      { key: 'sila_docs', table: 'sila_docs' },
+      { key: 'sila_kanban', table: 'sila_kanban' },
+      { key: 'sila_prisma', table: 'sila_prisma' },
+      { key: 'sila_userdata', table: 'sila_userdata' },
+      { key: 'sila_settings', table: 'sila_settings' },
+      { key: 'sila_projects', table: 'sila_projects' },
+      { key: 'dr_socratic_log', table: 'dr_socratic_log' },
+      { key: 'dr_alerts', table: 'dr_alerts' },
+      { key: 'dr_wizard_context', table: 'dr_wizard_context' }
+    ];
+
+    let restored = 0;
+    let errors = 0;
+
+    for (const { key, table } of tablesToRestore) {
+      const rows = d[key];
+      if (!rows || !Array.isArray(rows) || rows.length === 0) continue;
+      try {
+        for (const row of rows) {
+          await state.sdb.from(table).upsert(row, { onConflict: 'id' });
+        }
+        restored += rows.length;
+      } catch (e) {
+        console.error(`Restore ${table} error:`, e);
+        errors++;
       }
     }
-    // Restore documents
-    if (d.documents && d.documents.length > 0) {
-      for (const doc of d.documents) {
-        await state.sdb.from('sila_docs').upsert(doc, { onConflict: 'id' });
-      }
-    }
-    // Restore socratic log
-    if (d.dr_socratic_log && d.dr_socratic_log.length > 0) {
-      for (const entry of d.dr_socratic_log) {
-        await state.sdb.from('dr_socratic_log').upsert(entry, { onConflict: 'id' });
-      }
-    }
 
-    showToast('✅ Backup restaurado exitosamente', 'success');
+    showToast(`Backup restaurado: ${restored} registros${errors > 0 ? `, ${errors} tablas con error` : ''}`, 'success', 4000);
     return true;
   } catch (e) {
     console.error('Restore error:', e);
