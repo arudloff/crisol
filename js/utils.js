@@ -75,6 +75,30 @@ export function setSyncStatus(msg, color) {
   if (el) { el.textContent = msg; el.style.color = color || 'var(--tx3)'; }
 }
 
+// --- Error and audit logging ---
+export function logError(message, stack, url) {
+  console.error('App error:', message);
+  if (state.sdb && state.currentUser) {
+    state.sdb.from('error_log').insert({
+      user_id: state.currentUser.id,
+      message: (message || '').substring(0, 500),
+      stack: (stack || '').substring(0, 2000),
+      url: (url || '').substring(0, 200)
+    }).then(() => {}).catch(() => {});
+  }
+}
+
+export function logAudit(action, targetType, targetId, detail) {
+  if (state.sdb && state.currentUser) {
+    state.sdb.from('audit_log').insert({
+      user_id: state.currentUser.id,
+      action, target_type: targetType,
+      target_id: targetId,
+      detail: (detail || '').substring(0, 500)
+    }).then(() => {}).catch(() => {});
+  }
+}
+
 // --- Online/offline detection ---
 export function initConnectionMonitor() {
   function updateStatus() {

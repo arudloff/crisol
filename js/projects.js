@@ -193,7 +193,9 @@ function editProject(projId) {
 
 async function deleteProject(projId) {
   if (!confirm('¿Eliminar este proyecto? Los artículos y documentos NO se eliminarán.')) return;
+  const proj = getProjects().find(p => p.id === projId);
   await deleteProjectFromDb(projId);
+  if (window.logAudit) window.logAudit('delete_project', 'project', projId, proj?.nombre || '');
   await loadProjects();
   if (state.currentProjectId === projId) { state.currentProjectId = null; state._goHome(); }
   buildProjectSidebar();

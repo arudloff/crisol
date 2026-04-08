@@ -32,6 +32,7 @@ export function syncToCloud(d) {
     } catch (e) {
       console.error('Sync error:', e);
       setSyncStatus('☁ Error sync', 'var(--red)');
+      showToast('Los cambios no se estan guardando en la nube', 'error', 5000);
     }
   }, 2000);
 }

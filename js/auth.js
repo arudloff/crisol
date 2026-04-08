@@ -3,7 +3,7 @@
 // ============================================================
 
 import { state } from './state.js';
-import { showToast, setSyncStatus, escH, isValidEmail, sanitizeText } from './utils.js';
+import { showToast, setSyncStatus, escH, isValidEmail, sanitizeText, logAudit } from './utils.js';
 window.showToast = showToast; // expose for inline onclick in invite modals
 import './db.js'; // side-effect: initializes state.sdb
 
@@ -181,6 +181,7 @@ window.approveInvite = async function(id, idx) {
   console.log('approveInvite result:', { id, code, upData, error });
   if (error) { showToast('Error al aprobar: ' + error.message, 'error'); return; }
   if (!upData || upData.length === 0) { showToast('No se pudo actualizar — revisa permisos RLS en Supabase', 'error'); return; }
+  logAudit('approve_invite', 'invite_request', id, req ? req.email + ' — code: ' + code : '');
   // Remove from local pending list and update badge
   if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
   const badge = document.getElementById('notif-badge');
@@ -216,6 +217,7 @@ window.rejectInvite = async function(id, idx) {
   if (!state.sdb) return;
   const { error } = await state.sdb.from('invite_requests').update({ status: 'rejected' }).eq('id', id);
   if (error) { showToast('Error al rechazar: ' + error.message, 'error'); return; }
+  logAudit('reject_invite', 'invite_request', id, '');
   if (state._pendingInvites) state._pendingInvites.splice(idx, 1);
   const badge = document.getElementById('notif-badge');
   if (badge) {

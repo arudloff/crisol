@@ -12,7 +12,7 @@ import {
 import './db.js'; // side-effect: initializes state.sdb
 import { checkLogin, logout } from './auth.js';
 import {
-  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor
+  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor, logError, logAudit
 } from './utils.js';
 import {
   loadArticle, initArticleData, render, upd, saveNavState, restoreNavState,
@@ -53,6 +53,7 @@ state.getSources = getSources;
 state._saveNavState = saveNavState;
 state._closeSidebarMobile = closeSidebarMobile;
 state._cleanupNotifications = cleanupNotifications;
+window.logAudit = logAudit;
 
 // ============================================================
 // SIDEBAR TOGGLE (mobile)
@@ -845,6 +846,21 @@ window.addEventListener('offline', () => {
 (async function boot() {
   // Monitor connection status
   initConnectionMonitor();
+
+  // Global error handler — log unhandled errors to Supabase
+  window.addEventListener('error', e => {
+    logError(e.message, e.error?.stack, e.filename + ':' + e.lineno);
+  });
+  window.addEventListener('unhandledrejection', e => {
+    logError('Unhandled promise: ' + (e.reason?.message || e.reason), e.reason?.stack);
+  });
+
+  // Flush pending saves on tab close
+  window.addEventListener('beforeunload', () => {
+    if (state.projects?.length > 0) {
+      try { localStorage.setItem('sila_projects_cache', JSON.stringify(state.projects)); } catch (e) {}
+    }
+  });
 
   // Build sidebars (projects will be empty until loaded from Supabase)
   buildSidebar();
