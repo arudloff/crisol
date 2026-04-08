@@ -41,10 +41,17 @@ export async function saveOneProject(proj) {
 }
 
 // --- Save all projects (backward compat — calls saveOne for each) ---
-export function saveProjects(projects) {
+let _saveInProgress = false;
+export async function saveProjects(projects) {
   state.projects = projects;
   try { localStorage.setItem('sila_projects_cache', JSON.stringify(projects)); } catch (e) {}
-  projects.forEach(p => saveOneProject(p));
+  if (_saveInProgress) return; // prevent concurrent batch saves
+  _saveInProgress = true;
+  try {
+    for (const p of projects) await saveOneProject(p);
+  } finally {
+    _saveInProgress = false;
+  }
 }
 
 // --- Load all projects from Supabase into cache (own + shared) ---
