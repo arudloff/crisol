@@ -53,6 +53,57 @@ Ver [ARCHITECTURE.md](ARCHITECTURE.md) para diagrama completo.
 | /dr benchmark | Comparacion vs publicaciones ancla (12 dimensiones) |
 | /dr journal | Registro automatico de acciones |
 
+## Restaurar en PC nueva
+
+### Prerequisito
+Restaurar primero CLAUDE_STANDARD (las reglas y skills):
+```bash
+git clone https://github.com/arudloff/claude-standard.git "G:\Mi unidad\DOCTORADO\CLAUDE_STANDARD"
+cd "G:\Mi unidad\DOCTORADO\CLAUDE_STANDARD"
+bash install.sh
+```
+
+### Paso 1: Clonar este repo
+```bash
+git clone https://github.com/arudloff/crisol.git "G:\Mi unidad\Doctorado MGT\SILA\crisol"
+```
+
+### Paso 2: Configurar Supabase
+```bash
+# Editar js/state.js con tu URL y KEY de Supabase
+# URL: https://cupykpcsxjihnzwyflbm.supabase.co
+# KEY: tu anon key
+```
+
+### Paso 3: Verificar tests
+```bash
+cd "G:\Mi unidad\Doctorado MGT\SILA\crisol"
+npm test    # Debe dar 33/33 pass
+```
+
+### Paso 4: Auditar calidad
+```bash
+# Desde Claude Code:
+/dev audit full
+# O con YUNQUE CLI:
+cd "G:\Mi unidad\DOCTORADO\YUNQUE\package"
+node -e "const {audit} = require('./lib/audit'); audit({});"
+```
+
+### Paso 5: Deploy a Vercel
+```bash
+npx vercel --yes --prod
+```
+
+### Paso 6: Restaurar bóveda Obsidian
+La bóveda SILA vive en `G:\Mi unidad\Doctorado MGT\SILA_Vault\`. Google Drive la sincroniza automáticamente. Si necesitas regenerarla, usa /sila o /sila-v2 para procesar artículos.
+
+## Relación con otros proyectos
+
+- **CLAUDE_STANDARD** (github.com/arudloff/claude-standard) — las reglas que gobiernan cómo Claude trabaja en CRISOL
+- **YUNQUE** (github.com/arudloff/yunque) — herramienta de auditoría que verifica la calidad de CRISOL
+- Orden de restauración: CLAUDE_STANDARD → YUNQUE → CRISOL
+
 ## Licencia
 
 Uso academico. Alejandro Rudloff Munoz, Universidad de Talca, 2026.
