@@ -7,7 +7,7 @@ import { state } from './state.js';
 import { ld, gC, gD, gF, svF } from './storage.js';
 import {
   showToast, loadArticle, getArticleTags, hl,
-  togglePar, renderSub, getClaim, getClaimNote
+  togglePar, renderSub, getClaim, getClaimNote, escH
 } from './utils.js';
 import { getDocs, countDocWords } from './editor.js';
 
@@ -159,7 +159,7 @@ export function filterArticles() {
   if (!results.length) { el.innerHTML = '<p style="color:var(--tx3);padding:20px;text-align:center;">Sin resultados</p>'; return; }
   el.innerHTML = results.map(a => {
     const w = a.weight === 'critico' ? '◆◆◆' : a.weight === 'importante' ? '◆◆' : '◆';
-    return `<div class="cite-result" onclick="document.getElementById('article-search-modal').classList.remove('show');goToArticle('${a.key}')"><div class="cr-ref">${a.authors} (${a.year}) ${w}</div><div class="cr-text">${a.category || ''}</div></div>`;
+    return `<div class="cite-result" onclick="document.getElementById('article-search-modal').classList.remove('show');goToArticle('${escH(a.key)}')"><div class="cr-ref">${escH(a.authors)} (${escH(a.year)}) ${w}</div><div class="cr-text">${escH(a.category || '')}</div></div>`;
   }).join('');
 }
 window.filterArticles = filterArticles;
@@ -182,7 +182,7 @@ export function filterDocs() {
   if (!results.length) { el.innerHTML = '<p style="color:var(--tx3);padding:20px;text-align:center;">Sin resultados</p>'; return; }
   el.innerHTML = results.map(d => {
     const st = d.status || 'borrador'; const stIcon = st === 'finalizado' ? '✓' : st === 'revision' ? '⏳' : '✍';
-    return `<div class="cite-result" onclick="document.getElementById('doc-search-modal').classList.remove('show');openDoc('${d.id}')"><div class="cr-ref">${stIcon} ${d.title}</div><div class="cr-text">${(d.tags || []).join(', ')} · ${countDocWords(d)} pal</div></div>`;
+    return `<div class="cite-result" onclick="document.getElementById('doc-search-modal').classList.remove('show');openDoc('${escH(d.id)}')"><div class="cr-ref">${stIcon} ${escH(d.title)}</div><div class="cr-text">${escH((d.tags || []).join(', '))} · ${countDocWords(d)} pal</div></div>`;
   }).join('');
 }
 window.filterDocs = filterDocs;

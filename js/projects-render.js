@@ -29,8 +29,8 @@ function renderProjectHeader(proj, isOwner, days, projects) {
 
   h += `<div class="proj-header">`;
   h += `<div style="display:flex;justify-content:space-between;align-items:flex-start;">`;
-  h += `<div class="proj-title">${proj.nombre}`;
-  if (proj._isShared) h += ` <span style="font-size:13px;color:var(--purple);font-weight:400;">👥 ${PROJ_ROLE_LABELS[proj._myRole] || proj._myRole}</span>`;
+  h += `<div class="proj-title">${escH(proj.nombre)}`;
+  if (proj._isShared) h += ` <span style="font-size:13px;color:var(--purple);font-weight:400;">👥 ${escH(PROJ_ROLE_LABELS[proj._myRole] || proj._myRole)}</span>`;
   h += `</div>`;
   h += `<div style="display:flex;gap:6px;">`;
   if (isOwner) {
@@ -42,13 +42,13 @@ function renderProjectHeader(proj, isOwner, days, projects) {
   }
   h += `</div>`;
   h += `</div>`;
-  if (proj.descripcion) h += `<div class="proj-desc">${proj.descripcion}</div>`;
+  if (proj.descripcion) h += `<div class="proj-desc">${escH(proj.descripcion)}</div>`;
   h += `<div class="proj-meta">`;
   if (proj.fechaLimite) {
     const dLabel = days === Infinity ? '' : '(' + days + ' día' + (days !== 1 ? 's' : '') + ')';
     h += `<span>📅 ${proj.fechaLimite} ${dLabel}</span>`;
   }
-  if (proj.carpetaDrive) h += `<a href="${proj.carpetaDrive}" target="_blank" onclick="event.stopPropagation()">📁 Abrir carpeta en Drive</a>`;
+  if (proj.carpetaDrive) h += `<a href="${escH(proj.carpetaDrive)}" target="_blank" onclick="event.stopPropagation()">📁 Abrir carpeta en Drive</a>`;
   h += `</div>`;
 
   // Team members placeholder (async load)
@@ -66,7 +66,7 @@ function renderProjectHeader(proj, isOwner, days, projects) {
       const role = m.role === 'coauthor' ? 'reader' : m.role;
       const color = ROLE_COLORS[role] || 'var(--tx3)';
       const isMe = m.user_id === state.currentUser?.id;
-      mh += `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:12px;background:${color}18;border:1px solid ${color}30;color:${color};">${name}${isMe ? ' (tú)' : ''} · ${ROLE_LABELS[role] || role}`;
+      mh += `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:12px;background:${color}18;border:1px solid ${color}30;color:${color};">${escH(name)}${isMe ? ' (tú)' : ''} · ${escH(ROLE_LABELS[role] || role)}`;
       if (isOwnerMember && !isMe && role !== 'owner') {
         mh += ` <span onclick="removeMember('${proj.id}','${m.user_id}')" style="cursor:pointer;opacity:0.5;margin-left:2px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5" title="Revocar acceso">✕</span>`;
       }

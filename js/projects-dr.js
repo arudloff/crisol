@@ -5,7 +5,7 @@
 // ============================================================
 
 import { state } from './state.js';
-import { showToast } from './utils.js';
+import { showToast, escH } from './utils.js';
 import { getProjects, saveProjects } from './projects-core.js';
 import { loadDrAlerts, writeSocraticEntry, syncWizardContext, resolveDrAlert } from './sync.js';
 import { _getCloFases } from './projects-clo.js';
@@ -462,9 +462,9 @@ async function loadAndRenderDrAlerts(projId) {
     h += `<div style="background:${bgColors[a.type]};border:1px solid ${colors[a.type]};border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">`;
     h += `<span style="font-size:18px;">${icons[a.type]}</span>`;
     h += `<div style="flex:1;">`;
-    h += `<div style="font-size:13px;font-weight:600;color:${colors[a.type]};">${a.type === 'block' ? 'BLOQUEADO' : a.type === 'warning' ? 'ALERTA' : 'INFO'} — ${a.code || ''}</div>`;
-    h += `<div style="font-size:13px;color:var(--tx2);">${a.message}</div>`;
-    if (a.detail) h += `<div style="font-size:12px;color:var(--tx3);margin-top:2px;">${a.detail}</div>`;
+    h += `<div style="font-size:13px;font-weight:600;color:${colors[a.type]};">${a.type === 'block' ? 'BLOQUEADO' : a.type === 'warning' ? 'ALERTA' : 'INFO'} — ${escH(a.code || '')}</div>`;
+    h += `<div style="font-size:13px;color:var(--tx2);">${escH(a.message)}</div>`;
+    if (a.detail) h += `<div style="font-size:12px;color:var(--tx3);margin-top:2px;">${escH(a.detail)}</div>`;
     h += `</div>`;
     h += `<span style="font-size:11px;color:var(--tx3);cursor:pointer;" onclick="resolveDrAlertUI('${a.id}','${projId}')" title="Marcar como resuelto">✓ resolver</span>`;
     h += `</div>`;

@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-04-08",
+    "text": "Arreglar catch vacíos en app.js (FF-U4.1)",
+    "done": true
+  },
+  {
+    "date": "2026-04-08",
+    "text": "Agregar window.onerror handler global (FF-U4.3)",
+    "done": true
+  },
+  {
+    "date": "2026-04-08",
+    "text": "articles.js es el próximo god file candidato (1477 líneas)",
+    "done": false
+  },
+  {
+    "date": "2026-04-08",
+    "text": "Refactorización de projects.js completada (4670 → 714 líneas)",
+    "done": true
+  }
+]

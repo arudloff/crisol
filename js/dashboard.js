@@ -10,7 +10,7 @@ import {
   updateTopbar, getProjects, getKanban, saveKanban,
   renderKanbanInline, renderProjectsSummary, buildDocSidebar,
   buildProjectSidebar, getArticleTags, goHome,
-  getProjectClaims, calcDaysRemaining, calcProjectAlert
+  getProjectClaims, calcDaysRemaining, calcProjectAlert, escH
 } from './utils.js';
 import { getDocs, countDocWords, renderDocEditor } from './editor.js';
 import { syncSettingsToCloud } from './sync.js';

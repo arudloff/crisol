@@ -5,7 +5,7 @@
 // ============================================================
 
 import { state, LOGBOOK_TYPES } from './state.js';
-import { showToast } from './utils.js';
+import { showToast, escH } from './utils.js';
 import { getDocs } from './editor.js';
 import { getProjects, saveProjects } from './projects-core.js';
 
@@ -90,7 +90,7 @@ function addLbLink() {
     let h = '';
     window._lbLinks.forEach((lnk, i) => {
       h += `<div style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin:2px 4px 2px 0;background:var(--bg3);border-radius:6px;font-size:12px;">`;
-      h += `<span style="color:var(--blue);">📎 ${lnk.nombre}</span>`;
+      h += `<span style="color:var(--blue);">📎 ${escH(lnk.nombre)}</span>`;
       h += `<span onclick="window._lbLinks.splice(${i},1);addLbLink.__refresh()" style="cursor:pointer;color:var(--tx3);font-size:10px;">✕</span>`;
       h += `</div>`;
     });
@@ -103,7 +103,7 @@ addLbLink.__refresh = function () {
   let h = '';
   window._lbLinks.forEach((lnk, i) => {
     h += `<div style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin:2px 4px 2px 0;background:var(--bg3);border-radius:6px;font-size:12px;">`;
-    h += `<span style="color:var(--blue);">📎 ${lnk.nombre}</span>`;
+    h += `<span style="color:var(--blue);">📎 ${escH(lnk.nombre)}</span>`;
     h += `<span onclick="window._lbLinks.splice(${i},1);addLbLink.__refresh()" style="cursor:pointer;color:var(--tx3);font-size:10px;">✕</span>`;
     h += `</div>`;
   });
@@ -194,10 +194,10 @@ function editLogbookEntry(projId, entryId) {
   html += `</div>`;
 
   html += `<label>Versión actual</label>`;
-  html += `<input id="lb-version" value="${entry.version || ''}">`;
+  html += `<input id="lb-version" value="${escH(entry.version || '')}">`;
 
   html += `<label>Nota</label>`;
-  html += `<textarea id="lb-note">${entry.nota || ''}</textarea>`;
+  html += `<textarea id="lb-note">${escH(entry.nota || '')}</textarea>`;
 
   html += `<label>📎 Enlaces</label>`;
   // Show existing links for reference
@@ -205,24 +205,24 @@ function editLogbookEntry(projId, entryId) {
   html += `<div id="lb-links-list">`;
   if (window._lbLinks.length > 0) {
     window._lbLinks.forEach((lnk, i) => {
-      html += `<div style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin:2px 4px 2px 0;background:var(--bg3);border-radius:6px;font-size:12px;"><span style="color:var(--blue);">📎 ${lnk.nombre}</span><span onclick="window._lbLinks.splice(${i},1);addLbLink.__refresh()" style="cursor:pointer;color:var(--tx3);font-size:10px;">✕</span></div>`;
+      html += `<div style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;margin:2px 4px 2px 0;background:var(--bg3);border-radius:6px;font-size:12px;"><span style="color:var(--blue);">📎 ${escH(lnk.nombre)}</span><span onclick="window._lbLinks.splice(${i},1);addLbLink.__refresh()" style="cursor:pointer;color:var(--tx3);font-size:10px;">✕</span></div>`;
     });
   }
   html += `</div>`;
   html += `<button type="button" onclick="addLbLink()" style="background:var(--bg3);border:1px solid rgba(220,215,205,0.1);color:var(--tx2);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;">+ Agregar enlace</button>`;
 
   html += `<label>🤖 Prompt usado</label>`;
-  html += `<textarea id="lb-prompt" style="min-height:50px;">${entry.prompt || ''}</textarea>`;
-  html += `<input id="lb-prompt-result" value="${entry.promptResult || ''}" placeholder="Resultado">`;
+  html += `<textarea id="lb-prompt" style="min-height:50px;">${escH(entry.prompt || '')}</textarea>`;
+  html += `<input id="lb-prompt-result" value="${escH(entry.promptResult || '')}" placeholder="Resultado">`;
   if (projDocs.length > 0) {
     html += `<select id="lb-prompt-doc" style="width:100%;padding:6px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;margin-top:4px;">`;
     html += `<option value="">Vincular a documento</option>`;
-    projDocs.forEach(d => { html += `<option value="${d.id}"${d.id === entry.promptDoc ? ' selected' : ''}>${d.title}</option>`; });
+    projDocs.forEach(d => { html += `<option value="${escH(d.id)}"${d.id === entry.promptDoc ? ' selected' : ''}>${escH(d.title)}</option>`; });
     html += `</select>`;
   }
 
   html += `<label>💡 Insight</label>`;
-  html += `<input id="lb-insight" value="${entry.insight || ''}">`;
+  html += `<input id="lb-insight" value="${escH(entry.insight || '')}">`;
 
   html += `<div class="lb-actions">`;
   html += `<button onclick="window._lbLinks=[];this.closest('.proj-modal-overlay').remove()" style="background:var(--bg3);color:var(--tx2);">Cancelar</button>`;

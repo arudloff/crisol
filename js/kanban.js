@@ -50,7 +50,7 @@ export function renderKanbanCard(item) {
     h += `<div style="font-size:12px;color:var(--tx3);line-height:1.5;margin:3px 0;word-break:break-word;">${notaHtml}</div>`;
   }
   h += `<div class="kb-meta"><span class="kb-deadline ${dl.cls}">${dl.label}</span></div>`;
-  if (proj) h += `<div class="kb-proj">${proj.nombre}</div>`;
+  if (proj) h += `<div class="kb-proj">${escH(proj.nombre)}</div>`;
   h += `<div class="kb-actions">`;
   h += `<button onclick="editKanbanTask('${item.id}')">✎</button>`;
   h += `<button onclick="deleteKanbanTask('${item.id}')">✕</button>`;
@@ -222,13 +222,13 @@ window.showKanbanTaskModal = function(editId, presetProjectId) {
 
   html += `<label>Título *</label>`;
   html += `<div style="display:flex;gap:6px;align-items:center;">`;
-  html += `<input id="kb-title" value="${existing ? existing.title.replace(/"/g, '&quot;') : ''}" placeholder="¿Qué necesitas hacer?" style="flex:1;">`;
+  html += `<input id="kb-title" value="${existing ? escH(existing.title) : ''}" placeholder="¿Qué necesitas hacer?" style="flex:1;">`;
   html += `<button onclick="toggleDictation(this,'kb-title')" title="Dictar" style="background:var(--bg3);border:1px solid rgba(220,215,205,0.15);border-radius:6px;cursor:pointer;font-size:14px;padding:6px 8px;flex-shrink:0;">🎤</button>`;
   html += `</div>`;
 
   html += `<label>Nota <span style="font-weight:400;color:var(--tx3);">(opcional — comentario, link, detalle)</span></label>`;
   html += `<div style="display:flex;gap:6px;align-items:flex-start;">`;
-  html += `<textarea id="kb-nota" placeholder="Ej: Revisar sección 3, ver https://..." style="min-height:50px;flex:1;">${existing && existing.nota ? existing.nota.replace(/</g, '&lt;') : ''}</textarea>`;
+  html += `<textarea id="kb-nota" placeholder="Ej: Revisar sección 3, ver https://..." style="min-height:50px;flex:1;">${existing && existing.nota ? escH(existing.nota) : ''}</textarea>`;
   html += `<button onclick="toggleDictation(this,'kb-nota')" title="Dictar" style="background:var(--bg3);border:1px solid rgba(220,215,205,0.15);border-radius:6px;cursor:pointer;font-size:14px;padding:6px 8px;flex-shrink:0;margin-top:2px;">🎤</button>`;
   html += `</div>`;
 

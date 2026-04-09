@@ -1,0 +1,955 @@
+[
+  {
+    "timestamp": "2026-04-08T22:02:17.030Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "3 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "30 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "197 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "148 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "56 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "29 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (40 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (311 registered, 183 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "13 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "29/30 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-08T22:02:17.030Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "3 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "30 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "197 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "148 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "56 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "29 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (40 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (311 registered, 183 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "13 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "29/30 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-08T23:15:17.457Z",
+    "project": "crisol",
+    "summary": {
+      "total": 8,
+      "pass": 4,
+      "fail": 1,
+      "warn": 3,
+      "score": 50
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "119 innerHTML assignments",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catches",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "40 duplicates",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore OK",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without ARIA",
+        "dimension": "accessibility"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-08T23:15:32.374Z",
+    "project": "crisol",
+    "summary": {
+      "total": 8,
+      "pass": 4,
+      "fail": 1,
+      "warn": 3,
+      "score": 50
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "119 innerHTML assignments",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catches",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "40 duplicates",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore OK",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without ARIA",
+        "dimension": "accessibility"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-09T00:07:50.541Z",
+    "project": "crisol",
+    "summary": {
+      "total": 8,
+      "pass": 4,
+      "fail": 1,
+      "warn": 3,
+      "score": 50
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catches",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicates",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore OK",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without ARIA",
+        "dimension": "accessibility"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-09T00:08:04.447Z",
+    "project": "crisol",
+    "summary": {
+      "total": 8,
+      "pass": 4,
+      "fail": 1,
+      "warn": 3,
+      "score": 50
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catches",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicates",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore OK",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without ARIA",
+        "dimension": "accessibility"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-09T00:09:31.901Z",
+    "project": "crisol",
+    "summary": {
+      "total": 8,
+      "pass": 4,
+      "fail": 1,
+      "warn": 3,
+      "score": 50
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catches",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicates",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore OK",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without ARIA",
+        "dimension": "accessibility"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-09T00:17:35.992Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "174 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "148 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "56 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "24 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (40 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (311 registered, 183 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "13 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "29/30 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-09T00:18:52.243Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "106 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "174 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "148 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "56 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "24 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (40 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (311 registered, 183 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "13 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "29/30 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ]
+  }
+]

@@ -7,7 +7,7 @@ import { state } from './state.js';
 import {
   updateTopbar, buildSidebar, buildDocSidebar, buildProjectSidebar,
   loadArticle, initArticleData, showToast, getProjects,
-  renderProjectDash, renderMiTesis
+  renderProjectDash, renderMiTesis, escH
 } from './utils.js';
 import { getDocs, renderDocEditor } from './editor.js';
 import { renderGlobalDash } from './dashboard.js';
@@ -219,7 +219,7 @@ export function toggleQuickCapture() {
       sel.innerHTML = '<option value="">Sin proyecto</option>';
       projects.forEach(p => {
         const selected = state.currentProjectId === p.id ? ' selected' : '';
-        sel.innerHTML += `<option value="${p.id}"${selected}>${p.nombre}</option>`;
+        sel.innerHTML += `<option value="${escH(p.id)}"${selected}>${escH(p.nombre)}</option>`;
       });
     }
   }

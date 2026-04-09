@@ -4,7 +4,7 @@
 // ============================================================
 
 import { state, PROJ_ESTADOS, PROJ_ROLE_LABELS } from './state.js';
-import { showToast, closeSidebarMobile } from './utils.js';
+import { showToast, closeSidebarMobile, escH } from './utils.js';
 import { getDocs, saveDocs, countDocWords } from './editor.js';
 import { saveNavState } from './articles.js';
 import { openInTab } from './tabs.js';
@@ -78,11 +78,11 @@ function showProjectModal(projId) {
 
   let html = `<div class="proj-modal">`;
   html += `<h3>${isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h3>`;
-  html += `<label>Nombre *</label><input id="proj-name" value="${isEdit ? existing.nombre.replace(/"/g, '&quot;') : ''}" placeholder="Ej: Primer artículo">`;
-  html += `<label>Descripción</label><textarea id="proj-desc" placeholder="Breve descripción del objetivo...">${isEdit ? existing.descripcion || '' : ''}</textarea>`;
-  html += `<label>Eje (opcional)</label><input id="proj-eje" value="${isEdit ? (existing.eje || '').replace(/"/g, '&quot;') : ''}" placeholder="Ej: Marco teórico, Metodología, Revisión...">`;
+  html += `<label>Nombre *</label><input id="proj-name" value="${isEdit ? escH(existing.nombre) : ''}" placeholder="Ej: Primer artículo">`;
+  html += `<label>Descripción</label><textarea id="proj-desc" placeholder="Breve descripción del objetivo...">${isEdit ? escH(existing.descripcion || '') : ''}</textarea>`;
+  html += `<label>Eje (opcional)</label><input id="proj-eje" value="${isEdit ? escH(existing.eje || '') : ''}" placeholder="Ej: Marco teórico, Metodología, Revisión...">`;
   html += `<label>Deadline</label><input type="date" id="proj-deadline" value="${isEdit ? existing.fechaLimite || '' : ''}">`;
-  html += `<label>Carpeta Google Drive (URL)</label><input id="proj-drive" value="${isEdit ? (existing.carpetaDrive || '').replace(/"/g, '&quot;') : ''}" placeholder="https://drive.google.com/drive/folders/...">`;
+  html += `<label>Carpeta Google Drive (URL)</label><input id="proj-drive" value="${isEdit ? escH(existing.carpetaDrive || '') : ''}" placeholder="https://drive.google.com/drive/folders/...">`;
   const curEstado = isEdit ? (existing.estado || 'en_ejecucion') : 'en_ejecucion';
   html += `<label>Estado</label><select id="proj-estado" style="width:100%;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;">`;
   PROJ_ESTADOS.forEach(e => { html += `<option value="${e.id}"${e.id === curEstado ? ' selected' : ''}>${e.icon} ${e.label}</option>`; });
@@ -217,6 +217,7 @@ function removeArticleFromProject(e, projId, articleKey) {
   saveProjects(projects);
   renderProjectDash(projId);
   buildProjectSidebar();
+  showToast('Artículo removido del proyecto', 'success', 2000);
 }
 
 // ============================================================

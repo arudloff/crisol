@@ -10,8 +10,10 @@ import {
   saveNavState, restoreNavState, updateTopbar, buildSidebar,
   renderProjectBadges, getProjectsForDoc, goHome, dictWrap,
   buildDocSidebar, buildProjectSidebar, updateSidebarKPIs,
-  ensureToolsOpen, getProjects
+  ensureToolsOpen, getProjects, escH
 } from './utils.js';
+import { DOC_TEMPLATES } from './editor-templates.js';
+import './editor-export.js'; // side-effect: registers window handlers for export
 
 // ============================================================
 // DOC CRUD
@@ -55,111 +57,7 @@ export function docUndo() {
 window.docUndo = docUndo;
 
 // ============================================================
-// TEMPLATES
-// ============================================================
-const DOC_TEMPLATES = {
-  libre: { name: 'Documento libre', blocks: [{ type: 'text', content: '' }] },
-  imrad: {
-    name: 'Artículo científico (IMRaD)', blocks: [
-      { type: 'heading', content: 'Resumen / Abstract', open: true }, { type: 'text', content: '' },
-      { type: 'heading', content: '1. Introducción' }, { type: 'note', content: 'Contexto, problema, gap, pregunta, contribución' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2. Marco teórico' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3. Metodología' }, { type: 'note', content: 'Diseño, muestra, instrumentos, análisis' }, { type: 'text', content: '' },
-      { type: 'heading', content: '4. Resultados' }, { type: 'text', content: '' },
-      { type: 'heading', content: '5. Discusión' }, { type: 'note', content: 'Interpretación, implicaciones teóricas y prácticas' }, { type: 'text', content: '' },
-      { type: 'heading', content: '6. Conclusiones' }, { type: 'note', content: 'Resumen, limitaciones, investigación futura' }, { type: 'text', content: '' }
-    ]
-  },
-  marco: {
-    name: 'Capítulo: Marco teórico', blocks: [
-      { type: 'heading', content: 'Introducción al capítulo', open: true }, { type: 'note', content: 'Qué cubre este capítulo y por qué' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2.1 Pilar teórico 1' }, { type: 'note', content: 'Constructos clave, autores seminales, debates' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2.2 Pilar teórico 2' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2.3 Intersección' }, { type: 'note', content: 'Cómo se conectan los pilares, qué queda inexplorado' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2.4 Marco conceptual' }, { type: 'note', content: 'TU síntesis original — modelo visual + proposiciones' }, { type: 'text', content: '' },
-      { type: 'heading', content: '2.5 Síntesis del capítulo' }, { type: 'note', content: 'Tabla resumen: constructo | definición | autores | rol en la tesis' }, { type: 'text', content: '' }
-    ]
-  },
-  metodo: {
-    name: 'Capítulo: Metodología', blocks: [
-      { type: 'heading', content: 'Introducción', open: true }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.1 Filosofía de investigación' }, { type: 'note', content: 'Ontología, epistemología, paradigma' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.2 Diseño y enfoque' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.3 Selección de casos / Muestra' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.4 Recolección de datos' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.5 Análisis de datos' }, { type: 'text', content: '' },
-      { type: 'heading', content: '3.6 Validez, confiabilidad y ética' }, { type: 'text', content: '' }
-    ]
-  },
-  propuesta: {
-    name: 'Propuesta de conferencia', blocks: [
-      { type: 'heading', content: 'Título', open: true }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Resumen (300 palabras)' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Contribución' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Palabras clave' }, { type: 'text', content: '' }
-    ]
-  },
-  cover: {
-    name: '📨 Cover letter (submission)', blocks: [
-      { type: 'heading', content: 'Datos del envío', open: true },
-      { type: 'note', content: 'Journal, editor, fecha de envío' },
-      { type: 'text', content: '**Journal:** \n**Editor:** \n**Fecha:** ' },
-      { type: 'heading', content: 'Cuerpo de la carta' },
-      { type: 'text', content: 'Dear Editor,\n\nWe are pleased to submit our manuscript entitled "[TÍTULO]" for consideration in [JOURNAL].\n\n**Context and motivation:**\n[Describe the research problem and why it matters to the journal audience]\n\n**Key contribution:**\n[State the main theoretical/empirical contribution in 2-3 sentences]\n\n**Novelty:**\n[Explain what is new — what gap this fills that existing literature does not]\n\n**Fit with the journal:**\n[Explain why this manuscript belongs in THIS journal specifically]\n\n**Methodology:**\n[Brief description of method and data]\n\nThis manuscript has not been published elsewhere and is not under consideration by another journal. All authors have approved the manuscript and agree with its submission.\n\nWe look forward to your response.\n\nSincerely,\n[AUTHORS]' },
-      { type: 'heading', content: 'Checklist pre-envío' },
-      { type: 'text', content: '- [ ] Formato según guidelines del journal\n- [ ] Word count dentro del límite\n- [ ] Abstract según estructura requerida\n- [ ] Referencias en formato correcto\n- [ ] Figuras/tablas en resolución requerida\n- [ ] Declaración de conflicto de interés\n- [ ] Co-autores revisaron y aprobaron\n- [ ] Verificación anti-plagio completada\n- [ ] Datos suplementarios preparados\n- [ ] Properties del archivo borradas (anonimato)' }
-    ]
-  },
-  response: {
-    name: '📝 Response to reviewers', blocks: [
-      { type: 'heading', content: 'Carta al editor', open: true },
-      { type: 'text', content: 'Dear Editor,\n\nThank you for the opportunity to revise our manuscript "[TÍTULO]" (Manuscript ID: [ID]).\n\nWe appreciate the constructive feedback from the reviewers. Below we provide a point-by-point response to each comment, describing the changes made in the revised manuscript.\n\nSignificant changes are highlighted in [yellow/tracked changes] in the revised manuscript.\n\nSincerely,\n[AUTHORS]' },
-      { type: 'heading', content: 'Reviewer 1' },
-      { type: 'note', content: 'Copiar cada comentario del reviewer y responder punto a punto. Indicar página/sección del cambio.' },
-      { type: 'text', content: '**Comment 1.1:**\n> "[Copiar texto del reviewer]"\n\n**Response:**\n[Tu respuesta]\n\n**Changes made:**\n[Descripción del cambio, referencia a página/sección]\n\n---\n\n**Comment 1.2:**\n> "[Copiar texto del reviewer]"\n\n**Response:**\n[Tu respuesta]\n\n**Changes made:**\n[Descripción del cambio]' },
-      { type: 'heading', content: 'Reviewer 2' },
-      { type: 'text', content: '**Comment 2.1:**\n> "[Copiar texto del reviewer]"\n\n**Response:**\n[Tu respuesta]\n\n**Changes made:**\n[Descripción del cambio]\n\n---\n\n**Comment 2.2:**\n> "[Copiar texto del reviewer]"\n\n**Response:**\n[Tu respuesta]\n\n**Changes made:**\n[Descripción del cambio]' },
-      { type: 'heading', content: 'Reviewer 3 (si aplica)' },
-      { type: 'text', content: '**Comment 3.1:**\n> "[Copiar texto del reviewer]"\n\n**Response:**\n\n**Changes made:**\n' },
-      { type: 'heading', content: 'Resumen de cambios' },
-      { type: 'text', content: '| Sección | Cambio realizado | Motivado por |\n|---|---|---|\n| Introducción | | Reviewer 1, Comment 1 |\n| Metodología | | Reviewer 2, Comment 3 |\n| Resultados | | Reviewer 1, Comment 4 |\n| Discusión | | Reviewer 2, Comment 1 |' }
-    ]
-  },
-  revision_sistematica: {
-    name: '🔬 Protocolo de revisión sistemática', blocks: [
-      { type: 'heading', content: '1. Pregunta de investigación', open: true },
-      { type: 'note', content: 'Definir con formato PICO/PEO o similar. Toda la revisión depende de esta pregunta.' },
-      { type: 'text', content: '**Pregunta:** \n\n**Población/Contexto:** \n**Exposición/Intervención:** \n**Comparación:** \n**Outcome/Resultado:** ' },
-      { type: 'heading', content: '2. Criterios de inclusión y exclusión' },
-      { type: 'text', content: '**Criterios de inclusión:**\n- Publicaciones entre [AÑO] y [AÑO]\n- Idiomas: inglés, español\n- Tipo: artículos en journals peer-reviewed\n- Temática: [describir]\n\n**Criterios de exclusión:**\n- Artículos de opinión, editoriales\n- Estudios no empíricos (si aplica)\n- [Otros criterios]' },
-      { type: 'heading', content: '3. Estrategia de búsqueda' },
-      { type: 'text', content: '**Bases de datos:**\n- Web of Science\n- Scopus\n- Google Scholar\n- [Otras]\n\n**String de búsqueda:**\n```\n("organizational learning" OR "organisational learning") AND ("artificial intelligence" OR "machine learning") AND ("complexity" OR "complex systems")\n```\n\n**Fecha de ejecución:** [FECHA]' },
-      { type: 'heading', content: '4. Proceso de selección (PRISMA)' },
-      { type: 'text', content: '**Identificación:**\n- Registros encontrados en bases de datos: ___\n- Registros adicionales (referencias, recomendaciones): ___\n\n**Screening:**\n- Registros después de eliminar duplicados: ___\n- Registros excluidos por título/abstract: ___\n\n**Elegibilidad:**\n- Artículos evaluados en texto completo: ___\n- Artículos excluidos con razón: ___\n\n**Incluidos:**\n- Artículos incluidos en la síntesis: ___' },
-      { type: 'heading', content: '5. Extracción de datos' },
-      { type: 'note', content: 'Definir qué datos se extraen de cada artículo. Esto alimenta la matriz de análisis.' },
-      { type: 'text', content: '| Variable | Descripción |\n|---|---|\n| Autor(es) y año | |\n| Objetivo del estudio | |\n| Marco teórico | |\n| Metodología | |\n| Hallazgos principales | |\n| Limitaciones | |\n| Relevancia para mi investigación | |' },
-      { type: 'heading', content: '6. Síntesis y análisis' },
-      { type: 'note', content: '¿Análisis temático? ¿Meta-análisis? ¿Narrative synthesis? Describir el método de síntesis.' },
-      { type: 'text', content: '**Método de síntesis:** \n\n**Temas emergentes:**\n1. \n2. \n3. \n\n**Gaps identificados:**\n1. \n2. ' }
-    ]
-  },
-  plan: {
-    name: '🎯 Plan de investigación', blocks: [
-      { type: 'heading', content: 'Pregunta de investigación', open: true }, { type: 'note', content: 'La pregunta central que guía tu tesis. Reescríbela cada vez que evolucione.' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Objetivos' }, { type: 'note', content: 'Objetivo general (1) + específicos (3-5). Marca con ✓ los completados.' }, { type: 'text', content: '**Objetivo general:**\n\n**Objetivos específicos:**\n1. \n2. \n3. ' },
-      { type: 'heading', content: 'Hilos de investigación' }, { type: 'note', content: 'Líneas temáticas que estás explorando. Vincula artículos de YUNQUE como citas.' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Gaps y preguntas abiertas' }, { type: 'note', content: 'Lo que falta por investigar. Cada gap puede convertirse en búsqueda de artículos.' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Argumento central (tu posición)' }, { type: 'note', content: '¿Qué afirmas TÚ? Tu voz en la conversación académica. Vincula los claims que la sustentan.' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Cronograma e hitos' }, { type: 'text', content: '- [ ] Propuesta de tesis: \n- [ ] Comité 1: \n- [ ] Comité 2: \n- [ ] Defensa: \n\n**Próximas acciones:**\n- [ ] \n- [ ] ' },
-      { type: 'heading', content: 'Red de colaboración' }, { type: 'text', content: '**Tutor:**\n\n**Comité:**\n\n**Notas de reuniones:**\n' },
-      { type: 'heading', content: 'Recursos y herramientas' }, { type: 'text', content: '' },
-      { type: 'heading', content: 'Subproductos' }, { type: 'note', content: 'Papers, presentaciones, datasets. Vincula documentos de YUNQUE.' }, { type: 'text', content: '' }
-    ]
-  }
-};
-
-export { DOC_TEMPLATES };
+// Templates → editor-templates.js
 
 // ============================================================
 // DOC CREATION / OPEN / CLONE / DELETE / RENAME
@@ -192,6 +90,7 @@ export function createDocFromTemplate(tplKey) {
   docs.push(doc); saveDocs(docs);
   state.currentDocId = doc.id;
   buildDocSidebar(); renderDocEditor();
+  showToast('Documento creado', 'success', 2000);
 }
 window.createDocFromTemplate = createDocFromTemplate;
 
@@ -212,7 +111,7 @@ export function cloneDoc(id) {
   const clone = JSON.parse(JSON.stringify(src));
   clone.id = 'doc_' + Date.now(); clone.title = src.title + ' (copia)'; clone.created = new Date().toISOString();
   docs.push(clone); saveDocs(docs); buildDocSidebar();
-  alert('Documento clonado: ' + clone.title);
+  showToast('Documento clonado: ' + clone.title, 'success', 2000);
 }
 window.cloneDoc = cloneDoc;
 
@@ -221,6 +120,7 @@ export function deleteDoc(id) {
   const docs = getDocs().filter(d => d.id !== id); saveDocs(docs);
   if (state.currentDocId === id) { state.currentDocId = null; goHome(); }
   buildDocSidebar();
+  showToast('Documento eliminado', 'success', 2000);
 }
 window.deleteDoc = deleteDoc;
 
@@ -229,6 +129,7 @@ export function renameDoc(id) {
   const name = prompt('Nuevo nombre:', doc.title); if (!name) return;
   doc.title = name; doc.updated = new Date().toISOString(); saveDocs(docs);
   buildDocSidebar(); if (state.currentDocId === id) renderDocEditor();
+  showToast('Documento renombrado', 'success', 2000);
 }
 window.renameDoc = renameDoc;
 
@@ -374,7 +275,7 @@ export function setBlockTitle(idx, fromBtn) {
   if (!span || span.dataset.editing) return;
   span.dataset.editing = '1';
   const current = doc.blocks[idx].blockTitle || '';
-  span.innerHTML = `<input type="text" value="${current.replace(/"/g, '&quot;')}" style="background:var(--bg);border:1px solid var(--gold);border-radius:4px;color:var(--tx);font-size:13px;padding:2px 6px;width:100%;font-family:Inter,sans-serif;" onblur="finishBlockTitle(${idx},this)" onkeydown="if(event.key==='Enter'){this.blur();event.stopPropagation();}if(event.key==='Escape'){this.value='${current.replace(/'/g, "\\'")}';this.blur();}">`;
+  span.innerHTML = `<input type="text" value="${escH(current)}" style="background:var(--bg);border:1px solid var(--gold);border-radius:4px;color:var(--tx);font-size:13px;padding:2px 6px;width:100%;font-family:Inter,sans-serif;" onblur="finishBlockTitle(${idx},this)" onkeydown="if(event.key==='Enter'){this.blur();event.stopPropagation();}if(event.key==='Escape'){this.value='${escH(current).replace(/'/g, "\\'")}';this.blur();}">`;
   span.querySelector('input').focus();
   span.querySelector('input').select();
 }
@@ -405,7 +306,7 @@ export function editCiteFragment(idx, el) {
   el.dataset.editing = '1';
   const docs = getDocs(); const doc = docs.find(d => d.id === state.currentDocId); if (!doc || !doc.blocks[idx]) return;
   const current = doc.blocks[idx].fragment || '';
-  el.innerHTML = `<textarea style="width:100%;min-height:60px;background:var(--bg);border:1px solid var(--gold);border-radius:4px;color:var(--tx);font-size:14px;padding:6px 8px;font-family:Inter,sans-serif;font-style:italic;resize:vertical;" onblur="finishCiteFragment(${idx},this)">${current.replace(/</g, '&lt;')}</textarea>`;
+  el.innerHTML = `<textarea style="width:100%;min-height:60px;background:var(--bg);border:1px solid var(--gold);border-radius:4px;color:var(--tx);font-size:14px;padding:6px 8px;font-family:Inter,sans-serif;font-style:italic;resize:vertical;" onblur="finishCiteFragment(${idx},this)">${escH(current)}</textarea>`;
   el.querySelector('textarea').focus();
 }
 window.editCiteFragment = editCiteFragment;
@@ -711,7 +612,7 @@ window.removeBlock = removeBlock;
 // ============================================================
 // SECTION OPERATIONS
 // ============================================================
-export function moveSectionDir(secIdx, dir) {
+function moveSectionDir(secIdx, dir) {
   saveCurrentDoc(); pushUndo();
   const docs = getDocs(); const doc = docs.find(d => d.id === state.currentDocId); if (!doc) return;
   const sections = getSectionGroups(doc.blocks);
@@ -904,7 +805,7 @@ export function citeSelection() {
   if (docs.length === 0) {
     list.innerHTML = '<p style="color:var(--tx3);">No tienes documentos. Crea uno nuevo.</p>';
   } else {
-    list.innerHTML = docs.map(d => `<div class="gd-card" style="padding:8px 12px;margin:4px 0;cursor:pointer;" onclick="sendCiteToDoc('${d.id}')">${d.title}</div>`).join('');
+    list.innerHTML = docs.map(d => `<div class="gd-card" style="padding:8px 12px;margin:4px 0;cursor:pointer;" onclick="sendCiteToDoc('${escH(d.id)}')">${escH(d.title)}</div>`).join('');
   }
   document.getElementById('doc-select-modal').classList.add('show');
 }
@@ -978,127 +879,7 @@ export function importBlocksUI(targetId) {
 }
 window.importBlocksUI = importBlocksUI;
 
-// ============================================================
-// EXPORT APA
-// ============================================================
-export function buildDocExport(docId) {
-  const docs = getDocs(); const doc = docs.find(d => d.id === docId); if (!doc) return '';
-  let text = doc.title.toUpperCase() + '\n' + '═'.repeat(doc.title.length) + '\n\n';
-  const refs = new Set();
-  doc.blocks.forEach(b => {
-    if (b.type === 'heading') text += '\n' + b.content + '\n' + '─'.repeat(b.content.length) + '\n\n';
-    else if (b.type === 'text' && b.content) text += b.content + '\n\n';
-    else if (b.type === 'cite') {
-      text += '  "' + b.fragment + '"\n  — ' + b.ref + '\n\n';
-      refs.add(b.ref);
-    }
-  });
-  if (refs.size) {
-    text += '\n' + '═'.repeat(30) + '\nREFERENCIAS\n' + '═'.repeat(30) + '\n\n';
-    [...refs].sort().forEach(r => { text += r + '\n'; });
-  }
-  return text;
-}
-
-export function exportDocAPA(docId) {
-  const text = buildDocExport(docId); if (!text) return;
-  const docs = getDocs(); const doc = docs.find(d => d.id === docId);
-  const h = `<div style="text-align:center;padding:10px;">
-    <h3 style="color:#fff;margin-bottom:14px;">Exportar documento</h3>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn bg" onclick="exportDocxAPA('${docId}');document.getElementById('export-modal').remove();" style="padding:10px 20px;">📄 Word APA (.docx)</button>
-      <button class="btn bo" onclick="exportTxt('${docId}');document.getElementById('export-modal').remove();">📝 Texto plano (.txt)</button>
-      <button class="btn bo" onclick="exportClipboard('${docId}');document.getElementById('export-modal').remove();">📋 Copiar al portapapeles</button>
-    </div>
-    <button class="btn bo" onclick="document.getElementById('export-modal').remove();" style="margin-top:12px;font-size:12px;color:var(--tx3);">Cancelar</button>
-  </div>`;
-  const modal = document.createElement('div');
-  modal.id = 'export-modal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;';
-  modal.innerHTML = `<div style="background:var(--bg2);border:1px solid rgba(220,215,205,0.1);border-radius:12px;padding:24px;max-width:400px;width:90%;">${h}</div>`;
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-  document.body.appendChild(modal);
-}
-window.exportDocAPA = exportDocAPA;
-
-export function exportTxt(docId) {
-  const text = buildDocExport(docId);
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  const docs = getDocs(); const doc = docs.find(d => d.id === docId);
-  a.download = (doc ? doc.title : 'documento').replace(/[^a-zA-Z0-9áéíóúñ ]/gi, '_') + '.txt'; a.click();
-}
-window.exportTxt = exportTxt;
-
-export function exportClipboard(docId) {
-  const text = buildDocExport(docId);
-  navigator.clipboard.writeText(text).then(() => showToast('Copiado al portapapeles', 'success'));
-}
-window.exportClipboard = exportClipboard;
-
-export async function exportDocxAPA(docId) {
-  const docs = getDocs(); const doc = docs.find(d => d.id === docId); if (!doc) return;
-  showToast('Generando .docx APA...', 'info');
-  if (!window.docx) {
-    try {
-      await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js';
-        s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    } catch (e) { showToast('Error cargando librería docx', 'error'); return; }
-  }
-  const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = window.docx;
-  const children = [];
-  children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: [new TextRun({ text: doc.title, bold: true, size: 24, font: 'Times New Roman' })] }));
-  children.push(new Paragraph({ spacing: { after: 400 }, children: [] }));
-  const refs = new Set();
-  doc.blocks.forEach(b => {
-    if (b.type === 'heading') {
-      children.push(new Paragraph({ heading: HeadingLevel.HEADING_2, spacing: { before: 360, after: 120 }, children: [new TextRun({ text: b.content || '', bold: true, size: 24, font: 'Times New Roman' })] }));
-    } else if (b.type === 'text' && b.content) {
-      const lines = b.content.split('\n');
-      lines.forEach(line => {
-        if (!line.trim()) return;
-        const runs = [];
-        const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
-        parts.forEach(part => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            runs.push(new TextRun({ text: part.slice(2, -2), bold: true, size: 24, font: 'Times New Roman' }));
-          } else if (part.startsWith('*') && part.endsWith('*')) {
-            runs.push(new TextRun({ text: part.slice(1, -1), italics: true, size: 24, font: 'Times New Roman' }));
-          } else if (part) {
-            runs.push(new TextRun({ text: part, size: 24, font: 'Times New Roman' }));
-          }
-        });
-        if (runs.length) children.push(new Paragraph({ spacing: { line: 480, after: 0 }, indent: { firstLine: 720 }, children: runs }));
-      });
-    } else if (b.type === 'cite') {
-      children.push(new Paragraph({
-        spacing: { line: 480, after: 0 }, indent: { left: 720 }, children: [
-          new TextRun({ text: '"' + (b.fragment || '') + '"', italics: true, size: 24, font: 'Times New Roman' }),
-          new TextRun({ text: ' — ' + (b.ref || ''), size: 24, font: 'Times New Roman' })
-        ]
-      }));
-      if (b.ref) refs.add(b.ref);
-      children.push(new Paragraph({ spacing: { after: 200 }, children: [] }));
-    }
-  });
-  if (refs.size) {
-    children.push(new Paragraph({ spacing: { before: 600 }, children: [] }));
-    children.push(new Paragraph({ heading: HeadingLevel.HEADING_2, spacing: { before: 360, after: 200 }, alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'Referencias', bold: true, size: 24, font: 'Times New Roman' })] }));
-    [...refs].sort().forEach(r => {
-      children.push(new Paragraph({ spacing: { line: 480, after: 0 }, indent: { left: 720, hanging: 720 }, children: [new TextRun({ text: r, size: 24, font: 'Times New Roman' })] }));
-    });
-  }
-  const docx = new Document({ sections: [{ properties: { page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } }, children }] });
-  const blob = await Packer.toBlob(docx);
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = (doc.title || 'documento').replace(/[^a-zA-Z0-9áéíóúñ ]/gi, '_') + '.docx'; a.click();
-  showToast('📄 .docx APA descargado', 'success');
-}
-window.exportDocxAPA = exportDocxAPA;
+// Export APA/txt/clipboard/docx → editor-export.js
 
 // ============================================================
 // REVISION STATE MANAGEMENT

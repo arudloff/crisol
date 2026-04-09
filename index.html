@@ -207,10 +207,10 @@
       <p style="font-size:11px;color:var(--tx3);margin-top:6px;">&iquest;No tienes c&oacute;digo? <span onclick="document.getElementById('invite-request-form').style.display=document.getElementById('invite-request-form').style.display==='none'?'block':'none'" style="color:var(--purple);cursor:pointer;text-decoration:underline;">Solicitar invitaci&oacute;n</span></p>
       <div id="invite-request-form" style="display:none;margin-top:10px;padding:14px;background:var(--bg2);border:1px solid rgba(155,125,207,0.15);border-radius:8px;">
         <div style="font-size:13px;font-weight:600;color:var(--purple);margin-bottom:8px;">Solicitar c&oacute;digo de invitaci&oacute;n</div>
-        <input id="req-name" type="text" placeholder="Tu nombre completo" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
-        <input id="req-email" type="email" placeholder="Tu email institucional" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
-        <input id="req-institution" type="text" placeholder="Universidad / Instituci&oacute;n" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
-        <select id="req-role" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <input id="req-name" type="text" placeholder="Tu nombre completo" aria-label="Nombre completo" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <input id="req-email" type="email" placeholder="Tu email institucional" aria-label="Email institucional" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <input id="req-institution" type="text" placeholder="Universidad / Instituci&oacute;n" aria-label="Instituci&oacute;n" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
+        <select id="req-role" aria-label="Rol" style="width:100%;padding:8px 12px;margin-bottom:6px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">
           <option value="">Rol</option>
           <option value="doctoral">Estudiante doctoral</option>
           <option value="master">Estudiante magíster</option>
@@ -218,7 +218,7 @@
           <option value="profesional">Profesional</option>
           <option value="otro">Otro</option>
         </select>
-        <textarea id="req-reason" placeholder="&iquest;Por qu&eacute; te interesa CRISOL? (breve)" style="width:100%;padding:8px 12px;margin-bottom:8px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;min-height:50px;resize:vertical;"></textarea>
+        <textarea id="req-reason" placeholder="&iquest;Por qu&eacute; te interesa CRISOL? (breve)" aria-label="Raz&oacute;n de solicitud" style="width:100%;padding:8px 12px;margin-bottom:8px;border-radius:6px;border:1px solid rgba(220,215,205,0.12);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;min-height:50px;resize:vertical;"></textarea>
         <button onclick="submitInviteRequest()" style="width:100%;padding:10px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Enviar solicitud</button>
         <p id="req-status" style="font-size:12px;color:var(--tx3);margin-top:6px;display:none;"></p>
       </div>
@@ -236,11 +236,11 @@
     <div style="font-size:48px;margin-bottom:16px;">👤</div>
     <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;">Completa tu perfil</h2>
     <p style="font-size:14px;color:var(--tx2);margin-bottom:20px;">Solo necesitamos lo básico para comenzar.</p>
-    <input type="text" id="profile-name" placeholder="Nombre completo *"
+    <input type="text" id="profile-name" placeholder="Nombre completo *" aria-label="Nombre completo"
       style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(225,220,210,0.12);background:var(--bg2);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;text-align:center;outline:none;margin-bottom:8px;">
-    <input type="text" id="profile-institution" placeholder="Institución (opcional)"
+    <input type="text" id="profile-institution" placeholder="Institución (opcional)" aria-label="Instituci&oacute;n"
       style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(225,220,210,0.12);background:var(--bg2);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;text-align:center;outline:none;margin-bottom:8px;">
-    <input type="text" id="profile-area" placeholder="Área de investigación (opcional)"
+    <input type="text" id="profile-area" placeholder="Área de investigación (opcional)" aria-label="&Aacute;rea de investigaci&oacute;n"
       style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(225,220,210,0.12);background:var(--bg2);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;text-align:center;outline:none;margin-bottom:8px;">
     <button onclick="saveProfile()" id="profile-btn"
       style="width:100%;margin-top:10px;padding:12px;border-radius:8px;border:none;background:var(--gold);color:#000;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">
@@ -385,15 +385,15 @@
     <span style="font-size:13px;font-weight:600;color:var(--gold);">💡 Captura rápida</span>
     <span onclick="toggleQuickCapture()" style="font-size:14px;color:var(--tx3);cursor:pointer;padding:2px 6px;" title="Cerrar (Esc)">✕</span>
   </div>
-  <textarea id="qc-text" placeholder="Anota tu idea... se creará como tarea en el tablero"></textarea>
-  <select id="qc-project" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid rgba(220,215,205,0.12);border-radius:6px;color:var(--tx3);font-family:'Inter',sans-serif;font-size:12px;margin-bottom:4px;">
+  <textarea id="qc-text" placeholder="Anota tu idea... se creará como tarea en el tablero" aria-label="Captura r&aacute;pida"></textarea>
+  <select id="qc-project" aria-label="Proyecto destino" style="width:100%;padding:5px 8px;background:var(--bg2);border:1px solid rgba(220,215,205,0.12);border-radius:6px;color:var(--tx3);font-family:'Inter',sans-serif;font-size:12px;margin-bottom:4px;">
     <option value="">Sin proyecto</option>
   </select>
   <div class="qc-bar" style="display:flex;gap:6px;align-items:center;justify-content:space-between;">
     <span style="font-size:11px;color:var(--tx3);">Enter · Esc</span>
     <div style="display:flex;gap:4px;">
       <button id="qc-priority-label" onclick="const cb=document.getElementById('qc-priority');cb.checked=!cb.checked;this.style.background=cb.checked?'rgba(255,77,77,0.2)':'var(--bg2)';this.style.borderColor=cb.checked?'#ff4d4d':'rgba(220,215,205,0.2)';this.style.color=cb.checked?'#ff4d4d':'var(--tx3)';" title="Marcar como prioritario" style="background:var(--bg2);border:1px solid rgba(220,215,205,0.2);border-radius:6px;cursor:pointer;font-size:13px;padding:4px 8px;color:var(--tx3);font-family:'Inter',sans-serif;">⚡</button>
-      <input type="checkbox" id="qc-priority" style="display:none;">
+      <input type="checkbox" id="qc-priority" aria-label="Prioritario" style="display:none;">
       <button onclick="toggleDictation(this,'qc-text')" title="Dictar por voz" style="background:var(--bg2);border:1px solid rgba(220,215,205,0.2);border-radius:6px;cursor:pointer;font-size:13px;padding:4px 8px;color:var(--tx2);font-family:'Inter',sans-serif;">🎤</button>
       <button class="btn bg" onclick="saveQuickCapture()" style="font-size:12px;padding:4px 14px;">Guardar</button>
     </div>
@@ -402,9 +402,9 @@
 </div>
 
 <!-- Article import modal -->
-<div class="cite-search-overlay" id="import-modal">
+<div class="cite-search-overlay" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
   <div class="cite-search" style="max-width:480px;">
-    <h3 style="font-size:16px;color:#fff;margin-bottom:12px;">Importar artículo procesado</h3>
+    <h3 id="import-modal-title" style="font-size:16px;color:#fff;margin-bottom:12px;">Importar artículo procesado</h3>
     <div id="import-drop" style="border:2px dashed rgba(225,220,210,0.2);border-radius:10px;padding:30px 20px;text-align:center;cursor:pointer;transition:border-color 0.2s;"
       ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
       ondragleave="this.style.borderColor='rgba(225,220,210,0.2)'"
@@ -418,7 +418,7 @@
     <div id="import-preview" style="display:none;margin-top:12px;padding:12px;background:var(--bg2);border-radius:8px;">
       <div id="import-preview-text" style="font-size:14px;color:var(--tx);"></div>
       <label style="font-size:13px;color:var(--tx2);margin-top:10px;display:block;">Asignar a proyecto (opcional)</label>
-      <select id="import-project" style="width:100%;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;margin-top:4px;">
+      <select id="import-project" aria-label="Proyecto destino" style="width:100%;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;margin-top:4px;">
         <option value="">Sin proyecto</option>
       </select>
       <button onclick="confirmImport()" class="btn bg" style="width:100%;margin-top:10px;">Importar</button>
@@ -429,37 +429,37 @@
 </div>
 
 <!-- Article search modal -->
-<div class="cite-search-overlay" id="article-search-modal">
+<div class="cite-search-overlay" id="article-search-modal" role="dialog" aria-modal="true" aria-labelledby="article-search-title">
   <div class="cite-search">
-    <h3 style="font-size:16px;color:#fff;margin-bottom:10px;">Buscar artículo</h3>
-    <input type="text" id="article-search-q" placeholder="Título, autor, año..." oninput="filterArticles()">
+    <h3 id="article-search-title" style="font-size:16px;color:#fff;margin-bottom:10px;">Buscar artículo</h3>
+    <input type="text" id="article-search-q" placeholder="Título, autor, año..." aria-label="Buscar art&iacute;culo" oninput="filterArticles()">
     <div class="search-results cite-results" id="article-search-results"></div>
     <div style="text-align:right;margin-top:10px;"><button class="btn bo" onclick="document.getElementById('article-search-modal').classList.remove('show')">Cerrar</button></div>
   </div>
 </div>
 <!-- Document search modal -->
-<div class="cite-search-overlay" id="doc-search-modal">
+<div class="cite-search-overlay" id="doc-search-modal" role="dialog" aria-modal="true" aria-labelledby="doc-search-title">
   <div class="cite-search">
-    <h3 style="font-size:16px;color:#fff;margin-bottom:10px;">Buscar documento</h3>
-    <input type="text" id="doc-search-q" placeholder="Título, contenido..." oninput="filterDocs()">
+    <h3 id="doc-search-title" style="font-size:16px;color:#fff;margin-bottom:10px;">Buscar documento</h3>
+    <input type="text" id="doc-search-q" placeholder="Título, contenido..." aria-label="Buscar documento" oninput="filterDocs()">
     <div class="search-results cite-results" id="doc-search-results"></div>
     <div style="text-align:right;margin-top:10px;"><button class="btn bo" onclick="document.getElementById('doc-search-modal').classList.remove('show')">Cerrar</button></div>
   </div>
 </div>
 <!-- Cite search modal -->
-<div class="cite-search-overlay" id="cite-search-modal">
+<div class="cite-search-overlay" id="cite-search-modal" role="dialog" aria-modal="true" aria-labelledby="cite-search-title">
   <div class="cite-search">
-    <h3 style="font-size:16px;color:#fff;margin-bottom:12px;">Insertar cita</h3>
-    <input type="text" id="cite-search-input" placeholder="Buscar en todos los artículos..." oninput="searchCitations(this.value)">
+    <h3 id="cite-search-title" style="font-size:16px;color:#fff;margin-bottom:12px;">Insertar cita</h3>
+    <input type="text" id="cite-search-input" placeholder="Buscar en todos los artículos..." aria-label="Buscar cita" oninput="searchCitations(this.value)">
     <div class="cite-results" id="cite-search-results"></div>
     <div style="text-align:right;margin-top:10px;"><button class="btn bo" onclick="closeCiteSearch()">Cancelar</button></div>
   </div>
 </div>
 
 <!-- Doc target selector -->
-<div class="modal-overlay" id="doc-select-modal">
+<div class="modal-overlay" id="doc-select-modal" role="dialog" aria-modal="true" aria-labelledby="doc-select-title">
   <div class="modal">
-    <h3>Enviar cita a documento</h3>
+    <h3 id="doc-select-title">Enviar cita a documento</h3>
     <div id="doc-select-list" style="margin:12px 0;"></div>
     <button class="btn bg" onclick="createDocFromCite()" style="width:100%;margin-top:8px;">+ Crear nuevo documento</button>
     <div style="text-align:right;margin-top:10px;"><button class="btn bo" onclick="document.getElementById('doc-select-modal').classList.remove('show')">Cancelar</button></div>
@@ -474,7 +474,7 @@
 </div>
 
 <!-- Edit modal -->
-<div class="modal-overlay" id="edit-modal">
+<div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal">
     <h3 id="modal-title">Editar flashcard</h3>
     <label>Pregunta (Anverso)</label>

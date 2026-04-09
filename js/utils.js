@@ -110,28 +110,55 @@ export function initAccessibility() {
 }
 
 function patchInteractiveElements() {
-  // Add tabindex and Enter/Space key handler to clickable divs without it
-  document.querySelectorAll('[onclick]:not(button):not(a):not([tabindex])').forEach(el => {
+  // Add tabindex and Enter/Space key handler to clickable elements without it
+  document.querySelectorAll('[onclick]:not(button):not(a):not(input):not(select):not(textarea):not([tabindex])').forEach(el => {
     el.setAttribute('tabindex', '0');
-    el.setAttribute('role', 'button');
+    // Use role="tab" for tab bars, role="button" for everything else
+    if (el.classList.contains('tab')) {
+      el.setAttribute('role', 'tab');
+    } else {
+      el.setAttribute('role', 'button');
+    }
     el.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
     });
   });
 
-  // Patch modals with role="dialog" and Escape handler
-  document.querySelectorAll('.proj-modal-overlay:not([role])').forEach(overlay => {
+  // Patch tab containers with tablist role
+  document.querySelectorAll('.topbar:not([role])').forEach(bar => {
+    bar.setAttribute('role', 'tablist');
+  });
+
+  // Auto-associate labels with their next sibling input/select/textarea
+  document.querySelectorAll('label:not([for])').forEach(label => {
+    const next = label.nextElementSibling;
+    if (!next) return;
+    // If next element is a wrapper div, check inside it
+    const target = next.matches('input,select,textarea') ? next : next.querySelector('input,select,textarea');
+    if (target && target.id && !label.htmlFor) {
+      label.setAttribute('for', target.id);
+    }
+  });
+
+  // Patch ALL modal overlays with role="dialog" and Escape handler
+  document.querySelectorAll('.proj-modal-overlay:not([role]),.cite-search-overlay:not([role]),.modal-overlay:not([role])').forEach(overlay => {
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    const modal = overlay.querySelector('.proj-modal,.logbook-modal');
+    const modal = overlay.querySelector('.proj-modal,.logbook-modal,.cite-search,.modal');
     if (modal && !modal.dataset.a11y) {
       modal.dataset.a11y = '1';
+      // Set aria-labelledby from first heading if present
+      const heading = modal.querySelector('h3,h4');
+      if (heading) {
+        if (!heading.id) heading.id = 'dlg-title-' + Math.random().toString(36).slice(2, 8);
+        overlay.setAttribute('aria-labelledby', heading.id);
+      }
       // Focus first focusable element
       const focusable = modal.querySelector('input,button,select,textarea,[tabindex]');
       if (focusable) setTimeout(() => focusable.focus(), 100);
       // Escape to close
       overlay.addEventListener('keydown', e => {
-        if (e.key === 'Escape') overlay.remove();
+        if (e.key === 'Escape') { overlay.classList.remove('show'); overlay.remove(); }
       });
     }
   });
@@ -158,25 +185,7 @@ export function closeSidebarMobile() {
   }
 }
 
-export function calcProgress() {
-  const d = state._ld ? state._ld() : {};
-  let readWords = 0;
-  if (!state.DATA) return;
-  state.DATA.sections.forEach((sec, si) => {
-    sec.paragraphs.forEach((par, pi) => {
-      if ((d.chk || {})[`c${si}-${pi}`]) readWords += state.WORD_COUNTS[si][pi];
-    });
-  });
-  const pct = state.TOTAL_WORDS > 0 ? Math.round(readWords / state.TOTAL_WORDS * 100) : 0;
-  const el = document.getElementById('reading-pct');
-  if (el) el.textContent = pct + '%';
-  const bar = document.getElementById('reading-fill');
-  if (bar) bar.style.width = pct + '%';
-  const sp = document.getElementById('side-pct-' + state.currentArticleKey);
-  if (sp) sp.textContent = pct + '%';
-  const sf = document.getElementById('side-fill-' + state.currentArticleKey);
-  if (sf) sf.style.width = pct + '%';
-}
+// calcProgress() consolidated in storage.js — import from there
 
 // ============================================================
 // LATE-BOUND WRAPPERS (registered by app.js / projects.js on state)

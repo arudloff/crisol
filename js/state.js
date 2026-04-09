@@ -216,7 +216,9 @@ export const PROJ_ROLE_LABELS = {
 
 export const srcColors = ['var(--blue)','var(--gold)','var(--green)','var(--purple)','var(--red)','var(--amber)'];
 
-export const DOC_TEMPLATES = {
+// DOC_TEMPLATES: canonical source is editor.js (only consumer)
+// Removed from state.js to eliminate duplication
+const _UNUSED_DOC_TEMPLATES = {
   libre:{name:'Documento libre',blocks:[{type:'text',content:''}]},
   imrad:{name:'Artículo científico (IMRaD)',blocks:[
     {type:'heading',content:'Resumen / Abstract',open:true},{type:'text',content:''},

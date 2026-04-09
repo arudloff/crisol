@@ -51,7 +51,7 @@ export async function loadTeamDashboard(projectId) {
     const gateCount = (pd?.gate_records || []).filter(g => !g.skipped).length;
 
     h += `<tr style="border-bottom:1px solid var(--bg3);">`;
-    h += `<td style="padding:6px 10px;"><span style="color:${isMe ? '#fff' : 'var(--tx)'};">${name}${isMe ? ' (tú)' : ''}</span> <span style="font-size:10px;color:${color};">${m.role}</span></td>`;
+    h += `<td style="padding:6px 10px;"><span style="color:${isMe ? '#fff' : 'var(--tx)'};">${escH(name)}${isMe ? ' (tú)' : ''}</span> <span style="font-size:10px;color:${color};">${escH(m.role)}</span></td>`;
 
     PHASE_IDS.forEach(pid => {
       const fase = phases.find(f => f.id === pid);
@@ -122,8 +122,8 @@ export function showInviteModal(projId) {
   html += `<div style="margin-bottom:16px;padding:14px;background:var(--bg3);border-radius:8px;">`;
   html += `<div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;">Agregar por email</div>`;
   html += `<div style="display:flex;gap:6px;">`;
-  html += `<input id="invite-email" type="email" placeholder="email@ejemplo.com" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;">`;
-  html += `<select id="invite-email-role" style="padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
+  html += `<input id="invite-email" type="email" placeholder="email@ejemplo.com" aria-label="Email del invitado" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;">`;
+  html += `<select id="invite-email-role" aria-label="Rol del invitado" style="padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
   html += `<option value="reviewer">Reviewer (ve y comenta)</option><option value="reader">Lector (ve y puede clonar)</option>`;
   html += `</select>`;
   html += `</div>`;
@@ -134,7 +134,7 @@ export function showInviteModal(projId) {
   html += `<div style="padding:14px;background:var(--bg3);border-radius:8px;">`;
   html += `<div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:8px;">Generar link de invitación</div>`;
   html += `<div style="display:flex;gap:6px;align-items:center;">`;
-  html += `<select id="invite-role" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
+  html += `<select id="invite-role" aria-label="Rol para link de invitación" style="flex:1;padding:8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;">`;
   html += `<option value="reviewer">Reviewer (ve y comenta)</option><option value="reader">Lector (ve y puede clonar)</option>`;
   html += `</select>`;
   html += `<button id="invite-gen-btn" onclick="generateInviteLink('${projId}')" class="btn bo" style="white-space:nowrap;">Generar link</button>`;
@@ -143,18 +143,18 @@ export function showInviteModal(projId) {
   html += `<div style="padding:12px;background:rgba(93,187,138,0.06);border:1px solid rgba(93,187,138,0.2);border-radius:8px;">`;
   html += `<div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:10px;">✅ Link generado — completa estos pasos:</div>`;
   html += `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding:8px;background:var(--bg2);border-radius:6px;">`;
-  html += `<input type="checkbox" id="invite-check-drive" style="margin-top:3px;accent-color:var(--green);">`;
+  html += `<input type="checkbox" id="invite-check-drive" aria-label="Compartir carpeta Drive" style="margin-top:3px;accent-color:var(--green);">`;
   html += `<div style="flex:1;">`;
   html += `<div style="font-size:13px;color:var(--tx);font-weight:600;">Compartir carpeta de fuentes en Google Drive</div>`;
   html += `<div style="font-size:12px;color:var(--tx3);margin-top:2px;">Comparte la carpeta de PDFs y documentos del proyecto con el invitado en modo <b>lector</b>.</div>`;
   html += `<a href="https://drive.google.com" target="_blank" style="font-size:12px;color:var(--blue);text-decoration:underline;margin-top:4px;display:inline-block;">Abrir Google Drive →</a>`;
   html += `</div></div>`;
   html += `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px;background:var(--bg2);border-radius:6px;">`;
-  html += `<input type="checkbox" id="invite-check-link" style="margin-top:3px;accent-color:var(--green);">`;
+  html += `<input type="checkbox" id="invite-check-link" aria-label="Copiar link de invitación" style="margin-top:3px;accent-color:var(--green);">`;
   html += `<div style="flex:1;">`;
   html += `<div style="font-size:13px;color:var(--tx);font-weight:600;">Copiar y enviar el link de invitación</div>`;
   html += `<div style="display:flex;gap:6px;margin-top:6px;">`;
-  html += `<input id="invite-link" readonly style="flex:1;padding:6px 8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--green);font-family:monospace;font-size:11px;">`;
+  html += `<input id="invite-link" readonly aria-label="Link de invitación" style="flex:1;padding:6px 8px;background:var(--bg);border:1px solid rgba(220,215,205,0.1);border-radius:6px;color:var(--green);font-family:monospace;font-size:11px;">`;
   html += `<button onclick="navigator.clipboard.writeText(document.getElementById('invite-link').value);this.textContent='✓ Copiado';document.getElementById('invite-check-link').checked=true;setTimeout(()=>this.textContent='Copiar',2000)" class="btn bg" style="white-space:nowrap;font-size:12px;">Copiar</button>`;
   html += `</div>`;
   html += `<div style="font-size:11px;color:var(--tx3);margin-top:4px;">Expira en 7 días. Funciona para usuarios nuevos y existentes.</div>`;

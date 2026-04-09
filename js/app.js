@@ -4,7 +4,7 @@
 // ============================================================
 
 import { state, DEFAULT_FASES, PROJ_ESTADOS, PROJ_ROLE_LABELS } from './state.js';
-import { ld, sv, getSK, migrateLegacy, calcProgress as storageCalcProgress } from './storage.js';
+import { ld, sv, getSK, migrateLegacy, calcProgress } from './storage.js';
 import {
   initSync, syncSettingsToCloud, loadSettingsFromCloud,
   initKanbanSync, initPrismaSync, initDocsSync, syncDocsToCloud
@@ -12,7 +12,7 @@ import {
 import './db.js'; // side-effect: initializes state.sdb
 import { checkLogin, logout } from './auth.js';
 import {
-  showToast, setSyncStatus, closeSidebarMobile, calcProgress, escH, initConnectionMonitor, logError, logAudit, initAccessibility
+  showToast, setSyncStatus, closeSidebarMobile, escH, initConnectionMonitor, logError, logAudit, initAccessibility
 } from './utils.js';
 import {
   loadArticle, initArticleData, render, upd, saveNavState, restoreNavState,
@@ -362,7 +362,7 @@ window.goToArticle = async function(key) {
     if (state.syncEnabled) initSync();
   } catch (e) {
     const ct = document.getElementById('ct');
-    if (ct) ct.innerHTML = '<div style="padding:40px;text-align:center;color:var(--red);">Error: ' + e.message + '</div>';
+    if (ct) ct.innerHTML = '<div style="padding:40px;text-align:center;color:var(--red);">Error: ' + escH(e.message) + '</div>';
   }
 };
 
@@ -541,7 +541,7 @@ function showImportModal() {
   if (sel) {
     sel.innerHTML = '<option value="">Sin proyecto</option>';
     getProjects().forEach(p => {
-      sel.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+      sel.innerHTML += `<option value="${escH(p.id)}">${escH(p.nombre)}</option>`;
     });
   }
   modal.classList.add('show');

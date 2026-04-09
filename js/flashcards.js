@@ -5,6 +5,7 @@
 
 import { state } from './state.js';
 import { ld, sv } from './storage.js';
+import { escH, showToast } from './utils.js';
 
 // ============================================================
 // DEFAULT CARDS (legacy for bustamante_2004)
@@ -106,8 +107,8 @@ export function renderCard(c) {
   const editStyle = fcEditMode ? 'border-color:rgba(224,112,80,0.2);animation:editPulse 1.5s ease-in-out infinite;' : '';
   return `<div class="fc-card" style="${editStyle}">
     <div class="fc-type ${typeClass}">${typeLabel}</div>
-    <div class="fc-front" onclick="this.nextElementSibling.classList.toggle('show')">${c.front.replace(/\{\{c\d+::/g, '<b>[').replace(/\}\}/g, ']</b>')}</div>
-    <div class="fc-back" id="fcb-${c.id}">${c.back}</div>
+    <div class="fc-front" onclick="this.nextElementSibling.classList.toggle('show')">${escH(c.front).replace(/\{\{c\d+::/g, '<b>[').replace(/\}\}/g, ']</b>')}</div>
+    <div class="fc-back" id="fcb-${escH(c.id)}">${escH(c.back)}</div>
     ${fcEditMode ? `<div class="fc-actions">
       <div class="fc-act" onclick="editCard('${c.id}')">✏️ Editar</div>
       <div class="fc-act danger" onclick="deleteCard('${c.id}')">🗑 Eliminar</div>
@@ -158,6 +159,7 @@ window.saveModal = function () {
   setCards(cards);
   window.closeModal();
   renderFlashcards();
+  showToast(editingCardId ? 'Flashcard actualizada' : 'Flashcard creada', 'success', 2000);
 };
 
 window.deleteCard = function (id) {
@@ -165,6 +167,7 @@ window.deleteCard = function (id) {
   const cards = getCards().filter(c => c.id !== id);
   setCards(cards);
   renderFlashcards();
+  showToast('Flashcard eliminada', 'success', 2000);
 };
 
 // ============================================================
