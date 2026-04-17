@@ -1,5 +1,23 @@
 # CRISOL — Estado actual
-> Última actualización: 2026-04-08
+> Última actualización: 2026-04-15 (adopción SINFONÍA)
+
+## Configuración SINFONÍA
+
+Este proyecto sigue el marco **SINFONÍA v1.1**. Ver [`G:\Mi unidad\DOCTORADO\SINFONIA\`](G:\Mi unidad\DOCTORADO\SINFONIA) para reglas y manual.
+
+| Campo | Valor |
+|---|---|
+| **Nombre** | CRISOL |
+| **JIRA key** | CSL |
+| **JIRA URL** | https://colegiocamilohenriquez.atlassian.net/jira/software/projects/CSL |
+| **Repo** | https://github.com/arudloff/crisol |
+| **Repo local** | `G:\Mi unidad\Doctorado MGT\SILA\crisol` |
+| **BITACORA context** | `crisol` (reactivado 2026-04-15) |
+| **Producción** | https://crisol-psi.vercel.app |
+| **Devs activos** | Alejandro (+ Claude Code) |
+| **Enforcement adicional** | Yunque (ver `.yunque.yml`) |
+| **Estado de adopción** | 🟢 Completa (JIRA creado + GitHub conectado + templates SINFONÍA instanciados; docs existentes ARCHITECTURE, SETUP, SMOKE_TEST, CONTINGENCY se mantienen) |
+| **Archivos SINFONÍA añadidos** | `NOTAS.md`, `.github/PULL_REQUEST_TEMPLATE.md`, `docs/adr/` |
 
 ## Estado general
 CRISOL es una plataforma web de investigación doctoral que integra lectura académica profunda, escritura, gestión de proyectos y herramientas de IA. En producción (v4.0) con BYOK y sistema de invitaciones. Post-refactorización de projects.js completada.
