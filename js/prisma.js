@@ -118,7 +118,7 @@ export function isViewingOther() {
 // --------------- navigation ---------------
 window.goPrisma = function() {
   if (state._saveNavState) state._saveNavState();
-  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = true;
+  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = true; state._isAtlas = false;
   // Reset view to own
   setViewingUser(null); state._otherPrisma = null; state._viewingName = null;
 

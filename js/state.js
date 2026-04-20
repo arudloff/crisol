@@ -24,6 +24,10 @@ export const state = {
   isHome: true,
   isMiTesis: false,
   _isPrisma: false,
+  _isAtlas: false,
+  currentAtlasCorpus: null,   // selected corpus id
+  currentAtlasPaper: null,    // selected paper id
+  currentAtlasTab: 'corpus',  // corpus | glossary | map | genealogy | paper
   currentPrismaTab: 'jardin',
 
   // Article data (loaded per article)

@@ -815,7 +815,7 @@ window.selArt = async function (key, el) {
   document.querySelectorAll('.s-it').forEach(i => i.classList.remove('active'));
   if (el && el.classList) el.classList.add('active');
   state.isHome = false; state.isMiTesis = false; state.currentDocId = null;
-  state.currentProjectId = null; state._isPrisma = false;
+  state.currentProjectId = null; state._isPrisma = false; state._isAtlas = false;
   state.currentArticleKey = key;
   try {
     await loadArticle(key);

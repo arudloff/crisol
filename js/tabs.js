@@ -61,7 +61,7 @@ export function captureTabState() {
 export function restoreTabState(tab) {
   const ct = document.getElementById('ct');
   if (tab.type === 'home') {
-    state.isHome = true; state.isMiTesis = false; state.currentDocId = null; state._isPrisma = false; state.currentProjectId = null;
+    state.isHome = true; state.isMiTesis = false; state.currentDocId = null; state._isPrisma = false; state._isAtlas = false; state.currentProjectId = null;
     updateTopbar(); renderGlobalDash();
   } else if (tab.type === 'mitesis') {
     state.isHome = false; state.isMiTesis = true; state.currentDocId = null; state.currentProjectId = null;

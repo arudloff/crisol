@@ -532,7 +532,7 @@ window.goCompare = goCompare;
 // TUTORING SESSION REPORT
 // ============================================================
 export function goReport() {
-  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = false;
+  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = false; state._isAtlas = false;
   document.querySelectorAll('.s-it,.s-home,.s-proj').forEach(i => i.classList.remove('active'));
   ensureToolsOpen();
   updateTopbar();

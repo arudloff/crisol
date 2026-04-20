@@ -41,6 +41,7 @@ import './tts.js';
 import './dictation.js';
 import './search.js';
 import './flashcards.js';
+import './atlas.js';
 
 // ============================================================
 // Register late-bound references on state for cross-module access
@@ -161,7 +162,7 @@ function updateTopbar() {
   if (state.currentDocId) {
     artBar.style.display = 'none'; docBar.style.display = '';
     if (content) content.style.gridRow = '';
-  } else if (state.isHome || state.isMiTesis || state.currentProjectId || state._isPrisma) {
+  } else if (state.isHome || state.isMiTesis || state.currentProjectId || state._isPrisma || state._isAtlas) {
     artBar.style.display = 'none'; docBar.style.display = 'none';
     if (content) content.style.gridRow = '1/3';
   } else {
@@ -179,6 +180,11 @@ function getBreadcrumb() {
   let parts = ['<span style="cursor:pointer;color:var(--gold);" onclick="goHome()">CRISOL</span>'];
   if (state._isPrisma) {
     parts.push('PRISMA');
+    return '<div style="font-size:11px;color:var(--tx3);margin-bottom:8px;">' + parts.join(' <span style="opacity:0.5;">›</span> ') + '</div>';
+  }
+  if (state._isAtlas) {
+    parts.push('Atlas');
+    if (state.currentAtlasCorpus) parts.push(state.currentAtlasCorpus.name || 'Corpus');
     return '<div style="font-size:11px;color:var(--tx3);margin-bottom:8px;">' + parts.join(' <span style="opacity:0.5;">›</span> ') + '</div>';
   }
   if (state.isHome) parts.push('Vista general');
@@ -309,7 +315,7 @@ window.buildDocSidebar = buildDocSidebar;
 function goHome() {
   saveNavState();
   state.isHome = true; state.isMiTesis = false; state.currentDocId = null;
-  state._isPrisma = false; state.currentProjectId = null;
+  state._isPrisma = false; state._isAtlas = false; state.currentProjectId = null;
   document.querySelectorAll('.s-it,.s-home,.s-proj').forEach(i => i.classList.remove('active'));
   document.getElementById('s-home')?.classList.add('active');
   updateTopbar();
@@ -327,7 +333,7 @@ window.goHome = goHome;
 // NAVIGATION — goMiTesis
 // ============================================================
 function goMiTesis() {
-  state.isHome = false; state.isMiTesis = true; state.currentDocId = null; state.currentProjectId = null;
+  state.isHome = false; state.isMiTesis = true; state.currentDocId = null; state.currentProjectId = null; state._isAtlas = false;
   document.querySelectorAll('.s-it,.s-home,.s-proj').forEach(i => i.classList.remove('active'));
   ensureToolsOpen();
   document.getElementById('s-mitesis')?.classList.add('active');

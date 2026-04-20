@@ -317,7 +317,7 @@ window.deleteKanbanTask = function(id) {
 
 window.goKanban = function() {
   if (state._saveNavState) state._saveNavState();
-  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = false;
+  state.isHome = false; state.isMiTesis = false; state.currentProjectId = null; state.currentDocId = null; state._isPrisma = false; state._isAtlas = false;
   document.querySelectorAll('.s-it,.s-home,.s-proj').forEach(i => i.classList.remove('active'));
   const kbEl = document.getElementById('s-kanban'); if (kbEl) kbEl.classList.add('active');
   updateTopbar();
