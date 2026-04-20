@@ -17,18 +17,27 @@ import { renderGenealogy, destroyGenealogy } from './atlas-genealogy.js';
 // ============================================================
 
 async function loadCorpora() {
-  if (!state.sdb || !state.currentUser) return [];
+  if (!state.sdb || !state.currentUser) {
+    console.warn('Atlas: loadCorpora aborted — sdb:', !!state.sdb, 'user:', !!state.currentUser);
+    return [];
+  }
+  console.log('Atlas: loadCorpora for user:', state.currentUser.id);
   const { data, error } = await state.sdb
     .from('atlas_corpus')
     .select('*, atlas_papers(id, title, authors, year, status, mode, relevance_score)')
     .eq('user_id', state.currentUser.id)
     .order('updated_at', { ascending: false });
+  console.log('Atlas loadCorpora result:', data?.map(c => ({ name: c.name, papers: c.atlas_papers?.length })), error?.message);
   if (error) { console.error('Atlas: load corpora error:', error); return []; }
   return data || [];
 }
 
 async function loadCorpusData(corpusId) {
-  if (!state.sdb || !state.currentUser) return null;
+  if (!state.sdb || !state.currentUser) {
+    console.warn('Atlas: loadCorpusData aborted — sdb:', !!state.sdb, 'user:', !!state.currentUser);
+    return null;
+  }
+  console.log('Atlas: loadCorpusData for', corpusId, 'user:', state.currentUser.id);
   const [corpusRes, papersRes, conceptsRes, relationsRes, authorsRes, traditionsRes] = await Promise.all([
     state.sdb.from('atlas_corpus').select('*').eq('id', corpusId).single(),
     state.sdb.from('atlas_papers').select('*').eq('corpus_id', corpusId).order('created_at', { ascending: true }),
@@ -37,6 +46,15 @@ async function loadCorpusData(corpusId) {
     state.sdb.from('atlas_authors').select('*').eq('corpus_id', corpusId).order('role'),
     state.sdb.from('atlas_traditions').select('*').eq('corpus_id', corpusId),
   ]);
+  // Log all results for debugging
+  console.log('Atlas loadCorpusData results:', {
+    corpus: corpusRes.data?.name, corpusErr: corpusRes.error?.message,
+    papers: papersRes.data?.length, papersErr: papersRes.error?.message,
+    concepts: conceptsRes.data?.length, conceptsErr: conceptsRes.error?.message,
+    relations: relationsRes.data?.length, relationsErr: relationsRes.error?.message,
+    authors: authorsRes.data?.length, authorsErr: authorsRes.error?.message,
+    traditions: traditionsRes.data?.length, traditionsErr: traditionsRes.error?.message,
+  });
   if (corpusRes.error) { console.error('Atlas: load corpus error:', corpusRes.error); return null; }
   return {
     corpus: corpusRes.data,
@@ -124,9 +142,13 @@ export async function renderAtlas() {
   if (state.currentAtlasCorpus) {
     ct.innerHTML = bc + '<div class="atlas-loading">Cargando corpus...</div>';
     const data = await loadCorpusData(state.currentAtlasCorpus);
-    if (!data) { ct.innerHTML = bc + '<div class="atlas-empty">No se pudo cargar el corpus.</div>'; return; }
+    if (!data) { ct.innerHTML = bc + '<div class="atlas-empty">No se pudo cargar el corpus.<br><small>sdb: ' + !!state.sdb + ' | user: ' + !!state.currentUser + '</small></div>'; return; }
     state._atlasCorpusCache = data;
-    ct.innerHTML = bc + renderCorpusDetail(data);
+    // Debug banner (temporary)
+    const dbg = `<div style="background:#1a1a2e;border:1px solid #444;padding:8px 12px;margin:8px 0;border-radius:6px;font-size:12px;color:#aaa;">
+      DEBUG: papers=${data.papers.length}, concepts=${data.concepts.length}, relations=${data.relations.length}, authors=${data.authors.length}, traditions=${data.traditions.length}
+    </div>`;
+    ct.innerHTML = bc + dbg + renderCorpusDetail(data);
 
     // Initialize graph/genealogy after DOM is ready
     requestAnimationFrame(() => {
