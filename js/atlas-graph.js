@@ -11,41 +11,9 @@ let cy = null;
 // LOAD CYTOSCAPE (lazy, from CDN)
 // ============================================================
 
-let cytoscapeLoaded = false;
-
-async function ensureCytoscape() {
-  if (cytoscapeLoaded && window.cytoscape) return true;
-
-  const scripts = [
-    'https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js',
-    'https://unpkg.com/dagre@0.8.5/dist/dagre.min.js',
-    'https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js',
-  ];
-
-  for (const src of scripts) {
-    if (document.querySelector('script[src="' + src + '"]')) continue;
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src;
-      s.onload = () => { resolve(); };
-      s.onerror = (e) => { console.error('Atlas: failed to load', src, e); reject(e); };
-      document.head.appendChild(s);
-    });
-  }
-
-  if (!window.cytoscape) {
-    console.error('Atlas: window.cytoscape not available after loading scripts');
-    return false;
-  }
-
-  // Register dagre extension if available
-  if (window.cytoscapeDagre && !window._dagreRegistered) {
-    window.cytoscape.use(window.cytoscapeDagre);
-    window._dagreRegistered = true;
-  }
-
-  cytoscapeLoaded = true;
-  return true;
+// Cytoscape is loaded via <script> tags in index.html (more reliable than dynamic loading)
+function isCytoscapeReady() {
+  return !!window.cytoscape;
 }
 
 // ============================================================
@@ -53,8 +21,7 @@ async function ensureCytoscape() {
 // ============================================================
 
 export async function renderConceptMap(concepts, relations) {
-  const ok = await ensureCytoscape();
-  if (!ok) {
+  if (!isCytoscapeReady()) {
     const ct = document.getElementById('atlas-cy');
     if (ct) ct.innerHTML = '<div style="padding:40px;text-align:center;color:var(--tx3);">Error cargando Cytoscape. Revisa la consola.</div>';
     return;
