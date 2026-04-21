@@ -12,15 +12,9 @@ let cy = null;
 // ============================================================
 
 let cytoscapeLoaded = false;
-let cytoscapeLoading = false;
-const loadQueue = [];
 
 async function ensureCytoscape() {
-  if (cytoscapeLoaded && window.cytoscape) return;
-  if (cytoscapeLoading) {
-    return new Promise(resolve => loadQueue.push(resolve));
-  }
-  cytoscapeLoading = true;
+  if (cytoscapeLoaded && window.cytoscape) return true;
 
   const scripts = [
     'https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js',
@@ -29,25 +23,29 @@ async function ensureCytoscape() {
   ];
 
   for (const src of scripts) {
+    if (document.querySelector('script[src="' + src + '"]')) continue;
     await new Promise((resolve, reject) => {
-      if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
       const s = document.createElement('script');
       s.src = src;
-      s.onload = resolve;
-      s.onerror = reject;
+      s.onload = () => { resolve(); };
+      s.onerror = (e) => { console.error('Atlas: failed to load', src, e); reject(e); };
       document.head.appendChild(s);
     });
   }
 
-  // Register dagre extension
-  if (window.cytoscape && window.cytoscapeDagre) {
+  if (!window.cytoscape) {
+    console.error('Atlas: window.cytoscape not available after loading scripts');
+    return false;
+  }
+
+  // Register dagre extension if available
+  if (window.cytoscapeDagre && !window._dagreRegistered) {
     window.cytoscape.use(window.cytoscapeDagre);
+    window._dagreRegistered = true;
   }
 
   cytoscapeLoaded = true;
-  cytoscapeLoading = false;
-  loadQueue.forEach(fn => fn());
-  loadQueue.length = 0;
+  return true;
 }
 
 // ============================================================
@@ -55,118 +53,157 @@ async function ensureCytoscape() {
 // ============================================================
 
 export async function renderConceptMap(concepts, relations) {
-  await ensureCytoscape();
-  if (!window.cytoscape) {
-    console.error('Atlas: Cytoscape not available');
+  const ok = await ensureCytoscape();
+  if (!ok) {
+    const ct = document.getElementById('atlas-cy');
+    if (ct) ct.innerHTML = '<div style="padding:40px;text-align:center;color:var(--tx3);">Error cargando Cytoscape. Revisa la consola.</div>';
     return;
   }
 
   const container = document.getElementById('atlas-cy');
-  if (!container) return;
+  if (!container) { console.error('Atlas: #atlas-cy container not found'); return; }
+
+  // Ensure container has dimensions
+  if (container.offsetHeight < 10) {
+    container.style.height = '500px';
+  }
+
+  // Build node set for edge validation
+  const nodeIds = new Set(concepts.map(c => c.id));
 
   // Build elements
   const nodes = concepts.map(c => ({
     data: {
       id: c.id,
       label: c.name,
-      weight: c.weight,
-      isThreshold: c.is_threshold,
-      category: c.category || '',
+      weight: c.weight || 'important',
+      isThreshold: c.is_threshold ? 'yes' : 'no',
+      category: c.category || 'general',
       centrality: c.centrality_score || 0,
     },
   }));
 
-  const edges = relations.map(r => ({
-    data: {
-      id: r.id,
-      source: r.source_id,
-      target: r.target_id,
-      label: r.relation_type || r.label || '',
-      relType: r.relation_type || '',
-      isGap: !r.relation_type && !r.user_completed,
-    },
-  }));
+  // Only include edges where both source and target exist
+  const edges = relations
+    .filter(r => nodeIds.has(r.source_id) && nodeIds.has(r.target_id))
+    .map(r => ({
+      data: {
+        id: r.id,
+        source: r.source_id,
+        target: r.target_id,
+        label: r.relation_type || '',
+        relType: r.relation_type || '',
+      },
+    }));
 
-  // Color by category
-  const categories = [...new Set(concepts.map(c => c.category || ''))];
-  const catColors = {};
+  console.log('Atlas graph: rendering', nodes.length, 'nodes,', edges.length, 'edges');
+
+  // Color palette by category
+  const categories = [...new Set(concepts.map(c => c.category || 'general'))];
   const palette = ['#4A90D9', '#D94A6B', '#49B882', '#D9A54A', '#9B59B6', '#E67E22', '#1ABC9C', '#E74C3C'];
-  categories.forEach((cat, i) => { catColors[cat] = palette[i % palette.length]; });
+  const catColorMap = {};
+  categories.forEach((cat, i) => { catColorMap[cat] = palette[i % palette.length]; });
 
-  // Size by weight
-  const weightSizes = { foundational: 45, important: 32, peripheral: 22 };
+  // Destroy previous instance
+  if (cy) { cy.destroy(); cy = null; }
 
-  cy = window.cytoscape({
-    container,
-    elements: [...nodes, ...edges],
-    style: [
-      {
-        selector: 'node',
-        style: {
-          'label': 'data(label)',
-          'background-color': function(ele) { return catColors[ele.data('category')] || '#4A90D9'; },
-          'width': function(ele) { return weightSizes[ele.data('weight')] || 32; },
-          'height': function(ele) { return weightSizes[ele.data('weight')] || 32; },
-          'font-size': 11,
-          'color': '#fff',
-          'text-valign': 'center',
-          'text-halign': 'center',
-          'text-wrap': 'wrap',
-          'text-max-width': '80px',
-          'border-width': function(ele) { return ele.data('isThreshold') ? 3 : 0; },
-          'border-color': '#FFD700',
-          'border-style': 'solid',
-        },
-      },
-      {
-        selector: 'edge',
-        style: {
-          'label': 'data(label)',
-          'curve-style': 'bezier',
-          'target-arrow-shape': 'triangle',
-          'target-arrow-color': '#999',
-          'line-color': function(ele) {
-            if (ele.data('relType') === 'tensions_with') return '#E74C3C';
-            if (ele.data('isGap')) return '#DDD';
-            return '#999';
+  try {
+    cy = window.cytoscape({
+      container: container,
+      elements: { nodes: nodes, edges: edges },
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'label': 'data(label)',
+            'background-color': 'data(category)',
+            'width': 35,
+            'height': 35,
+            'font-size': 10,
+            'color': '#ffffff',
+            'text-valign': 'bottom',
+            'text-halign': 'center',
+            'text-margin-y': 5,
+            'text-wrap': 'wrap',
+            'text-max-width': '80px',
           },
-          'line-style': function(ele) { return ele.data('isGap') ? 'dashed' : 'solid'; },
-          'font-size': 9,
-          'text-rotation': 'autorotate',
-          'text-margin-y': -8,
-          'color': '#666',
-          'width': 1.5,
         },
-      },
-      {
-        selector: 'node:selected',
-        style: {
-          'border-width': 3,
-          'border-color': 'var(--blue)',
+        {
+          selector: 'node[weight="foundational"]',
+          style: { 'width': 50, 'height': 50, 'font-size': 12, 'font-weight': 'bold' },
         },
+        {
+          selector: 'node[weight="peripheral"]',
+          style: { 'width': 22, 'height': 22, 'font-size': 9 },
+        },
+        {
+          selector: 'node[isThreshold="yes"]',
+          style: { 'border-width': 3, 'border-color': '#FFD700' },
+        },
+        {
+          selector: 'edge',
+          style: {
+            'label': 'data(label)',
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': '#888',
+            'line-color': '#888',
+            'font-size': 8,
+            'text-rotation': 'autorotate',
+            'text-margin-y': -8,
+            'color': '#aaa',
+            'width': 1.5,
+          },
+        },
+        {
+          selector: 'edge[relType="tensions_with"]',
+          style: { 'line-color': '#E74C3C', 'target-arrow-color': '#E74C3C', 'line-style': 'dashed' },
+        },
+        {
+          selector: 'node:selected',
+          style: { 'border-width': 3, 'border-color': '#3498DB' },
+        },
+      ],
+      layout: {
+        name: 'cose',
+        animate: false,
+        nodeRepulsion: function() { return 8000; },
+        idealEdgeLength: function() { return 120; },
+        gravity: 0.3,
+        numIter: 500,
+        padding: 30,
       },
-    ],
-    layout: { name: 'cose', animate: true, animationDuration: 500 },
-    wheelSensitivity: 0.3,
-  });
+      wheelSensitivity: 0.3,
+    });
 
-  // Click handlers
-  cy.on('tap', 'node', function(evt) {
-    const node = evt.target;
-    showNodeDetail(node.data(), concepts);
-  });
+    // Apply colors by category after init (workaround for data-driven colors)
+    cy.nodes().forEach(n => {
+      const cat = n.data('category');
+      n.style('background-color', catColorMap[cat] || '#4A90D9');
+    });
 
-  cy.on('tap', 'edge', function(evt) {
-    const edge = evt.target;
-    showEdgeDetail(edge.data());
-  });
+    // Click handlers
+    cy.on('tap', 'node', function(evt) {
+      showNodeDetail(evt.target.data(), concepts);
+    });
 
-  cy.on('tap', function(evt) {
-    if (evt.target === cy) {
-      const detail = document.getElementById('atlas-node-detail');
-      if (detail) detail.style.display = 'none';
-    }
-  });
+    cy.on('tap', 'edge', function(evt) {
+      showEdgeDetail(evt.target.data());
+    });
+
+    cy.on('tap', function(evt) {
+      if (evt.target === cy) {
+        const detail = document.getElementById('atlas-node-detail');
+        if (detail) detail.style.display = 'none';
+      }
+    });
+
+    console.log('Atlas graph: rendered successfully');
+
+  } catch (e) {
+    console.error('Atlas graph: render error:', e);
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--red);">Error renderizando el mapa: ' + escH(e.message) + '</div>';
+  }
 }
 
 // ============================================================
@@ -181,20 +218,17 @@ function showNodeDetail(data, concepts) {
   if (!concept) return;
 
   const defs = Array.isArray(concept.definitions) ? concept.definitions : [];
-  let defsHtml = defs.map(d => `<div class="atlas-detail-def">${escH(d.definition || '')}<br><small>${escH(d.page_ref ? 'p.' + d.page_ref : '')}</small></div>`).join('');
+  let defsHtml = defs.map(d => '<div class="atlas-detail-def">' + escH(d.definition || '') + '<br><small>' + escH(d.page_ref ? 'p.' + d.page_ref : '') + '</small></div>').join('');
 
-  detail.innerHTML = `
-    <div class="atlas-detail-header">
-      <strong>${escH(concept.name)}</strong>
-      ${concept.is_threshold ? '<span class="atlas-badge atlas-badge-threshold">Umbral</span>' : ''}
-      <button class="atlas-detail-close" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
-    </div>
-    <div class="atlas-detail-body">
-      <div><strong>Peso:</strong> ${concept.weight}</div>
-      <div><strong>Categoria:</strong> ${concept.category || 'Sin categoria'}</div>
-      <div><strong>Centralidad:</strong> ${(concept.centrality_score || 0).toFixed(2)}</div>
-      ${defsHtml ? `<div><strong>Definiciones:</strong>${defsHtml}</div>` : ''}
-    </div>`;
+  detail.innerHTML = '<div class="atlas-detail-header"><strong>' + escH(concept.name) + '</strong>' +
+    (concept.is_threshold ? ' <span class="atlas-badge atlas-badge-threshold">Umbral</span>' : '') +
+    '<button class="atlas-detail-close" onclick="this.parentElement.parentElement.style.display=\'none\'">&times;</button></div>' +
+    '<div class="atlas-detail-body">' +
+    '<div><strong>Peso:</strong> ' + concept.weight + '</div>' +
+    '<div><strong>Categoria:</strong> ' + (concept.category || 'Sin categoria') + '</div>' +
+    '<div><strong>Centralidad:</strong> ' + (concept.centrality_score || 0).toFixed(2) + '</div>' +
+    (defsHtml ? '<div><strong>Definiciones:</strong>' + defsHtml + '</div>' : '') +
+    '</div>';
   detail.style.display = 'block';
 }
 
@@ -202,15 +236,11 @@ function showEdgeDetail(data) {
   const detail = document.getElementById('atlas-node-detail');
   if (!detail) return;
 
-  detail.innerHTML = `
-    <div class="atlas-detail-header">
-      <strong>Relacion</strong>
-      <button class="atlas-detail-close" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
-    </div>
-    <div class="atlas-detail-body">
-      <div><strong>Tipo:</strong> ${escH(data.relType || data.label || 'Sin tipo')}</div>
-      ${data.isGap ? '<div style="color:var(--gold);">Esta relacion es un gap — completala en Modo Activo</div>' : ''}
-    </div>`;
+  detail.innerHTML = '<div class="atlas-detail-header"><strong>Relacion</strong>' +
+    '<button class="atlas-detail-close" onclick="this.parentElement.parentElement.style.display=\'none\'">&times;</button></div>' +
+    '<div class="atlas-detail-body">' +
+    '<div><strong>Tipo:</strong> ' + escH(data.relType || data.label || 'Sin tipo') + '</div>' +
+    '</div>';
   detail.style.display = 'block';
 }
 
@@ -220,7 +250,7 @@ function showEdgeDetail(data) {
 
 window.atlasLayoutForce = function() {
   if (!cy) return;
-  cy.layout({ name: 'cose', animate: true, animationDuration: 400 }).run();
+  cy.layout({ name: 'cose', animate: true, animationDuration: 400, nodeRepulsion: function() { return 8000; } }).run();
   document.getElementById('atlas-layout-force')?.classList.add('active');
   document.getElementById('atlas-layout-hierarchy')?.classList.remove('active');
 };

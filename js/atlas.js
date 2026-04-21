@@ -144,11 +144,7 @@ export async function renderAtlas() {
     const data = await loadCorpusData(state.currentAtlasCorpus);
     if (!data) { ct.innerHTML = bc + '<div class="atlas-empty">No se pudo cargar el corpus.<br><small>sdb: ' + !!state.sdb + ' | user: ' + !!state.currentUser + '</small></div>'; return; }
     state._atlasCorpusCache = data;
-    // Debug banner (temporary)
-    const dbg = `<div style="background:#1a1a2e;border:1px solid #444;padding:8px 12px;margin:8px 0;border-radius:6px;font-size:12px;color:#aaa;">
-      DEBUG: papers=${data.papers.length}, concepts=${data.concepts.length}, relations=${data.relations.length}, authors=${data.authors.length}, traditions=${data.traditions.length}
-    </div>`;
-    ct.innerHTML = bc + dbg + renderCorpusDetail(data);
+    ct.innerHTML = bc + renderCorpusDetail(data);
 
     // Initialize graph/genealogy after DOM is ready
     requestAnimationFrame(() => {
