@@ -83,7 +83,7 @@ export async function renderConceptMap(concepts, relations) {
           selector: 'node',
           style: {
             'label': 'data(label)',
-            'background-color': 'data(category)',
+            'background-color': '#4A90D9',
             'width': 35,
             'height': 35,
             'font-size': 10,
