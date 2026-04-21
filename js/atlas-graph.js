@@ -11,8 +11,18 @@ let cy = null;
 // LOAD CYTOSCAPE (lazy, from CDN)
 // ============================================================
 
-// Cytoscape is loaded via <script> tags in index.html (more reliable than dynamic loading)
-function isCytoscapeReady() {
+// Cytoscape loaded async via <script> tags in index.html
+// Wait until it's available before rendering
+async function waitForCytoscape(maxWait) {
+  const deadline = Date.now() + (maxWait || 10000);
+  while (!window.cytoscape && Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, 200));
+  }
+  // Register dagre if both loaded
+  if (window.cytoscape && window.cytoscapeDagre && !window._dagreRegistered) {
+    window.cytoscape.use(window.cytoscapeDagre);
+    window._dagreRegistered = true;
+  }
   return !!window.cytoscape;
 }
 
@@ -21,7 +31,8 @@ function isCytoscapeReady() {
 // ============================================================
 
 export async function renderConceptMap(concepts, relations) {
-  if (!isCytoscapeReady()) {
+  const cyReady = await waitForCytoscape(10000);
+  if (!cyReady) {
     const ct = document.getElementById('atlas-cy');
     if (ct) ct.innerHTML = '<div style="padding:40px;text-align:center;color:var(--tx3);">Error cargando Cytoscape. Revisa la consola.</div>';
     return;

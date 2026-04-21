@@ -489,16 +489,10 @@
   </div>
 </div>
 
-<!-- Cytoscape.js for Atlas concept map and genealogy -->
-<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
-<script>
-  if (window.cytoscape && window.cytoscapeDagre) {
-    window.cytoscape.use(window.cytoscapeDagre);
-    window._dagreRegistered = true;
-  }
-</script>
-<script type="module" src="js/app.js?v=20260421a"></script>
+<script type="module" src="js/app.js?v=20260421b"></script>
+<!-- Cytoscape.js for Atlas (loaded async, not blocking) -->
+<script async src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js" onload="window._cyLoaded=true"></script>
+<script async src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
 </body>
 </html>
