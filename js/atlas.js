@@ -22,14 +22,26 @@ async function loadCorpora() {
     return [];
   }
   console.log('Atlas: loadCorpora for user:', state.currentUser.id);
-  const { data, error } = await state.sdb
+  // Load corpus list WITHOUT join (avoids timeout on free tier)
+  const { data: corpora, error } = await state.sdb
     .from('atlas_corpus')
-    .select('*, atlas_papers(id, title, authors, year, status, mode, relevance_score)')
+    .select('id, name, description, project_id, created_at, updated_at')
     .eq('user_id', state.currentUser.id)
     .order('updated_at', { ascending: false });
-  console.log('Atlas loadCorpora result:', data?.map(c => ({ name: c.name, papers: c.atlas_papers?.length })), error?.message);
   if (error) { console.error('Atlas: load corpora error:', error); return []; }
-  return data || [];
+  // Count papers per corpus with a separate lightweight query
+  if (corpora && corpora.length > 0) {
+    const { data: papers } = await state.sdb
+      .from('atlas_papers')
+      .select('corpus_id, status')
+      .eq('user_id', state.currentUser.id);
+    corpora.forEach(c => {
+      const cp = (papers || []).filter(p => p.corpus_id === c.id);
+      c.atlas_papers = cp.map(p => ({ status: p.status }));
+    });
+  }
+  console.log('Atlas loadCorpora result:', corpora?.length, 'corpora');
+  return corpora || [];
 }
 
 async function loadCorpusData(corpusId) {
@@ -37,24 +49,18 @@ async function loadCorpusData(corpusId) {
     console.warn('Atlas: loadCorpusData aborted — sdb:', !!state.sdb, 'user:', !!state.currentUser);
     return null;
   }
-  console.log('Atlas: loadCorpusData for', corpusId, 'user:', state.currentUser.id);
-  const [corpusRes, papersRes, conceptsRes, relationsRes, authorsRes, traditionsRes] = await Promise.all([
-    state.sdb.from('atlas_corpus').select('*').eq('id', corpusId).single(),
-    state.sdb.from('atlas_papers').select('*').eq('corpus_id', corpusId).order('created_at', { ascending: true }),
-    state.sdb.from('atlas_concepts').select('*').eq('corpus_id', corpusId).order('centrality_score', { ascending: false }),
-    state.sdb.from('atlas_concept_relations').select('*').eq('corpus_id', corpusId),
-    state.sdb.from('atlas_authors').select('*').eq('corpus_id', corpusId).order('role'),
-    state.sdb.from('atlas_traditions').select('*').eq('corpus_id', corpusId),
-  ]);
-  // Log all results for debugging
-  console.log('Atlas loadCorpusData results:', {
-    corpus: corpusRes.data?.name, corpusErr: corpusRes.error?.message,
-    papers: papersRes.data?.length, papersErr: papersRes.error?.message,
-    concepts: conceptsRes.data?.length, conceptsErr: conceptsRes.error?.message,
-    relations: relationsRes.data?.length, relationsErr: relationsRes.error?.message,
-    authors: authorsRes.data?.length, authorsErr: authorsRes.error?.message,
-    traditions: traditionsRes.data?.length, traditionsErr: traditionsRes.error?.message,
-  });
+  console.log('Atlas: loadCorpusData for', corpusId);
+  // Sequential queries to avoid timeout on free tier (6 parallel was too aggressive)
+  const corpusRes = await state.sdb.from('atlas_corpus').select('*').eq('id', corpusId).single();
+  if (corpusRes.error) { console.error('Atlas: corpus error:', corpusRes.error.message); return null; }
+
+  const papersRes = await state.sdb.from('atlas_papers').select('*').eq('corpus_id', corpusId).order('created_at', { ascending: true });
+  const conceptsRes = await state.sdb.from('atlas_concepts').select('*').eq('corpus_id', corpusId).order('centrality_score', { ascending: false });
+  const relationsRes = await state.sdb.from('atlas_concept_relations').select('*').eq('corpus_id', corpusId);
+  const authorsRes = await state.sdb.from('atlas_authors').select('*').eq('corpus_id', corpusId);
+  const traditionsRes = await state.sdb.from('atlas_traditions').select('*').eq('corpus_id', corpusId);
+
+  console.log('Atlas loadCorpusData:', corpusRes.data?.name, '| papers:', papersRes.data?.length, '| concepts:', conceptsRes.data?.length);
   if (corpusRes.error) { console.error('Atlas: load corpus error:', corpusRes.error); return null; }
   return {
     corpus: corpusRes.data,
