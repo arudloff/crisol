@@ -563,6 +563,7 @@ function showWelcomePopup() {
     const { data } = await state.sdb.auth.getSession();
     if (data.session) {
       state.currentUser = data.session.user;
+      _restoreLastNav();
       await enterApp();
     }
   } catch (e) { console.error('Auto-login error:', e); }
@@ -572,20 +573,82 @@ function showWelcomePopup() {
 // AUTH STATE CHANGE LISTENER
 // ============================================================
 if (state.sdb) {
-  state.sdb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT' || !session) {
+  state.sdb.auth.onAuthStateChange(async (event, session) => {
+    console.log('Auth event:', event, !!session);
+    if (event === 'SIGNED_OUT') {
+      // Intentional logout — clear everything
       state.currentUser = null;
       state.profile = null;
       document.getElementById('main-app').style.display = 'none';
       document.getElementById('profile-screen').style.display = 'none';
       document.getElementById('login-screen').style.display = 'flex';
-      setSyncStatus('Sesion expirada', 'var(--red)');
+      setSyncStatus('Sesion cerrada', 'var(--red)');
     } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
       state.currentUser = session.user;
       console.log('Auth: ' + event);
+      // If app is hidden (login screen showing but we have a session), re-enter
+      if (document.getElementById('main-app').style.display === 'none' &&
+          document.getElementById('login-screen').style.display === 'flex') {
+        await enterApp();
+        _restoreLastNav();
+      }
+    } else if (event === 'INITIAL_SESSION') {
+      // Supabase v2 fires this on page load — ignore if already logged in
+      if (session && !state.currentUser) {
+        state.currentUser = session.user;
+        await enterApp();
+        _restoreLastNav();
+      }
     }
   });
 }
+
+// Persist & restore navigation state across tab switches / token refreshes
+function _saveLastNav() {
+  try {
+    localStorage.setItem('crisol_lastNav', JSON.stringify({
+      articleKey: state.currentArticleKey,
+      panel: state.currentPanel,
+      subSec: state.currentSubSec,
+      docId: state.currentDocId,
+      projectId: state.currentProjectId,
+      isHome: state.isHome,
+      isMiTesis: state.isMiTesis,
+      _isPrisma: state._isPrisma,
+      _isAtlas: state._isAtlas,
+      currentAtlasTab: state.currentAtlasTab,
+      currentPrismaTab: state.currentPrismaTab,
+      ts: Date.now()
+    }));
+  } catch (e) { /* storage error */ }
+}
+
+function _restoreLastNav() {
+  try {
+    const raw = localStorage.getItem('crisol_lastNav');
+    if (!raw) return;
+    const nav = JSON.parse(raw);
+    // Only restore if saved within the last 24 hours
+    if (Date.now() - (nav.ts || 0) > 86400000) return;
+    state.currentArticleKey = nav.articleKey || state.currentArticleKey;
+    state.currentPanel = nav.panel || 'dashboard';
+    state.currentSubSec = nav.subSec || 0;
+    state.currentDocId = nav.docId || null;
+    state.currentProjectId = nav.projectId || null;
+    state.isHome = nav.isHome ?? true;
+    state.isMiTesis = nav.isMiTesis ?? false;
+    state._isPrisma = nav._isPrisma ?? false;
+    state._isAtlas = nav._isAtlas ?? false;
+    state.currentAtlasTab = nav.currentAtlasTab || 'corpus';
+    state.currentPrismaTab = nav.currentPrismaTab || 'jardin';
+  } catch (e) { /* parse error */ }
+}
+
+// Save nav state periodically and on tab hide
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && state.currentUser) _saveLastNav();
+});
+setInterval(() => { if (state.currentUser) _saveLastNav(); }, 30000);
 
 // ============================================================
 // HELPERS
