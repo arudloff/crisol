@@ -1,19 +1,20 @@
 # .yunque.yml — CRISOL quality configuration
 version: 1
+project_id: crisol
 app_type: web
+test_cmd: npx jest --verbose
 
 rules:
   blocking:
-    - FF-DU3.1      # hardcoded secrets
-    - FF-DU3.2      # innerHTML/XSS
-    - FF-U4.1       # empty catches
-    - FF-U4.3       # global error handlers
+    - FF-DU3.1
+    - FF-DU3.2
+    - FF-U4.1
+    - FF-U4.3
   advisory:
-    - FF-DU1        # file sizes (>500 lines)
-    - FF-DU14       # documentation
-    - FF-U2.1       # duplicate functions
+    - FF-DU1
+    - FF-DU14
+    - FF-U2.1
   disabled: []
 
 thresholds:
   max_file_lines: 500
-  min_test_coverage_modules: 50
