@@ -951,5 +951,1049 @@
         "dimension": "recovery"
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-25T22:05:43.309Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-25T22:13:36.839Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass (npm test)",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.1",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C3.2",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-25T22:14:54.392Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass (npx jest --verbose)",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.1",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C3.2",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-25T22:41:21.728Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "project_id": "crisol",
+    "scope": null,
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass (npx jest --verbose)",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.1",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C3.2",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-25T22:41:44.450Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "project_id": "crisol",
+    "scope": null,
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass (npx jest --verbose)",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.1",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C3.2",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
+  },
+  {
+    "timestamp": "2026-04-25T22:44:29.040Z",
+    "project": "crisol",
+    "stacks": [
+      "javascript"
+    ],
+    "appType": "web",
+    "project_id": "crisol",
+    "scope": null,
+    "summary": {
+      "total": 24,
+      "pass": 13,
+      "fail": 1,
+      "warn": 10,
+      "score": 54
+    },
+    "checks": [
+      {
+        "id": "FF-DU3.1",
+        "result": "PASS",
+        "detail": "No hardcoded secrets",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU3.2",
+        "result": "WARN",
+        "detail": "122 innerHTML assignments (review for XSS)",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-gitignore",
+        "result": "PASS",
+        "detail": ".gitignore includes .env",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-DU1",
+        "result": "FAIL",
+        "detail": "10 files > 500 lines",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-DU1b",
+        "result": "WARN",
+        "detail": "8 potential circular dependencies",
+        "dimension": "architecture"
+      },
+      {
+        "id": "FF-U1.1",
+        "result": "PASS",
+        "detail": "All imports resolve to exports",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U1.2",
+        "result": "PASS",
+        "detail": "Barrel re-exports valid",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-U2.1",
+        "result": "WARN",
+        "detail": "29 duplicate function names",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U2.2",
+        "result": "WARN",
+        "detail": "179 exports without imports (potential dead code)",
+        "dimension": "maintainability"
+      },
+      {
+        "id": "FF-U4.1",
+        "result": "PASS",
+        "detail": "No empty catch blocks",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.2",
+        "result": "WARN",
+        "detail": "4 write operations may lack user feedback",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U4.3",
+        "result": "PASS",
+        "detail": "Global error handlers found",
+        "dimension": "observability"
+      },
+      {
+        "id": "FF-U5.1",
+        "result": "WARN",
+        "detail": "154 div/span with onclick without keyboard support",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.2",
+        "result": "WARN",
+        "detail": "57 modals without role=\"dialog\"/aria-modal",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-U5.3",
+        "result": "WARN",
+        "detail": "25 inputs may lack accessible labels",
+        "dimension": "accessibility"
+      },
+      {
+        "id": "FF-DU4",
+        "result": "PASS",
+        "detail": "No forEach+async patterns",
+        "dimension": "performance"
+      },
+      {
+        "id": "FF-DU7",
+        "result": "PASS",
+        "detail": "Tests pass (npx jest --verbose)",
+        "dimension": "testing"
+      },
+      {
+        "id": "FF-DU14",
+        "result": "PASS",
+        "detail": "README exists + ARCHITECTURE.md",
+        "dimension": "documentation"
+      },
+      {
+        "id": "FF-C1.1",
+        "result": "PASS",
+        "detail": "state._ registrations OK (46 registered)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.2",
+        "result": "PASS",
+        "detail": "Window globals OK (327 registered, 195 used)",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C1.3",
+        "result": "WARN",
+        "detail": "23 state._ registrations outside app.js",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.1",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C2.2",
+        "result": "PASS",
+        "detail": "Sync timers OK",
+        "dimension": "integrity"
+      },
+      {
+        "id": "FF-C3.1",
+        "result": "WARN",
+        "detail": "36/37 tables with RLS",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C3.2",
+        "result": "N/A",
+        "detail": "Project does not use Supabase",
+        "dimension": "security"
+      },
+      {
+        "id": "FF-C4.1",
+        "result": "PASS",
+        "detail": "Backup covers 20 tables",
+        "dimension": "recovery"
+      }
+    ],
+    "regressions": [],
+    "improvements": []
   }
 ]
